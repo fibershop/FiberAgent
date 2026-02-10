@@ -9,7 +9,7 @@
 ## Requested Endpoints
 
 ### 1. Platform Stats (Global)
-**Endpoint:** `GET /v1/stats/platform`
+**Endpoint:** `GET /v1/agent/stats/platform`
 
 **Response:**
 ```json
@@ -31,7 +31,7 @@
 ---
 
 ### 2. Top Agents Leaderboard
-**Endpoint:** `GET /v1/stats/leaderboard?limit=10&offset=0`
+**Endpoint:** `GET /v1/agent/stats/leaderboard?limit=10&offset=0`
 
 **Response:**
 ```json
@@ -106,7 +106,7 @@
 ---
 
 ### 4. Daily/Weekly/Monthly Trends
-**Endpoint:** `GET /v1/stats/trends?period=daily&days=30`
+**Endpoint:** `GET /v1/agent/stats/trends?period=daily&days=30`
 
 **Response:**
 ```json
@@ -253,12 +253,12 @@
 
 ```javascript
 // Get global stats
-const globalStats = await fetch('https://api.staging.fiber.shop/v1/stats/platform').then(r => r.json());
+const globalStats = await fetch('https://api.staging.fiber.shop/v1/agent/stats/platform').then(r => r.json());
 console.log(`Total agents: ${globalStats.stats.total_agents_registered}`);
 console.log(`Total earnings: $${globalStats.stats.total_earnings_usd}`);
 
 // Get leaderboard
-const leaderboard = await fetch('https://api.staging.fiber.shop/v1/stats/leaderboard?limit=10').then(r => r.json());
+const leaderboard = await fetch('https://api.staging.fiber.shop/v1/agent/stats/leaderboard?limit=10').then(r => r.json());
 leaderboard.leaderboard.forEach((agent, i) => {
   console.log(`${agent.rank}. ${agent.agent_name}: $${agent.total_earnings_usd}`);
 });

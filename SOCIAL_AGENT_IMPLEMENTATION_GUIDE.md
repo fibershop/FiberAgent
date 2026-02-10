@@ -14,7 +14,7 @@
    ↓
 2. Bot scans recent tweets (Solana/Monad communities)
    ↓
-3. Queries Fetch: GET /api/agent/search?keywords={category}
+3. Queries FiberAgent: GET /api/agent/search?keywords={category}
    ↓
 4. Receives offer list ranked by cashback %
    ↓
@@ -126,7 +126,7 @@ Phase 2 templates:
 
 ### Step 1: Bot Initialization
 
-Register with Fetch:
+Register with FiberAgent:
 
 ```javascript
 const agentConfig = {
@@ -212,7 +212,7 @@ function detectContext(tweetText, replyToUserId = null) {
 ### Step 3: FiberAgent Offer Query
 
 ```javascript
-async function queryFetchForOffers(context, agentId) {
+async function queryFiberAgentForOffers(context, agentId) {
   /**
    * Query FiberAgent API for offers matching context
    * Returns ranked list by cashback %
@@ -403,7 +403,7 @@ async function logOfferPromotion(offer, tweetId, context) {
    */
   
   const payload = {
-    agent_id: process.env.FETCH_AGENT_ID,
+    agent_id: process.env.FIBERAGENT_AGENT_ID,
     offer_id: offer.product_id,
     merchant: offer.merchant,
     cashback_rate: offer.cashback_rate,
@@ -468,7 +468,7 @@ async function engagementCycle() {
     const context = detectContext(tweet.text);
     
     // Query FiberAgent for offers
-    const offers = await queryFetchForOffers(context, process.env.FETCH_AGENT_ID);
+    const offers = await queryFiberAgentForOffers(context, process.env.FIBERAGENT_AGENT_ID);
     
     // Select token
     const token = selectToken(context, offers, config.tokenList);
@@ -492,7 +492,7 @@ async function engagementCycle() {
   const topTweet = tweets[0]; // Could use engagement metrics
   if (topTweet && !await alreadyReplied(topTweet.id)) {
     const context = detectContext(topTweet.text);
-    const offers = await queryFetchForOffers(context, process.env.FETCH_AGENT_ID);
+    const offers = await queryFiberAgentForOffers(context, process.env.FIBERAGENT_AGENT_ID);
     const token = selectToken(context, offers, config.tokenList);
     const tokenHandle = getTokenHandle(token, config.tokenList);
     
@@ -534,7 +534,7 @@ Check your bot's performance:
 ```javascript
 async function getAnalytics() {
   const response = await fetch(
-    `http://192.168.1.39:5000/api/agent/earnings/${process.env.FETCH_AGENT_ID}`,
+    `http://192.168.1.39:5000/api/agent/earnings/${process.env.FIBERAGENT_AGENT_ID}`,
     {
       headers: { "Authorization": `Bearer ${process.env.FETCH_API_KEY}` }
     }
@@ -577,7 +577,7 @@ function canPromoteOffer(offerId) {
 
 ## Testing Checklist
 
-- [ ] Bot registers with Fetch, receives `api_key`
+- [ ] Bot registers with FiberAgent, receives `api_key`
 - [ ] `/api/agent/search` returns offers
 - [ ] Token rotation selects tokens correctly
 - [ ] CTA construction works (Phase 1 and 2)

@@ -46,7 +46,7 @@ curl -X POST https://api.staging.fiber.shop/v1/agent/register \
 
 ### Step 3: Search Products for Your Users
 
-When a user asks you for product recommendations, query Fetch:
+When a user asks you for product recommendations, query FiberAgent:
 
 ```bash
 curl "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_abc123xyz&wallet=your_monad_wallet&limit=10"
@@ -121,7 +121,7 @@ curl "https://api.staging.fiber.shop/v1/agent/earnings/agent_abc123xyz"
 
 ## ⚠️ IMPORTANT: Set Expectations with Your Users
 
-If you recommend products from Fetch, **tell your users upfront:**
+If you recommend products from FiberAgent, **tell your users upfront:**
 
 > "I found you a great deal on running shoes at Nike via FiberAgent. When you buy, I earn a small commission that takes 5 days to show up in my account, then another 85 days max to arrive as real money. This doesn't affect your price - you pay the same thing!"
 
@@ -299,7 +299,7 @@ console.log('Wallet:', walletAddress);
 **A:** Build reputation with ERC-8004. High-reputation agents negotiate better rates with merchants.
 
 ### Q: Can I integrate this with my existing agent?
-**A:** Yes! Just make API calls to Fetch's endpoints when your users ask for shopping help.
+**A:** Yes! Just make API calls to FiberAgent's endpoints when your users ask for shopping help.
 
 ---
 

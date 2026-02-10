@@ -18,8 +18,8 @@
 **Resources:** ERC-8004 spec found at https://docs.monad.xyz/guides/erc-8004-guide
 
 **Tasks:**
-- [ ] **Monad Mainnet Wallet for Fetch**
-  - Confirm Fetch's Monad mainnet wallet address
+- [ ] **Monad Mainnet Wallet for FiberAgent**
+  - Confirm FiberAgent's Monad mainnet wallet address
   - Ensure wallet has MON for gas fees (~$1-5 for registration + reputation updates)
   - Store in `.env`: `FETCH_WALLET=0x...`
 
@@ -65,8 +65,8 @@
 **Tasks:**
 
 - [ ] **Execute ERC-8004 Registration (Continuation from Feb 6)**
-  - Run registration script: `node register-fetch.js`
-  - Record Fetch's token ID from transaction receipt
+  - Run registration script: `node register-fiberagent.js`
+  - Record FiberAgent's token ID from transaction receipt
   - Update `.env`: `FETCH_TOKEN_ID=...`
   - Verify registration on 8004scan.io or Monad Vision
   - **Deliverable:** FiberAgent registered on Monad mainnet with verified token ID
@@ -352,7 +352,7 @@
 
 - [ ] **FiberAgent Persona Tuning**
   - Review tone examples from white paper (Section 3)
-  - Update all API response messages to reflect Fetch's "Ari Gold" personality
+  - Update all API response messages to reflect FiberAgent's "Ari Gold" personality
   - Examples:
     - Search result: "Nike Pegasus 40 at Dick's for $120. I got you 12% cashback because I know you run. That's $14.40 back. This is why you have an agent."
     - No match: "I'm not going to insult you with a bad deal. Check back soon."
@@ -408,7 +408,7 @@
 
 - [ ] **README.md Final Version**
   - Sections:
-    1. **What is Fetch?** (One-liner + elevator pitch)
+    1. **What is FiberAgent?** (One-liner + elevator pitch)
     2. **Why It's Different** (4 unfair advantages)
     3. **Quick Start** (how to run locally)
     4. **Architecture** (link to docs/ARCHITECTURE.md)
@@ -416,7 +416,7 @@
     6. **Key Features** (agent registration, behavioral personalization, kickback, reputation, gossip)
     7. **For Judges** (how to test, endpoints to call)
     8. **Team Notes** (who built what, timeline)
-  - **Tone:** Professional but with Fetch's personality shine through
+  - **Tone:** Professional but with FiberAgent's personality shine through
 
 - [ ] **Submission Documentation**
   - Create `SUBMISSION.md`:
@@ -440,8 +440,8 @@
 
 - [ ] **Twitter Bot Automation (Bonus)**
   - If time permits: Wire up automated posting to Twitter/X
-  - Fetch's Twitter account posts trending insights every 2 hours during demo
-  - Judges see live tweets: "#Monad #Fetch: Streetwear trending 1.8x in DeFi cohort 📈"
+  - FiberAgent's Twitter account posts trending insights every 2 hours during demo
+  - Judges see live tweets: "#Monad #FiberAgent: Streetwear trending 1.8x in DeFi cohort 📈"
 
 - [ ] **Hackathon Submission Checklist**
   - [ ] GitHub repo clean, no node_modules
@@ -669,7 +669,7 @@
 
 **Status:** Plan created Feb 6, 2026 | ERC-8004 spec + registration plan finalized | Ready to execute  
 **Next action (URGENT Feb 6):**
-1. Provide Fetch's Monad mainnet wallet address + private key storage location
+1. Provide FiberAgent's Monad mainnet wallet address + private key storage location
 2. Confirm agent card hosting (IPFS or web)
 3. Confirm production API endpoint URL
 4. Then: Execute ERC-8004 registration (Feb 7) + begin Phase 1 API development

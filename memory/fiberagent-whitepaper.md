@@ -31,7 +31,7 @@ FiberAgent is a **behavioral intelligence agent** built by Fiber that operates l
 - Takes a cut
 
 **Flow:**
-1. Agent A queries Fetch: "Find running shoe deals for wallet 0xABC..."
+1. Agent A queries FiberAgent: "Find running shoe deals for wallet 0xABC..."
 2. FiberAgent checks wallet's **behavioral history**:
    - On-chain signals: token holdings, community membership
    - Off-chain data: real ecommerce purchases via merchant network
@@ -40,7 +40,7 @@ FiberAgent is a **behavioral intelligence agent** built by Fiber that operates l
 5. User buys through referral link
 6. Everyone gets paid:
    - Fiber: commission on affiliate purchases
-   - Fetch: facilitation fee on code-only purchases
+   - FiberAgent: facilitation fee on code-only purchases
    - Agent A: kickback (% of cashback from Fiber's pot)
    - Code contributor: cut if their code was used
 
@@ -103,7 +103,7 @@ FiberAgent is a **behavioral intelligence agent** built by Fiber that operates l
 - Filters for high-quality agent interactions
 - Creates economic trust without reputation lookups
 
-### Fetch's Personality: The Ari Gold of AI Agents
+### FiberAgent's Personality: The Ari Gold of AI Agents
 Think Entourage's Ari Gold: hustler, always working an angle, always closing, a little brash. But you keep coming back because nobody gets you a better deal.
 
 **Tone Examples (Reference for Implementation):**
@@ -126,7 +126,7 @@ Think Entourage's Ari Gold: hustler, always working an angle, always closing, a 
 **Why it works:**
 - Creates urgency (early agents economically advantaged forever)
 - Incentivizes registration + real queries from day one
-- Status signal: "I'm a Founding Agent on Fetch" = FOMO in developer community
+- Status signal: "I'm a Founding Agent on FiberAgent" = FOMO in developer community
 
 **Validation needed post-launch:**
 - Ensure 2x multiplier remains viable (base 5% kickback → 10% for Founders)
@@ -196,7 +196,7 @@ Scores halve roughly every 2 months
 
 ### 5.6 On-Chain Reputation (ERC-8004)
 - After every successful purchase, FiberAgent posts feedback to Reputation Registry
-- Other agents can check Fetch's track record: conversion rate, accuracy, speed
+- Other agents can check FiberAgent's track record: conversion rate, accuracy, speed
 - Calling agents accumulate reputation for bringing quality traffic
 
 ### 5.7 Gossip Feed
@@ -322,7 +322,7 @@ Calling Agent
 
 ### FiberAgent as Standalone Brand?
 - Worth discussing: "FiberAgent by Fiber" → eventually own product/brand?
-- Agent-facing commerce intelligence layer (Fetch) vs. underlying behavioral intelligence protocol (Fiber) = distinct products/go-to-markets
+- Agent-facing commerce intelligence layer (FiberAgent) vs. underlying behavioral intelligence protocol (Fiber) = distinct products/go-to-markets
 - Parking for now — focus on shipping hackathon
 
 ---

@@ -1,18 +1,18 @@
 # Agent Onboarding Flow
 
 **For:** Any AI agent that wants to discover and integrate FiberAgent  
-**Purpose:** Quick start for agents to find Fetch, register, and start querying products  
+**Purpose:** Quick start for agents to find FiberAgent, register, and start querying products  
 **Last Updated:** 2026-02-09 21:01 GMT+1
 
 ---
 
-## What is Fetch?
+## What is FiberAgent?
 
-**Fetch** is an AI behavioral intelligence agent that helps other agents find products with personalized cashback rewards.
+**FiberAgent** is an AI behavioral intelligence agent that helps other agents find products with personalized cashback rewards.
 
 **In simple terms:**
 - You're an AI agent looking to help users find things to buy
-- You call Fetch: "Find me blue shoes"
+- You call FiberAgent: "Find me blue shoes"
 - FiberAgent returns: Product list + merchants + cashback percentages for your users
 - Your users earn rewards, you get credit for the referral
 
@@ -23,7 +23,7 @@
 ### Step 1: Discover FiberAgent
 
 Your agent can find FiberAgent by:
-- Querying a public registry for Fetch's API endpoint
+- Querying a public registry for FiberAgent's API endpoint
 - Or being pointed to FiberAgent by a user
 - Or discovering via agent network directories
 
@@ -94,7 +94,7 @@ curl "http://localhost:5000/api/agent/search?keywords=shoes&agent_id=agent_your_
 ### Step 4: Present to Your User
 
 **Example:**
-> "I found Blue Adidas Running Shoes for $99.99 at Adidas Store. When you buy through Fetch, you'll earn 5% cashback ($5.00 back)!"
+> "I found Blue Adidas Running Shoes for $99.99 at Adidas Store. When you buy through FiberAgent, you'll earn 5% cashback ($5.00 back)!"
 
 ### Step 5: Track Purchase (Optional)
 

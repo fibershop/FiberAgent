@@ -11,7 +11,7 @@ Save this as `fetch-agent-card.json`:
 
 ```json
 {
-  "name": "Fetch",
+  "name": "FiberAgent",
   "description": "AI shopping agent providing behavioral intelligence and personalized deals powered by Fiber.shop",
   "image": "https://fetch-platform.example.com/logo.png",
   "version": "1.0.0",
@@ -45,7 +45,7 @@ Save this as `fetch-agent-card.json`:
       "type": "HTTP",
       "url": "https://fetch-api.example.com/api/agent/reputation",
       "method": "GET",
-      "description": "Check Fetch's on-chain reputation",
+      "description": "Check FiberAgent's on-chain reputation",
       "parameters": {
         "include_feedback": "boolean"
       }
@@ -65,7 +65,7 @@ Save this as `fetch-agent-card.json`:
     "agent-services"
   ],
   
-  "wallet": "0xFetchMainnetWallet",
+  "wallet": "0xFiberAgentMainnetWallet",
   "network": "Monad",
   
   "capabilities": [
@@ -112,7 +112,7 @@ https://fetch-platform.example.com/fetch-agent-card.json
 ### Using Ethers.js (Node.js)
 
 ```javascript
-// register-fetch.js
+// register-fiberagent.js
 const ethers = require('ethers');
 
 const IDENTITY_REGISTRY = '0x8004A169FB4a3325136EB29fA0ceB6D2e539a432';
@@ -131,7 +131,7 @@ const IDENTITY_ABI = [
   }
 ];
 
-async function registerFetch() {
+async function registerFiberAgent() {
   // Connect to Monad
   const provider = new ethers.JsonRpcProvider(MONAD_RPC);
   const signer = new ethers.Wallet(process.env.FETCH_PRIVATE_KEY, provider);
@@ -165,12 +165,12 @@ async function registerFetch() {
   return event; // token_id
 }
 
-registerFetch().catch(console.error);
+registerFiberAgent().catch(console.error);
 ```
 
 ### Run Registration
 ```bash
-FETCH_PRIVATE_KEY=0x... FETCH_WALLET_ADDRESS=0x... node register-fetch.js
+FETCH_PRIVATE_KEY=0x... FETCH_WALLET_ADDRESS=0x... node register-fiberagent.js
 ```
 
 ---
@@ -182,7 +182,7 @@ Once registered, save the token ID:
 ```bash
 # .env
 FETCH_TOKEN_ID=12345  # From registration tx
-FETCH_WALLET=0xFetchWalletAddress
+FETCH_WALLET=0xFiberAgentWalletAddress
 MONAD_RPC=https://mainnet-rpc.monad.com
 IDENTITY_REGISTRY=0x8004A169FB4a3325136EB29fA0ceB6D2e539a432
 REPUTATION_REGISTRY=0x8004BAa17C55a88189AE136b182e5fdA19dE9b63
@@ -351,7 +351,7 @@ console.log("Endpoints:", card.endpoints);
 | Feb 7 | Register FiberAgent on Identity Registry (mint ERC-721) | TODO |
 | Feb 7 | Save token ID + update .env | TODO |
 | Feb 8+ | Start submitting reputation feedback after purchases | TODO |
-| Feb 15 | Judges can verify Fetch's on-chain reputation | TODO |
+| Feb 15 | Judges can verify FiberAgent's on-chain reputation | TODO |
 
 ---
 
@@ -360,7 +360,7 @@ console.log("Endpoints:", card.endpoints);
 ✅ **ERC-8004 is already deployed** on Monad mainnet (no need to deploy contracts)  
 ✅ **FiberAgent gets permanent, verifiable identity** (ERC-721 token)  
 ✅ **Reputation builds live** during hackathon (immutable feedback)  
-✅ **Other agents can discover Fetch** via registries (8004scan.io, agentscan.info)  
+✅ **Other agents can discover FiberAgent** via registries (8004scan.io, agentscan.info)  
 ✅ **Judges can verify everything on-chain** before awarding prizes  
 
 ---

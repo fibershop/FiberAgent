@@ -74,7 +74,7 @@
 
 ### Task 4.1: Build Interactive Demo Page (Enhanced)
 - [x] Jury sees: Interactive agent registration + product search
-- [x] Agent queries Fetch, results display with merchants + cashback
+- [x] Agent queries FiberAgent, results display with merchants + cashback
 - [x] Frontend already exists at `/demo` route
 - [x] Web UI is responsive and working
 - [ ] Status: **✅ ALREADY BUILT** (from previous MVP)

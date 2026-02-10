@@ -26,7 +26,7 @@
 
 1. **Check balance:** Query Monad RPC for wallet balance
 2. **Estimate gas:** Registration = ~$1-5, reputation updates = ~$0.01-0.10 each
-3. **Register Fetch:** Execute `register-fetch.js` (Feb 7)
+3. **Register FiberAgent:** Execute `register-fiberagent.js` (Feb 7)
 4. **Track token ID:** Save FETCH_TOKEN_ID in .env
 
 ---

@@ -244,12 +244,12 @@
   - [ ] Document where to host (IPFS? Web server?)
 
 - [ ] **Ready-to-Deploy Script**
-  - [ ] `register-fetch.js` — minimal script that works
+  - [ ] `register-fiberagent.js` — minimal script that works
   - [ ] Just needs: FETCH_WALLET, FETCH_PRIVATE_KEY, AGENT_CARD_URL
-  - [ ] Single command to register: `node register-fetch.js`
+  - [ ] Single command to register: `node register-fiberagent.js`
 
 - [ ] **Monitoring**
-  - [ ] Script to check Fetch's ERC-8004 registration status
+  - [ ] Script to check FiberAgent's ERC-8004 registration status
   - [ ] Verify on-chain via Monad Vision link
 
 **Blocker:** Need domain URL from Laurent  

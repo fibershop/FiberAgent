@@ -7,7 +7,7 @@
 
 ---
 
-## What is Fetch?
+## What is FiberAgent?
 
 **Problem:** AI agents exist in silos. They can't help users buy things because they don't know about products, merchants, or cashback opportunities. Users get bad deals because there's no personalization.
 
@@ -25,7 +25,7 @@
 ### Demo Scenario
 
 Judges will see:
-1. **An agent asks Fetch:** "Find blue shoes for my user"
+1. **An agent asks FiberAgent:** "Find blue shoes for my user"
 2. **FiberAgent searches:** Returns products from real merchants (Adidas, Nike, Puma)
 3. **FiberAgent personalizes:** Detects user is a "fitness enthusiast" → boosts cashback
 4. **FiberAgent returns:** Product list with merchant, price, and 40-50% boosted cashback
@@ -296,7 +296,7 @@ curl http://localhost:3000/demo
 > "AI agents are amazing, but they can't help users find good deals. FiberAgent bridges that gap."
 
 **Demonstration (5 min):**
-> "Let me show you: A brand-new agent discovers Fetch, registers in seconds, searches for products, logs a purchase, and starts earning rewards."
+> "Let me show you: A brand-new agent discovers FiberAgent, registers in seconds, searches for products, logs a purchase, and starts earning rewards."
 
 **Impact (2 min):**
 > "This isn't theoretical. It's live, on-chain, and ready to scale. Judges, what questions do you have?"

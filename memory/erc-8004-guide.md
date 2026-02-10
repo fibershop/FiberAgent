@@ -35,10 +35,10 @@ Each agent mints an ERC-721 token with:
   - DID/ENS identifiers
   - Agent wallet address (for payments)
 
-**For Fetch:**
+**For FiberAgent:**
 ```json
 {
-  "name": "Fetch",
+  "name": "FiberAgent",
   "description": "Behavioral intelligence agent for personalized commerce deals",
   "api_endpoints": {
     "search": "https://fetch-api.example.com/api/agent/search",
@@ -65,7 +65,7 @@ After each purchase/interaction, submit:
 **For FiberAgent Example:**
 ```json
 {
-  "agent_id": "0xFetchTokenID",
+  "agent_id": "0xFiberAgentTokenID",
   "values": {
     "conversion_rate": 87,
     "response_time_ms": 45,
@@ -88,7 +88,7 @@ For high-stakes tasks, third-party validators verify agent work on-chain.
 ### Step 1: Create Agent Card (JSON)
 ```json
 {
-  "name": "Fetch",
+  "name": "FiberAgent",
   "description": "AI shopping agent providing behavioral intelligence and personalized deals",
   "image": "https://fetch-api.example.com/logo.png",
   "version": "1.0.0",
@@ -109,11 +109,11 @@ For high-stakes tasks, third-party validators verify agent work on-chain.
       "type": "HTTP",
       "url": "https://fetch-api.example.com/api/agent/reputation",
       "method": "GET",
-      "description": "Check Fetch's reputation"
+      "description": "Check FiberAgent's reputation"
     }
   ],
   "categories": ["commerce", "intelligence", "rewards"],
-  "wallet": "0xFetchWalletAddress",
+  "wallet": "0xFiberAgentWalletAddress",
   "verifiable": true,
   "trustModels": ["on-chain-reputation"]
 }
@@ -139,7 +139,7 @@ registry.registerAgent(tokenURI, fetchWallet);
 // 0x8004BAa17C55a88189AE136b182e5fdA19dE9b63
 
 reputation.submitFeedback(
-  tokenId,                    // Fetch's token ID
+  tokenId,                    // FiberAgent's token ID
   [87, 45, 100],             // values: [conversion_rate, response_time, uptime]
   ["fast", "accurate"],      // tags
   "ipfs://QmDetailedReview", // feedbackURI (optional)
@@ -164,7 +164,7 @@ reputation.submitFeedback(
 Once FiberAgent is registered, other agents can find it:
 
 1. **On-chain lookup:**
-   - Query Identity Registry for Fetch's token ID
+   - Query Identity Registry for FiberAgent's token ID
    - Read token URI → get agent card JSON
    - Extract API endpoints
 
@@ -214,7 +214,7 @@ Once FiberAgent is registered, other agents can find it:
 
 1. **Feb 6-7:** Mint ERC-721 for FiberAgent on Identity Registry
 2. **Feb 8-15:** Auto-submit reputation feedback after each purchase
-3. **Feb 15:** Judges can verify Fetch's on-chain reputation at 8004scan.io
+3. **Feb 15:** Judges can verify FiberAgent's on-chain reputation at 8004scan.io
 4. **Post-hackathon:** Other agents discover FiberAgent via ERC-8004 registries
 
 This gives FiberAgent a **permanent, verifiable identity** on Monad mainnet. 🚀

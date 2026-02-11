@@ -1,15 +1,10 @@
 {
-  "builds": [
+  "buildCommand": "cd fiber-shop-landing && npm run build",
+  "outputDirectory": "fiber-shop-landing/build",
+  "rewrites": [
     {
-      "src": "fiber-shop-landing/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "fiber-shop-landing/build" }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "fiber-shop-landing/build/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

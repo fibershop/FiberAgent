@@ -233,36 +233,60 @@ export default function AgentApiDemo() {
                   <p><strong>Cashback Rate:</strong> {selectedProduct.cashback.display}</p>
                   <div className="affiliate-link">
                     <p><strong>Affiliate Link:</strong></p>
-                    <a 
-                      href={selectedProduct.affiliate_link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="affiliate-button"
-                      style={{
-                        display: 'inline-block',
-                        padding: '10px 16px',
-                        backgroundColor: '#00d084',
-                        color: '#fff',
-                        textDecoration: 'none',
-                        borderRadius: '6px',
-                        fontWeight: 'bold',
-                        marginRight: '10px'
-                      }}
-                    >
-                      🛍️ Open Affiliate Link
-                    </a>
-                    <button 
-                      className="copy-btn"
-                      onClick={() => {
-                        navigator.clipboard.writeText(selectedProduct.affiliate_link);
-                        alert('Affiliate link copied!');
-                      }}
-                    >
-                      📋 Copy Link
-                    </button>
-                    <p style={{fontSize: '0.75rem', marginTop: '10px', color: '#999', wordBreak: 'break-all'}}>
-                      {selectedProduct.affiliate_link}
-                    </p>
+                    {(() => {
+                      // Add agent tracking to affiliate link
+                      let trackedLink = selectedProduct.affiliate_link;
+                      const separator = trackedLink.includes('?') ? '&' : '?';
+                      trackedLink += `${separator}agent=${agentId}`;
+                      
+                      return (
+                        <>
+                          <a 
+                            href={trackedLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="affiliate-button"
+                            style={{
+                              display: 'inline-block',
+                              padding: '10px 16px',
+                              backgroundColor: '#00d084',
+                              color: '#fff',
+                              textDecoration: 'none',
+                              borderRadius: '6px',
+                              fontWeight: 'bold',
+                              marginRight: '10px'
+                            }}
+                          >
+                            🛍️ Open Store
+                          </a>
+                          <button 
+                            className="copy-btn"
+                            onClick={() => {
+                              navigator.clipboard.writeText(trackedLink);
+                              alert('Tracked affiliate link copied!');
+                            }}
+                          >
+                            📋 Copy Link
+                          </button>
+                          <p style={{fontSize: '0.75rem', marginTop: '10px', color: '#999', wordBreak: 'break-all'}}>
+                            {trackedLink}
+                          </p>
+                          <details style={{marginTop: '15px', fontSize: '0.85rem'}}>
+                            <summary style={{cursor: 'pointer', color: '#666'}}>Direct merchant link (no tracking)</summary>
+                            <p style={{marginTop: '10px'}}>
+                              <a 
+                                href={`https://${selectedProduct.merchant_domain}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                style={{color: '#0066cc', wordBreak: 'break-all'}}
+                              >
+                                https://{selectedProduct.merchant_domain}
+                              </a>
+                            </p>
+                          </details>
+                        </>
+                      );
+                    })()}
                   </div>
                   <p className="highlight">⏰ Timeline: 1-5 days for Fiber Points → 90 days for crypto</p>
                 </div>

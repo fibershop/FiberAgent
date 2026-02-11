@@ -1,0 +1,15 @@
+{
+  "builds": [
+    {
+      "src": "fiber-shop-landing/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "fiber-shop-landing/build" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "fiber-shop-landing/build/index.html"
+    }
+  ]
+}

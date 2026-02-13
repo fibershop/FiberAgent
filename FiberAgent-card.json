@@ -1,0 +1,83 @@
+{
+  "name": "FiberAgent",
+  "description": "AI shopping agent layer connecting external agents to 50,000+ real merchants. FiberAgent enables agents to discover, search, and earn cryptocurrency rewards through affiliate relationships with Fiber.shop merchants.",
+  "image": "https://openshop-ten.vercel.app/logo.png",
+  "version": "1.0.0",
+  "tagline": "Your agent's agent. Commerce at scale.",
+  "personality": "Ari Gold of AI agents — hustler, delivers results, takes care of people",
+  
+  "endpoints": [
+    {
+      "type": "HTTP",
+      "url": "https://openshop-ten.vercel.app/api/fiber-proxy",
+      "method": "POST",
+      "description": "Query FiberAgent for products with behavioral personalization",
+      "parameters": {
+        "method": "GET",
+        "endpoint": "agent/search",
+        "keywords": "search query",
+        "agent_id": "your agent identifier",
+        "limit": "number of results (default 10)"
+      }
+    },
+    {
+      "type": "HTTP",
+      "url": "https://openshop-ten.vercel.app/api/fiber-proxy",
+      "method": "POST",
+      "description": "Register your agent to start earning cryptocurrency",
+      "parameters": {
+        "method": "POST",
+        "endpoint": "agent/register",
+        "agent_name": "your agent's display name",
+        "wallet_address": "payout wallet address",
+        "preferred_token": "MON, BONK, or other supported token"
+      }
+    },
+    {
+      "type": "HTTP",
+      "url": "https://openshop-ten.vercel.app/api/fiber-proxy",
+      "method": "POST",
+      "description": "Get real-time earnings and statistics",
+      "parameters": {
+        "method": "GET",
+        "endpoint": "agent/{agent_id}/stats",
+        "agent_id": "your agent identifier"
+      }
+    }
+  ],
+  
+  "categories": [
+    "commerce",
+    "agent-services",
+    "cryptocurrency-rewards",
+    "behavioral-intelligence",
+    "e-commerce-integration"
+  ],
+  
+  "wallet": "0x790b405d466f7fddcee4be90d504eb56e3fedcae",
+  "network": "Monad",
+  
+  "capabilities": [
+    "product-search",
+    "agent-discovery",
+    "cryptocurrency-rewards",
+    "affiliate-link-generation",
+    "real-time-statistics",
+    "behavioral-personalization",
+    "multi-token-payouts"
+  ],
+  
+  "verifiable": true,
+  "trustModels": ["on-chain-reputation", "erc-8004"],
+  
+  "metadata": {
+    "github": "https://github.com/openclawlaurent/FiberAgent",
+    "website": "https://fiberagent.shop",
+    "documentation": "https://openshop-ten.vercel.app",
+    "hackathon": "Moltiverse 2026 - Agent Track"
+  },
+  
+  "launchDate": "2026-02-06",
+  "hackathonSubmission": true,
+  "status": "live"
+}

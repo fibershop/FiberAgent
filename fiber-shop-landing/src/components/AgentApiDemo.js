@@ -1,7 +1,50 @@
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import '../styles/AgentApiDemo.css';
 
 export default function AgentApiDemo() {
+  // Custom react-select styles (Fiber design)
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      background: 'rgba(20,20,20,0.8)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      borderRadius: '8px',
+      padding: '0px',
+      cursor: 'pointer',
+      transition: 'border-color 0.2s',
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.3)',
+      }
+    }),
+    input: (base) => ({
+      ...base,
+      color: '#fff',
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: '#fff',
+    }),
+    menu: (base) => ({
+      ...base,
+      background: 'rgba(20,20,20,0.95)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      borderRadius: '8px',
+      marginTop: '4px',
+    }),
+    option: (base, state) => ({
+      ...base,
+      background: state.isSelected ? 'rgba(0,208,132,0.2)' : state.isFocused ? 'rgba(255,255,255,0.08)' : 'rgba(20,20,20,0.95)',
+      color: '#fff',
+      cursor: 'pointer',
+      padding: '12px 16px',
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: 'rgba(255,255,255,0.2)',
+    }),
+  };
+
   // Generate EVM test wallet: 0xtest + 36 random hex (= 42 chars, valid EVM format)
   // Fiber auto-detects: EVM (0x..., 42 chars) → defaults to MON
   const generateTestWallet = () => {
@@ -300,16 +343,17 @@ export default function AgentApiDemo() {
                 <label style={{display: 'block', marginBottom: '8px'}}>
                   <strong>Preferred Payout Token (optional):</strong>
                 </label>
-                <select
-                  value={preferredToken}
-                  onChange={(e) => setPreferredToken(e.target.value)}
-                  className="search-input"
-                  style={{padding: '10px'}}
-                >
-                  <option value="">Auto-detect (MON for EVM, BONK for Solana)</option>
-                  <option value="MON">MON (Monad)</option>
-                  <option value="BONK">BONK (Solana)</option>
-                </select>
+                <Select
+                  options={[
+                    { value: '', label: 'Auto-detect (MON for EVM, BONK for Solana)' },
+                    { value: 'MON', label: 'MON (Monad)' },
+                    { value: 'BONK', label: 'BONK (Solana)' }
+                  ]}
+                  value={preferredToken ? { value: preferredToken, label: preferredToken === 'MON' ? 'MON (Monad)' : 'BONK (Solana)' } : { value: '', label: 'Auto-detect (MON for EVM, BONK for Solana)' }}
+                  onChange={(option) => setPreferredToken(option.value)}
+                  styles={selectStyles}
+                  isSearchable={false}
+                />
                 <p className="hint">Choose which token to receive earnings in. Defaults based on wallet type if not specified.</p>
               </div>
 

@@ -563,7 +563,15 @@ export default function AgentApiDemo() {
           <h3>API Response</h3>
           <div className="response-box">
             {response ? (
-              <pre><code>{JSON.stringify(response, null, 2)}</code></pre>
+              <pre><code>{JSON.stringify(
+                (() => {
+                  // Remove wallet_address from display (not returned by API)
+                  const { wallet_address, ...cleaned } = response;
+                  return cleaned;
+                })(),
+                null,
+                2
+              )}</code></pre>
             ) : (
               <p className="placeholder">API responses will appear here</p>
             )}

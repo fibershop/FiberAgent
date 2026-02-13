@@ -1,24 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import '../styles/AgentPage.css';
 
 export default function AgentPage() {
+  const FIBER_API = '/api/fiber-proxy';
+
+  // Blockchain and token mapping
+  const blockchainTokens = {
+    'Monad': ['MON'],
+    'Solana': ['SOL', 'BONK', 'MF', 'AOL', 'USDC', 'USD1', 'VALOR', 'PENGU']
+  };
+
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState([]);
+  const [selectedBlockchain, setSelectedBlockchain] = useState('Monad');
   const [selectedToken, setSelectedToken] = useState('MON');
-  const tokens = ['MON', 'BONK'];
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
-  useEffect(() => {
-    if (searchQuery) {
-      fetch(`/api/fiber-shop?q=${searchQuery}`)
-        .then(res => res.json())
-        .then(data => setProducts(data.results || []))
-        .catch(err => console.error(err));
+  const getAvailableTokens = () => blockchainTokens[selectedBlockchain] || [];
+
+  const handleBlockchainChange = (e) => {
+    const newBlockchain = e.target.value;
+    setSelectedBlockchain(newBlockchain);
+    const availableTokens = blockchainTokens[newBlockchain];
+    setSelectedToken(availableTokens[0]);
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) {
+      setProducts([]);
+      return;
     }
-  }, [searchQuery]);
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+    setSearchLoading(true);
+    setSearchError(null);
+
+    try {
+      const res = await fetch(FIBER_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          method: 'GET',
+          endpoint: 'agent/search',
+          queryParams: {
+            keywords: searchQuery,
+            agent_id: 'demo-agent',
+            limit: 12
+          }
+        })
+      });
+
+      const data = await res.json();
+      if (data.success && data.results) {
+        setProducts(data.results);
+      } else {
+        setSearchError('No results found');
+        setProducts([]);
+      }
+    } catch (err) {
+      setSearchError('Search failed: ' + err.message);
+      setProducts([]);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   return (
@@ -47,19 +92,26 @@ export default function AgentPage() {
               <p className="card-desc">Shopping through you</p>
             </div>
             <div className="dash-card">
-              <p className="card-label">Payout Token</p>
-              <div className="token-selector">
-                {tokens.map(t => (
-                  <button
-                    key={t}
-                    className={`token-btn ${selectedToken === t ? 'active' : ''}`}
-                    onClick={() => setSelectedToken(t)}
-                  >
-                    {t}
-                  </button>
-                ))}
+              <p className="card-label">Payout Settings</p>
+              <div className="settings-flex">
+                <div className="setting-field">
+                  <label>Blockchain</label>
+                  <select value={selectedBlockchain} onChange={handleBlockchainChange} className="setting-select">
+                    {Object.keys(blockchainTokens).map(chain => (
+                      <option key={chain} value={chain}>{chain}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="setting-field">
+                  <label>Token</label>
+                  <select value={selectedToken} onChange={(e) => setSelectedToken(e.target.value)} className="setting-select">
+                    {getAvailableTokens().map(token => (
+                      <option key={token} value={token}>{token}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <p className="card-desc">Receive {selectedToken} on conversion</p>
+              <p className="card-desc">Receive {selectedToken} on {selectedBlockchain}</p>
             </div>
           </div>
         </section>
@@ -91,15 +143,20 @@ export default function AgentPage() {
         <section className="products-section">
           <p className="section-label">SEARCH</p>
           <h2>Find what your users want.</h2>
-          <div className="search-box">
+          <form onSubmit={handleSearch} className="search-form">
             <input
               type="text"
               placeholder="shoes, electronics, food…"
               value={searchQuery}
-              onChange={handleSearch}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
             />
-          </div>
+            <button type="submit" disabled={searchLoading} className="search-btn">
+              {searchLoading ? 'Searching…' : 'Search'}
+            </button>
+          </form>
+
+          {searchError && <p className="search-error">{searchError}</p>}
 
           {products.length === 0 ? (
             <div className="empty-state">
@@ -109,19 +166,19 @@ export default function AgentPage() {
             <div className="products-grid">
               {products.map(product => (
                 <a
-                  key={product.productId}
-                  href={product.affiliate_link || '#'}
+                  key={product.merchant_id}
+                  href={product.affiliate_link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="product-card"
                 >
                   <div className="pc-image">
-                    <img src={product.image || ''} alt={product.title} />
+                    {product.image_url ? <img src={product.image_url} alt={product.merchant_name} /> : <span className="pc-placeholder">{product.merchant_name[0]}</span>}
                   </div>
                   <div className="pc-body">
-                    <h4>{product.title}</h4>
-                    <span className="pc-shop">{product.shop?.name}</span>
-                    <span className="pc-earn">{(product.cashback?.amount * 0.2).toFixed(2)} {selectedToken}</span>
+                    <h4>{product.merchant_name}</h4>
+                    <span className="pc-shop">{product.merchant_domain}</span>
+                    <span className="pc-earn">{product.cashback.display}</span>
                   </div>
                 </a>
               ))}

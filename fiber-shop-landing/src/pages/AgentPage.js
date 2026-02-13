@@ -151,13 +151,13 @@ export default function AgentPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           method: 'GET',
-          endpoint: `agent/${existingAgentId}`
+          endpoint: `agent/${existingAgentId}/stats`
         })
       });
 
       const data = await res.json();
       
-      if (data.success || data.agent_id) {
+      if (data.success) {
         setAgentId(existingAgentId);
         setRegistered(true);
         setExistingAgentError(null);

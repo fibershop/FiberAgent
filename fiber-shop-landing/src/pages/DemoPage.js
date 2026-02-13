@@ -60,8 +60,12 @@ export default function DemoPage() {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!agentId) { setSearchError('Register first'); return; }
+    
+    // Clear previous results immediately
+    setSearchResults(null);
     setSearchLoading(true);
     setSearchError(null);
+    
     try {
       const res = await fetch(FIBER_API, {
         method: 'POST',

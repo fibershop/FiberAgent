@@ -1,12 +1,12 @@
 {
   "dependencies": {
+    "ethers": "^6.16.0",
     "express": "^5.2.1"
   },
   "name": "workspace-fiber",
   "version": "1.0.0",
   "description": "",
   "main": "fiber-shop-api.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

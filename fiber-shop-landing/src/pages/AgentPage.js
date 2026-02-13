@@ -61,6 +61,14 @@ export default function AgentPage() {
     return addr;
   };
 
+  // Mode: 'new' = register new agent, 'existing' = use existing agent
+  const [mode, setMode] = useState('new');
+  
+  // For "already registered" flow
+  const [existingAgentId, setExistingAgentId] = useState('');
+  const [existingAgentLoading, setExistingAgentLoading] = useState(false);
+  const [existingAgentError, setExistingAgentError] = useState(null);
+
   // Registration state
   const [agentName, setAgentName] = useState('My Shopping Agent');
   const [walletAddress, setWalletAddress] = useState(() => generateTestWallet());
@@ -130,6 +138,39 @@ export default function AgentPage() {
     }
   };
 
+  const handleLoadExistingAgent = async (e) => {
+    e.preventDefault();
+    if (!existingAgentId.trim()) return;
+
+    setExistingAgentLoading(true);
+    setExistingAgentError(null);
+
+    try {
+      const res = await fetch(FIBER_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          method: 'GET',
+          endpoint: `agent/${existingAgentId}`
+        })
+      });
+
+      const data = await res.json();
+      
+      if (data.success || data.agent_id) {
+        setAgentId(existingAgentId);
+        setRegistered(true);
+        setExistingAgentError(null);
+      } else {
+        setExistingAgentError(data.error || 'Agent not found');
+      }
+    } catch (err) {
+      setExistingAgentError('Error: ' + err.message);
+    } finally {
+      setExistingAgentLoading(false);
+    }
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
@@ -183,9 +224,37 @@ export default function AgentPage() {
       </section>
 
       <div className="page-body">
+        {/* Mode Selector */}
+        {!registered && (
+          <section className="mode-selector-section">
+            <div className="mode-buttons">
+              <button
+                className={`mode-btn ${mode === 'new' ? 'active' : ''}`}
+                onClick={() => {
+                  setMode('new');
+                  setExistingAgentError(null);
+                }}
+              >
+                Create New Agent
+              </button>
+              <button
+                className={`mode-btn ${mode === 'existing' ? 'active' : ''}`}
+                onClick={() => {
+                  setMode('existing');
+                  setRegError(null);
+                }}
+              >
+                I'm Already Registered
+              </button>
+            </div>
+          </section>
+        )}
+
         {/* Registration Section */}
         {!registered ? (
-          <section className="registration-section">
+          <>
+            {mode === 'new' ? (
+              <section className="registration-section">
             <p className="section-label">STEP 1</p>
             <h2>Register your agent.</h2>
             <form onSubmit={handleRegister} className="reg-form">
@@ -246,7 +315,32 @@ export default function AgentPage() {
               </button>
               {regError && <p className="msg-error">{regError}</p>}
             </form>
-          </section>
+              </section>
+            ) : (
+              <section className="registration-section">
+                <p className="section-label">STEP 1</p>
+                <h2>Access your dashboard.</h2>
+                <form onSubmit={handleLoadExistingAgent} className="reg-form">
+                  <div className="reg-grid">
+                    <div className="reg-field" style={{gridColumn: '1 / -1'}}>
+                      <label>Your Agent ID</label>
+                      <input
+                        type="text"
+                        value={existingAgentId}
+                        onChange={(e) => setExistingAgentId(e.target.value)}
+                        placeholder="agent_12345"
+                        className="reg-input mono"
+                      />
+                    </div>
+                  </div>
+                  <button type="submit" disabled={existingAgentLoading} className="reg-submit">
+                    {existingAgentLoading ? 'Loading…' : 'Access Dashboard'}
+                  </button>
+                  {existingAgentError && <p className="msg-error">{existingAgentError}</p>}
+                </form>
+              </section>
+            )}
+          </>
         ) : (
           <>
             {/* Dashboard Cards */}

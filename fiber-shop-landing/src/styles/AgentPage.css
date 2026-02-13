@@ -50,6 +50,41 @@
   padding: 0 40px 80px;
 }
 
+/* ---------- Mode Selector ---------- */
+.mode-selector-section {
+  padding: 40px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.04);
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.5);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.7);
+}
+
+.mode-btn.active {
+  background: #fff;
+  border-color: #fff;
+  color: #000;
+}
+
 /* ---------- Registration ---------- */
 .registration-section {
   padding: 60px 0;
@@ -129,6 +164,7 @@
 .reg-input.mono {
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 13px;
+  letter-spacing: 0.5px;
 }
 
 .wallet-input-row {

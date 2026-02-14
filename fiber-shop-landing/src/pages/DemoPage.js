@@ -6,8 +6,16 @@ import HeroBackground from '../components/HeroBackground';
 export default function DemoPage() {
   const FIBER_API = '/api/fiber-proxy';
 
+  const generateTestWallet = () => {
+    const hex = '0123456789abcdef';
+    let addr = '0xtest';
+    for (let i = 0; i < 36; i++) addr += hex[Math.floor(Math.random() * 16)];
+    return addr;
+  };
+
   const [agentId, setAgentId] = useState(null);
   const [agentName, setAgentName] = useState('My Shopping Agent');
+  const [walletAddress, setWalletAddress] = useState(() => generateTestWallet());
   const [regResponse, setRegResponse] = useState(null);
   const [regLoading, setRegLoading] = useState(false);
   const [regError, setRegError] = useState(null);
@@ -28,7 +36,7 @@ export default function DemoPage() {
         body: JSON.stringify({
           method: 'POST',
           endpoint: 'agent/register',
-          body: { agent_name: agentName, description: 'Shopping agent via FiberAgent' }
+          body: { agent_name: agentName, wallet_address: walletAddress, description: 'Shopping agent via FiberAgent' }
         })
       });
       const data = await res.json();
@@ -113,6 +121,26 @@ export default function DemoPage() {
             <div className={styles.field}>
               <label>Agent Name</label>
               <input value={agentName} onChange={e => setAgentName(e.target.value)} placeholder="My Shopping Agent" />
+            </div>
+
+            <div className={styles.field}>
+              <label>Wallet Address (Optional)</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input 
+                  value={walletAddress} 
+                  onChange={e => setWalletAddress(e.target.value)} 
+                  placeholder="0xtest..." 
+                  style={{ flex: 1, fontFamily: 'monospace', fontSize: '12px' }}
+                />
+                <button 
+                  type="button"
+                  onClick={() => setWalletAddress(generateTestWallet())}
+                  style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', color: '#fff', cursor: 'pointer' }}
+                  title="Generate random test wallet"
+                >
+                  ↻
+                </button>
+              </div>
             </div>
 
             <button type="submit" disabled={regLoading} className={styles.btnSubmit}>

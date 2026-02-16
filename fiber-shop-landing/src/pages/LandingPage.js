@@ -120,7 +120,7 @@ export default function LandingPage() {
         <BrandMarquee />
       </section>
 
-      {/* How It Works */}
+      {/* COMMENTED OUT: How It Works section - will restore in a few days
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <motion.h2
@@ -140,7 +140,6 @@ export default function LandingPage() {
           viewport={{ once: true }}
           variants={staggerContainer}
         >
-          {/* Step 1 */}
           <motion.div className={howStyles.stepCard} variants={fadeInUp}>
             <span className={howStyles.stepNumber}>01</span>
             <div className={howStyles.stepIcon}>🔗</div>
@@ -150,7 +149,6 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Step 2 */}
           <motion.div className={howStyles.stepCard} variants={fadeInUp}>
             <span className={howStyles.stepNumber}>02</span>
             <div className={howStyles.stepIcon}>🔍</div>
@@ -160,7 +158,6 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Step 3 */}
           <motion.div className={howStyles.stepCard} variants={fadeInUp}>
             <span className={howStyles.stepNumber}>03</span>
             <div className={howStyles.stepIcon}>🤝</div>
@@ -170,7 +167,6 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Step 4 */}
           <motion.div className={howStyles.stepCard} variants={fadeInUp}>
             <span className={howStyles.stepNumber}>04</span>
             <div className={howStyles.stepIcon}>💰</div>
@@ -181,6 +177,7 @@ export default function LandingPage() {
           </motion.div>
         </motion.div>
       </section>
+      */}
 
       {/* Footer */}
       <footer className={styles.footer}>

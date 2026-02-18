@@ -13,40 +13,41 @@
     "type": "rest",
     "base_url": "https://fiberagent.shop/api",
     "documentation": "https://fiberagent.shop/api/docs",
+    "integration_note": "Use the /agent/* endpoints directly. These are designed for AI agents. (Note: /api/fiber-proxy is for frontend only - CORS workaround, not for external agents)",
     "endpoints": [
       {
         "path": "/agent/register",
         "method": "POST",
-        "description": "Register an AI agent",
-        "auth_required": false
+        "description": "Register an AI agent with wallet for receiving rewards",
+        "auth_required": false,
+        "required_fields": ["agent_id", "wallet_address"],
+        "optional_fields": ["agent_name", "crypto_preference"]
       },
       {
         "path": "/agent/search",
         "method": "GET",
-        "description": "Search products by keywords (unauthenticated)",
+        "description": "Search products by keywords - requires agent_id",
         "auth_required": false,
-        "parameters": {
-          "keywords": "Product keywords to search",
-          "agent_id": "Optional: Agent ID for tracking",
-          "size": "Optional: Number of results (default 10, max 50)"
-        }
+        "required_params": ["keywords", "agent_id"],
+        "optional_params": ["size"]
       },
       {
         "path": "/agent/search",
         "method": "POST",
-        "description": "Search products with agent tracking",
-        "auth_required": false
+        "description": "Search products (POST variant)",
+        "auth_required": false,
+        "required_fields": ["query", "agent_id"]
       },
       {
         "path": "/agent/{agent_id}/stats",
         "method": "GET",
-        "description": "Get agent performance statistics",
+        "description": "Get agent performance statistics and earnings",
         "auth_required": false
       },
       {
         "path": "/agent/earnings/{agent_id}",
         "method": "GET",
-        "description": "Get agent earnings summary",
+        "description": "Get agent earnings breakdown by token",
         "auth_required": false
       }
     ]

@@ -8,24 +8,45 @@
       "name": "Fiber Agent Support",
       "url": "https://fiberagent.shop",
       "email": "support@fiber.shop"
-    }
+    },
+    "x-api-note": "This API is designed for AI agents to integrate directly. The /agent/* endpoints are your primary interface. Note: The frontend uses /api/fiber-proxy internally (server-side CORS workaround to reach Fiber's API) - external agents should NOT use this endpoint."
   },
   "servers": [
     {
       "url": "https://fiberagent.shop/api",
-      "description": "Production API"
+      "description": "Production API (use /agent/* endpoints)"
     },
     {
       "url": "http://localhost:5000/api",
       "description": "Development API"
     }
   ],
+  "x-architecture": {
+    "overview": "FiberAgent has two integration patterns:",
+    "external-agents": {
+      "description": "For AI agents integrating with FiberAgent",
+      "endpoints": "/api/agent/* (direct REST endpoints)",
+      "examples": {
+        "register": "POST https://fiberagent.shop/api/agent/register",
+        "search": "GET https://fiberagent.shop/api/agent/search?keywords=shoes&agent_id=my_bot",
+        "stats": "GET https://fiberagent.shop/api/agent/{agent_id}/stats"
+      },
+      "note": "Call these endpoints directly from your agent code"
+    },
+    "web-frontend": {
+      "description": "For the React frontend only (browser CORS workaround)",
+      "endpoints": "/api/fiber-proxy (internal proxy to Fiber API)",
+      "note": "This is NOT for external agents - it's a server-side CORS workaround. The proxy translates frontend requests to Fiber's API. External agents should NOT use this endpoint.",
+      "rationale": "Browser requests to Fiber API are blocked by CORS. The proxy acts as a middleman, allowing the frontend to communicate with Fiber while maintaining same-origin policies."
+    }
+  },
   "paths": {
     "/agent/register": {
       "post": {
         "summary": "Register a new AI agent",
         "tags": ["Agent Management"],
-        "description": "Register an AI agent with wallet address and preferences. Returns agent_id for future API calls.",
+        "description": "Register an AI agent with wallet address and preferences. Returns agent_id for future API calls. This is a direct FiberAgent endpoint - external agents call this directly, NOT through /api/fiber-proxy.",
+        "x-audience": "external-agents",
         "requestBody": {
           "required": true,
           "content": {
@@ -94,7 +115,8 @@
       "get": {
         "summary": "Search products (GET)",
         "tags": ["Product Search"],
-        "description": "Search for products by keywords. Can be used unauthenticated (as 'anonymous') or with agent_id to track stats.",
+        "description": "Search for products by keywords. This is a direct FiberAgent endpoint - external agents call this directly. Required: agent_id (for tracking), keywords (search query).",
+        "x-audience": "external-agents",
         "parameters": [
           {
             "name": "keywords",
@@ -172,7 +194,8 @@
       "post": {
         "summary": "Search products (POST)",
         "tags": ["Product Search"],
-        "description": "Search for products by keywords (POST variant). Requires agent_id.",
+        "description": "Search for products by keywords (POST variant). Direct FiberAgent endpoint. Requires agent_id and query.",
+        "x-audience": "external-agents",
         "requestBody": {
           "required": true,
           "content": {
@@ -200,7 +223,8 @@
       "get": {
         "summary": "Get agent statistics",
         "tags": ["Agent Management"],
-        "description": "Retrieve performance metrics for a specific agent",
+        "description": "Retrieve performance metrics for a specific agent. Direct FiberAgent endpoint.",
+        "x-audience": "external-agents",
         "parameters": [
           {
             "name": "agent_id",
@@ -238,7 +262,8 @@
       "get": {
         "summary": "Get agent earnings",
         "tags": ["Rewards"],
-        "description": "Retrieve total earnings and breakdown by token type",
+        "description": "Retrieve total earnings and breakdown by token type. Direct FiberAgent endpoint.",
+        "x-audience": "external-agents",
         "parameters": [
           {
             "name": "agent_id",

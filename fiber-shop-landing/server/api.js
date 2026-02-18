@@ -414,31 +414,36 @@ app.get('/api/agent/search', async (req, res) => {
 app.post('/api/agent/search', async (req, res) => {
   const { query, agent_id, size = 10 } = req.body;
 
-  if (!query) {
-    return res.status(400).json({ error: 'Query parameter is required' });
+  if (!query || !agent_id) {
+    return res.status(400).json({ 
+      error: 'Missing required fields',
+      required: ['query', 'agent_id']
+    });
   }
 
   try {
     await trackStat('endpoint', 'search');
 
-    // Support unauthenticated search (agent_id is optional)
-    let agent = null;
-    let actualAgentId = agent_id || 'anonymous';
-
-    if (agent_id) {
-      // Only track stats if agent_id provided
+    // Check if agent exists, create if not
+    let agent = await get(`SELECT * FROM agents WHERE agent_id = ?`, [agent_id]);
+    if (!agent) {
+      const token = generateToken();
+      await run(
+        `INSERT INTO agents (agent_id, agent_name, wallet_address, crypto_preference, token)
+         VALUES (?, ?, ?, ?, ?)`,
+        [agent_id, agent_id, `0x${agent_id}`, 'MON', token]
+      );
       agent = await get(`SELECT * FROM agents WHERE agent_id = ?`, [agent_id]);
-      if (agent) {
-        // Update stats only for registered agents
-        await run(
-          `UPDATE agents SET api_calls_made = api_calls_made + 1, searches_made = searches_made + 1 
-           WHERE agent_id = ?`,
-          [agent_id]
-        );
-      }
     }
 
-    // Perform search regardless of authentication
+    // Update agent stats
+    await run(
+      `UPDATE agents SET api_calls_made = api_calls_made + 1, searches_made = searches_made + 1 
+       WHERE agent_id = ?`,
+      [agent_id]
+    );
+
+    // Track search history
     const seenIds = new Set();
     const filteredProducts = mockProducts.results
       .filter(p => 
@@ -455,23 +460,19 @@ app.post('/api/agent/search', async (req, res) => {
       })
       .slice(0, size);
 
-    // Track search history if agent_id provided
-    if (agent_id) {
-      await run(
-        `INSERT INTO search_history (agent_id, query, results_count) VALUES (?, ?, ?)`,
-        [agent_id, query, filteredProducts.length]
-      );
-    }
+    await run(
+      `INSERT INTO search_history (agent_id, query, results_count) VALUES (?, ?, ?)`,
+      [agent_id, query, filteredProducts.length]
+    );
 
     res.json({
       success: true,
       query,
-      agent_id: actualAgentId,
-      authenticated: !!agent_id,
+      agent_id,
       results: filteredProducts,
       total_results: filteredProducts.length,
       timestamp: new Date(),
-      note: 'Each product includes cashback amount. Register an agent to track purchases and earn rewards.'
+      note: 'Each product includes cashback amount. Agent will receive this amount in crypto when purchase is tracked.'
     });
   } catch (err) {
     console.error('Search error:', err);

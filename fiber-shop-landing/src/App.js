@@ -7,7 +7,6 @@ import AboutPage from './pages/AboutPage';
 import DemoPage from './pages/DemoPage';
 import AgentPage from './pages/AgentPage';
 import UserPage from './pages/UserPage';
-import LeaderboardPage from './pages/LeaderboardPage';
 import StatisticsPage from './components/StatisticsPage';
 
 function App() {
@@ -20,7 +19,6 @@ function App() {
         <Route path="/demo" element={<DemoPage />} />
         <Route path="/agent" element={<AgentPage />} />
         <Route path="/user" element={<UserPage />} />
-        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/stats" element={<StatisticsPage />} />
       </Routes>
     </Router>

@@ -8,6 +8,7 @@ import DemoPage from './pages/DemoPage';
 import AgentPage from './pages/AgentPage';
 import UserPage from './pages/UserPage';
 import StatisticsPage from './components/StatisticsPage';
+import ComparePage from './pages/ComparePage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/agent" element={<AgentPage />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/stats" element={<StatisticsPage />} />
+        <Route path="/compare" element={<ComparePage />} />
       </Routes>
     </Router>
   );

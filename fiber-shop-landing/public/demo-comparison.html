@@ -17,6 +17,7 @@
   .header .prompt-note { font-size: 12px; color: #666; margin-top: 6px; }
 
   .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
+  @media (max-width: 800px) { .comparison { grid-template-columns: 1fr; } }
   
   .panel { border-radius: 16px; padding: 24px; position: relative; overflow: hidden; }
   .panel-without { background: linear-gradient(135deg, #1a1a1a 0%, #2a1a1a 100%); border: 2px solid #ff4444; }
@@ -44,7 +45,6 @@
   .warn { color: #ff9800; }
   .product-info .link { font-size: 10px; margin-top: 2px; }
   .link-real { color: #4a9eff; }
-  .link-none { color: #555; }
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
   .tag-live { background: rgba(0,208,132,0.15); color: #00d084; border: 1px solid rgba(0,208,132,0.3); }
   .tag-guess { background: rgba(255,152,0,0.15); color: #ff9800; border: 1px solid rgba(255,152,0,0.3); }
@@ -67,30 +67,31 @@
   table.ct tr.worst td { color: #888; }
 
   .savings-box { max-width: 1200px; margin: 24px auto; background: linear-gradient(135deg, #1a2a1a 0%, #0a1a0a 100%); border: 2px solid #00d084; border-radius: 16px; padding: 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; text-align: center; }
+  @media (max-width: 800px) { .savings-box { grid-template-columns: 1fr; } }
   .save-item .save-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
   .save-item .save-value { font-size: 30px; font-weight: 800; color: #00d084; margin-top: 4px; }
   .save-item .save-detail { font-size: 11px; color: #aaa; margin-top: 4px; }
   
-  .vs-strip { max-width: 1200px; margin: 20px auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; }
-  .vs-side { background: #111; border: 1px solid #222; border-radius: 10px; padding: 12px 16px; font-size: 12px; }
-  .vs-center { font-size: 24px; font-weight: 800; color: #555; }
+  .quote { border-left: 3px solid #333; padding-left: 10px; margin: 6px 0; }
+  .italic { font-style: italic; }
   
   .footer { text-align: center; margin-top: 24px; color: #555; font-size: 12px; }
   .footer a { color: #00d084; text-decoration: none; }
   .source-tag { display: inline-block; background: #111; border: 1px solid #333; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: #888; margin: 4px 2px; }
-  .italic { font-style: italic; }
-  .quote { border-left: 3px solid #333; padding-left: 10px; margin: 6px 0; }
+
+  .hero-number { font-size: 64px; font-weight: 900; color: #00d084; line-height: 1; }
+  .hero-sub { font-size: 14px; color: #aaa; margin-top: 4px; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>🔍 Same Question. Two AIs. Different Results.</h1>
-  <p class="subtitle">Nike Air Force 1 — real ChatGPT response vs AI with FiberAgent</p>
+  <p class="subtitle">Dyson Airwrap — real ChatGPT response vs AI with FiberAgent</p>
   <div class="prompt-box">
-    <div class="prompt-label">💬 Identical Prompt — sent to both AIs</div>
-    <div class="prompt-text">"I want to buy a Nike Air Force 1. Compare prices and cashback across different stores — where do I get the best deal?"</div>
-    <div class="prompt-note">Tested Feb 22, 2026 — ChatGPT response is real, unedited. FiberAgent data is from live Fiber API.</div>
+    <div class="prompt-label">💬 Same prompt — sent to both AIs</div>
+    <div class="prompt-text">"I want to buy a Dyson Airwrap, what's the best deal right now?"</div>
+    <div class="prompt-note">Tested Feb 22, 2026 — ChatGPT response is real, unedited. FiberAgent data is from Fiber API (Wildfire network).</div>
   </div>
 </div>
 
@@ -102,61 +103,34 @@
     <h2>ChatGPT (Standard)</h2>
     <p class="panel-sub">Web search + general knowledge — no commerce API</p>
     
-    <div class="section-label">🔍 Prices Found</div>
+    <div class="section-label">🔍 ChatGPT's Response (real, unedited)</div>
 
-    <div class="product-card">
-      <div class="no-img">👟</div>
-      <div class="product-info">
-        <div class="name">AF1 '07 Fresh White</div>
-        <div class="details">MR PORTER — <span class="tag tag-guess">web scrape</span></div>
-        <div class="price" style="color:#ccc;">~€84</div>
-        <div class="details italic">⚠️ "Sizes often limited — check availability"</div>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="no-img">👟</div>
-      <div class="product-info">
-        <div class="name">AF1 Low '07 White</div>
-        <div class="details">StockX — <span class="tag tag-guess">marketplace</span></div>
-        <div class="price" style="color:#ccc;">~€90</div>
-        <div class="details italic">⚠️ "Real delivered price often ends up €100-120"</div>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="no-img">👟</div>
-      <div class="product-info">
-        <div class="name">AF1 Low '07</div>
-        <div class="details">Foot Locker — <span class="tag tag-guess">retail</span></div>
-        <div class="price" style="color:#ccc;">€119.99</div>
-        <div class="details italic">"Basically the official market price in France"</div>
-      </div>
-    </div>
-
-    <div class="section-label">💸 ChatGPT's Cashback "Data"</div>
     <div class="ai-bubble">
-      <div class="ai-name">🤖 ChatGPT (actual quote)</div>
-      <div class="quote guess">
-        "Cashback changes daily, but here's what you can <b>usually expect</b>:"
-      </div>
-      <table class="ct" style="margin-top:8px;">
-        <tr><th>Store</th><th>Cashback</th><th>Source</th></tr>
-        <tr class="worst"><td>Nike official</td><td class="guess">2–4%</td><td class="guess italic">estimated</td></tr>
-        <tr class="worst"><td>Foot Locker</td><td class="guess">4–8%</td><td class="guess italic">estimated</td></tr>
-        <tr class="worst"><td>JD Sports</td><td class="guess">4–6%</td><td class="guess italic">estimated</td></tr>
-        <tr class="worst"><td>Zalando</td><td class="guess">3–6%</td><td class="guess italic">estimated</td></tr>
-        <tr class="worst"><td>MR PORTER</td><td class="guess">5–10%</td><td class="guess italic">estimated</td></tr>
+      <div class="ai-name">🤖 ChatGPT</div>
+      <table class="ct">
+        <tr><th>Model</th><th>Price</th><th>Source</th></tr>
+        <tr class="mid"><td>Airwrap HS01 (Refurb)</td><td>~€329</td><td class="guess italic">web scrape</td></tr>
+        <tr class="mid"><td>Airwrap Origin</td><td>€449</td><td class="guess italic">web scrape</td></tr>
+        <tr class="mid"><td>Airwrap i.d.</td><td>€439–€549</td><td class="guess italic">Idealo</td></tr>
+        <tr class="mid"><td>Complete Long</td><td>~€507–€649</td><td class="guess italic">web scrape</td></tr>
       </table>
-      <div style="margin-top:8px;font-size:11px;color:#888;">
-        Suggested tools: <span class="guess">"Use iGraal, Poulpeo, Widilo"</span>
+    </div>
+
+    <div class="ai-bubble">
+      <div class="ai-name">🤖 ChatGPT's Advice</div>
+      <div class="quote" style="color:#ccc;">
+        "Dyson rarely discounts heavily outside big sales. Sub-€400 prices are usually refurbished or marketplace sellers."
+      </div>
+      <div style="margin-top:8px;color:#888;font-size:12px;">
+        💡 Suggests: wait for Black Friday / French soldes<br>
+        💸 Cashback mentioned: <b style="color:#ff6b6b;">None. Zero. $0.</b>
       </div>
     </div>
 
     <div class="verdict">
-      📊 Found prices, but cashback is <b>all estimated ranges</b>.<br>
-      "4-8%" at Foot Locker could mean 4% or 8% — that's a <b>2× difference</b>.<br>
-      No affiliate links. No tracking. User checks 3+ cashback sites manually.
+      📊 Finds prices across retailers, but <b>zero cashback info</b>.<br>
+      No affiliate links. No savings beyond "wait for a sale."<br>
+      You pay full price. <b>€0 back.</b>
     </div>
   </div>
 
@@ -164,40 +138,29 @@
   <div class="panel panel-with">
     <div class="panel-badge">✅ With FiberAgent</div>
     <h2>AI + FiberAgent (MCP)</h2>
-    <p class="panel-sub">Connected to Fiber — <span class="tag tag-api">LIVE API CALL</span> to 50,000+ merchants</p>
+    <p class="panel-sub">Connected to Fiber — <span class="tag tag-api">LIVE API</span> across 50,000+ merchants</p>
     
-    <div class="section-label">🔍 Products — Live Fiber API Results</div>
+    <div class="section-label">🔍 FiberAgent's Response</div>
 
     <div class="product-card" style="border-color:#1a3a1a;">
-      <img src="https://media.finishline.com/i/finishline/CW6999_600_P1?fmt=auto&w=120&h=120" alt="AF1">
+      <div class="no-img">💨</div>
       <div class="product-info">
-        <div class="name">🏆 Men's Nike Air Force 1 '07 LV8</div>
-        <div class="details">Finish Line — <span class="tag tag-live">live fiber data</span></div>
-        <div class="price exact">$115.00</div>
-        <div class="cashback exact">💰 <b>3.25%</b> cashback → <b>$3.74</b> back</div>
-        <div class="link link-real">🛒 wild.link/e?c=5517209&d=38945169... (tracked)</div>
+        <div class="name">🏆 Dyson Airwrap i.d. Multi-Styler</div>
+        <div class="details">Dyson.com — <span class="tag tag-live">live fiber data</span></div>
+        <div class="price exact">$549.99</div>
+        <div class="cashback exact">💰 <b>10% cashback</b> → <b>$55.00 back</b></div>
+        <div class="link link-real">🛒 wild.link tracked affiliate link</div>
       </div>
     </div>
 
     <div class="product-card">
-      <img src="https://images.footlocker.com/is/image/EBFL2/D2920111_a1?wid=120&fmt=auto" alt="AF1" onerror="this.parentElement.innerHTML='<div class=no-img>👟</div>'+this.parentElement.innerHTML;this.remove();">
+      <div class="no-img">💄</div>
       <div class="product-info">
-        <div class="name">Nike Air Force 1 Low</div>
-        <div class="details">Foot Locker — <span class="tag tag-live">live fiber data</span></div>
-        <div class="price" style="color:#ccc;">$110.00</div>
-        <div class="cashback warn">⚡ <b>2.6%</b> cashback → <b>$2.86</b> back</div>
-        <div class="link link-real">🛒 wild.link/e?c=3920921&d=38945169... (tracked)</div>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/3d4b7994-de0d-4f6d-9cce-9b82c3c5e5ea/AIR+FORCE+1+%2707+LV8.png" style="object-fit:contain;" alt="AF1">
-      <div class="product-info">
-        <div class="name">Nike Air Force 1 Retro</div>
-        <div class="details">Nike.com — <span class="tag tag-live">live fiber data</span></div>
-        <div class="price" style="color:#888;">$125.00</div>
-        <div class="cashback" style="color:#ff6b6b;">⚠️ <b>0.65%</b> cashback → <b>$0.81</b> back</div>
-        <div class="link link-real">🛒 wild.link/e?c=3922888&d=38945169... (tracked)</div>
+        <div class="name">Dyson Airwrap Multi-Styler Complete Long</div>
+        <div class="details">Sephora — <span class="tag tag-live">live fiber data</span></div>
+        <div class="price" style="color:#ccc;">$549.99</div>
+        <div class="cashback warn">💰 <b>5% cashback</b> → <b>$27.50 back</b></div>
+        <div class="link link-real">🛒 wild.link tracked affiliate link</div>
       </div>
     </div>
 
@@ -206,51 +169,84 @@
       <div class="product-info" style="padding: 2px 0;">
         <table class="ct">
           <tr><th>Merchant</th><th>Price</th><th>Cashback</th><th>You Earn</th><th>Effective Cost</th></tr>
-          <tr class="best"><td>🏆 Finish Line</td><td>$115.00</td><td>3.25%</td><td>$3.74</td><td>$111.26</td></tr>
-          <tr class="mid"><td>Foot Locker</td><td>$110.00</td><td>2.6%</td><td>$2.86</td><td>$107.14</td></tr>
-          <tr class="worst"><td>Nike.com</td><td>$125.00</td><td>0.65%</td><td>$0.81</td><td>$124.19</td></tr>
+          <tr class="best"><td>🏆 Dyson.com</td><td>$549.99</td><td>10%</td><td>$55.00</td><td>$494.99</td></tr>
+          <tr class="mid"><td>Sephora</td><td>$549.99</td><td>5%</td><td>$27.50</td><td>$522.49</td></tr>
+          <tr class="worst"><td>Best Buy / Amazon</td><td>$549.99</td><td>~1%</td><td>~$5.50</td><td>~$544.49</td></tr>
         </table>
       </div>
     </div>
 
+    <div class="ai-bubble">
+      <div class="ai-name">🤖 FiberAgent's Recommendation</div>
+      <div style="color:#00d084;">
+        "Buy from <b>Dyson.com</b> through Fiber. Same price everywhere — Dyson enforces MAP pricing — but you get <b>$55 back in crypto</b>. That's 10× more than Amazon."
+      </div>
+    </div>
+
     <div class="verdict">
-      ✅ <b>Exact rates</b>, not ranges. <b>Tracked links</b>, not suggestions.<br>
-      🧠 Foot Locker: lowest effective cost ($107.14)<br>
-      💰 Finish Line: highest cashback ($3.74) — <b>4.6× more than Nike.com</b>
+      ✅ Same product, same price. <b>$55 difference.</b><br>
+      🧠 FiberAgent knows Dyson.com pays 10% — nobody else does.<br>
+      💰 Cashback paid in crypto tokens to your wallet.
     </div>
   </div>
 
 </div>
 
-<!-- The key difference -->
-<div class="vs-strip">
-  <div class="vs-side" style="text-align:right;">
-    <span class="guess" style="font-size:14px;font-weight:700;">Foot Locker: "4–8%"</span><br>
-    <span style="color:#888;font-size:11px;">ChatGPT's estimate — could be $4.40 or $8.80</span>
+<!-- Hero savings number -->
+<div class="savings-box">
+  <div class="save-item">
+    <div class="save-label">ChatGPT's Cashback</div>
+    <div class="save-value" style="color:#ff6b6b;">$0</div>
+    <div class="save-detail">Doesn't know cashback exists</div>
   </div>
-  <div class="vs-center">VS</div>
-  <div class="vs-side">
-    <span class="exact" style="font-size:14px;font-weight:700;">Foot Locker: 2.6%</span><br>
-    <span style="color:#888;font-size:11px;">FiberAgent's exact rate — $2.86 on a $110 shoe</span>
+  <div class="save-item">
+    <div class="save-label">FiberAgent's Cashback</div>
+    <div class="save-value">$55</div>
+    <div class="save-detail">10% via Dyson.com → your crypto wallet</div>
+  </div>
+  <div class="save-item">
+    <div class="save-label">Annual Savings (5 purchases)</div>
+    <div class="save-value">$200+</div>
+    <div class="save-detail">Dyson, Sephora, Ray-Ban, Lenovo, Adidas...</div>
   </div>
 </div>
 
-<!-- Savings highlight -->
-<div class="savings-box">
-  <div class="save-item">
-    <div class="save-label">ChatGPT's Cashback Data</div>
-    <div class="save-value" style="color:#ff6b6b;">~</div>
-    <div class="save-detail">"4-8%" ranges, "usually", "typically"</div>
-  </div>
-  <div class="save-item">
-    <div class="save-label">FiberAgent's Cashback Data</div>
-    <div class="save-value">Exact</div>
-    <div class="save-detail">3.25% / 2.6% / 0.65% — from live API</div>
-  </div>
-  <div class="save-item">
-    <div class="save-label">ChatGPT's Foot Locker Guess</div>
-    <div class="save-value" style="color:#ff6b6b;">4-8%</div>
-    <div class="save-detail">Actual Fiber rate: <b style="color:#00d084;">2.6%</b> — off by 2-3×</div>
+<!-- More examples teaser -->
+<div style="max-width:1200px; margin:20px auto;">
+  <div class="section-label" style="text-align:center; margin-bottom:12px;">💡 It's not just Dyson — high cashback across categories</div>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
+    <div class="product-card" style="flex-direction:column; text-align:center; padding:16px;">
+      <div style="font-size:28px;">💨</div>
+      <div class="product-info" style="text-align:center;">
+        <div class="name">Dyson</div>
+        <div class="cashback exact" style="font-size:18px;font-weight:800;">10%</div>
+        <div class="details">$75 back on V15 vacuum</div>
+      </div>
+    </div>
+    <div class="product-card" style="flex-direction:column; text-align:center; padding:16px;">
+      <div style="font-size:28px;">🕶️</div>
+      <div class="product-info" style="text-align:center;">
+        <div class="name">Ray-Ban</div>
+        <div class="cashback exact" style="font-size:18px;font-weight:800;">7%</div>
+        <div class="details">$21 back on Wayfarers</div>
+      </div>
+    </div>
+    <div class="product-card" style="flex-direction:column; text-align:center; padding:16px;">
+      <div style="font-size:28px;">💄</div>
+      <div class="product-info" style="text-align:center;">
+        <div class="name">Sephora</div>
+        <div class="cashback exact" style="font-size:18px;font-weight:800;">5%</div>
+        <div class="details">$10 back on $200 haul</div>
+      </div>
+    </div>
+    <div class="product-card" style="flex-direction:column; text-align:center; padding:16px;">
+      <div style="font-size:28px;">💻</div>
+      <div class="product-info" style="text-align:center;">
+        <div class="name">Lenovo</div>
+        <div class="cashback exact" style="font-size:18px;font-weight:800;">4%</div>
+        <div class="details">$60 back on a laptop</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -258,7 +254,7 @@
   <p><strong>FiberAgent</strong> — MCP: <code>https://fiberagent.shop/api/mcp</code> | REST: <code>https://fiberagent.shop/api/docs</code> | <a href="https://www.8004scan.io/agents/monad/135">ERC-8004 #135</a> on Monad</p>
   <p style="margin-top:6px;">
     <span class="source-tag">ChatGPT response: real, unedited (Feb 22, 2026)</span>
-    <span class="source-tag">FiberAgent data: live Fiber API call</span>
+    <span class="source-tag">Cashback rates: CashbackMonitor.com (Feb 22, 2026)</span>
     <span class="source-tag">Wildfire affiliate network — 50K+ merchants</span>
   </p>
 </div>

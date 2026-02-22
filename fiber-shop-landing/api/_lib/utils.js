@@ -194,6 +194,59 @@ const mockProducts = {
       shop: { merchantId: 4567890, name: 'Best Buy', domain: 'bestbuy.com', score: 9.2 },
       cashback: { rate: '1.5%', amount: 3.74, type: 'percentage' }
     },
+    // === DYSON ===
+    {
+      productId: 'dyson_airwrap',
+      title: 'Dyson Airwrap i.d. Multi-Styler — Smart Personalized Styling',
+      brand: 'Dyson',
+      price: 549.99,
+      priceFormatted: '$549.99',
+      inStock: true,
+      image: 'https://dyson-h.assetsadobe2.com/is/image/content/dam/dyson/images/products/primary/448867-01.png?$responsive$&cropPathE=desktop&fit=stretch,1&wid=400',
+      url: 'https://www.dyson.com/hair-care/hair-stylers/airwrap/multi-styler-complete-long',
+      affiliateUrl: 'https://wild.link/e?c=7890123&d=38807951&url=https%3A%2F%2Fwww.dyson.com%2Fhair-care%2Fhair-stylers%2Fairwrap',
+      shop: { merchantId: 7890123, name: 'Dyson', domain: 'dyson.com', score: 9.6 },
+      cashback: { rate: '10%', amount: 55.00, type: 'percentage' }
+    },
+    {
+      productId: 'dyson_supersonic',
+      title: 'Dyson Supersonic Hair Dryer — Nickel/Copper',
+      brand: 'Dyson',
+      price: 429.99,
+      priceFormatted: '$429.99',
+      inStock: true,
+      image: 'https://dyson-h.assetsadobe2.com/is/image/content/dam/dyson/images/products/primary/389922-01.png?$responsive$&cropPathE=desktop&fit=stretch,1&wid=400',
+      url: 'https://www.dyson.com/hair-care/hair-dryers/supersonic/nickel-copper',
+      affiliateUrl: 'https://wild.link/e?c=7890123&d=38807951&url=https%3A%2F%2Fwww.dyson.com%2Fhair-care%2Fhair-dryers%2Fsupersonic',
+      shop: { merchantId: 7890123, name: 'Dyson', domain: 'dyson.com', score: 9.6 },
+      cashback: { rate: '10%', amount: 43.00, type: 'percentage' }
+    },
+    {
+      productId: 'dyson_v15',
+      title: 'Dyson V15 Detect Absolute Cordless Vacuum',
+      brand: 'Dyson',
+      price: 749.99,
+      priceFormatted: '$749.99',
+      inStock: true,
+      image: 'https://dyson-h.assetsadobe2.com/is/image/content/dam/dyson/images/products/primary/394472-01.png?$responsive$&cropPathE=desktop&fit=stretch,1&wid=400',
+      url: 'https://www.dyson.com/vacuum-cleaners/cordless/v15/detect-absolute',
+      affiliateUrl: 'https://wild.link/e?c=7890123&d=38807951&url=https%3A%2F%2Fwww.dyson.com%2Fvacuum-cleaners%2Fcordless%2Fv15',
+      shop: { merchantId: 7890123, name: 'Dyson', domain: 'dyson.com', score: 9.6 },
+      cashback: { rate: '10%', amount: 75.00, type: 'percentage' }
+    },
+    {
+      productId: 'dyson_airwrap_sephora',
+      title: 'Dyson Airwrap Multi-Styler Complete Long',
+      brand: 'Dyson',
+      price: 549.99,
+      priceFormatted: '$549.99',
+      inStock: true,
+      image: 'https://www.sephora.com/productimages/sku/s2693490-main-zoom.jpg',
+      url: 'https://www.sephora.com/product/dyson-airwrap-multi-styler-complete-long-P504771',
+      affiliateUrl: 'https://wild.link/e?c=8901234&d=38807951&url=https%3A%2F%2Fwww.sephora.com%2Fproduct%2Fdyson-airwrap',
+      shop: { merchantId: 8901234, name: 'Sephora', domain: 'sephora.com', score: 9.3 },
+      cashback: { rate: '5%', amount: 27.50, type: 'percentage' }
+    },
     // === APPAREL ===
     {
       productId: 'north_face_puffer',

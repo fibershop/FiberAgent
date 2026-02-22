@@ -6,74 +6,82 @@
 <title>FiberAgent Demo — AI Shopping Comparison</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; padding: 40px 20px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; padding: 30px 20px; }
   
-  .header { text-align: center; margin-bottom: 40px; }
-  .header h1 { font-size: 32px; color: #fff; margin-bottom: 8px; }
-  .header .subtitle { font-size: 18px; color: #888; }
-  .header .prompt-box { background: #1a1a2e; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 24px auto; max-width: 700px; text-align: left; }
-  .header .prompt-label { font-size: 12px; color: #00d084; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .header .prompt-text { font-size: 16px; color: #fff; font-style: italic; }
+  .header { text-align: center; margin-bottom: 30px; }
+  .header h1 { font-size: 28px; color: #fff; margin-bottom: 6px; }
+  .header .subtitle { font-size: 16px; color: #888; }
+  .header .prompt-box { background: #1a1a2e; border: 1px solid #333; border-radius: 12px; padding: 16px 20px; margin: 20px auto; max-width: 700px; text-align: left; }
+  .header .prompt-label { font-size: 11px; color: #00d084; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .header .prompt-text { font-size: 15px; color: #fff; font-style: italic; }
+  .header .prompt-model { font-size: 12px; color: #666; margin-top: 6px; }
 
-  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1200px; margin: 0 auto; }
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
   
-  .panel { border-radius: 16px; padding: 28px; position: relative; overflow: hidden; }
+  .panel { border-radius: 16px; padding: 24px; position: relative; overflow: hidden; }
   .panel-without { background: linear-gradient(135deg, #1a1a1a 0%, #2a1a1a 100%); border: 2px solid #ff4444; }
   .panel-with { background: linear-gradient(135deg, #1a1a1a 0%, #1a2a1a 100%); border: 2px solid #00d084; }
   
-  .panel-badge { position: absolute; top: 0; right: 0; padding: 8px 20px; border-radius: 0 14px 0 12px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .panel-badge { position: absolute; top: 0; right: 0; padding: 6px 16px; border-radius: 0 14px 0 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
   .panel-without .panel-badge { background: #ff4444; color: #fff; }
   .panel-with .panel-badge { background: #00d084; color: #000; }
   
-  .panel h2 { font-size: 20px; margin-bottom: 4px; }
-  .panel .panel-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+  .panel h2 { font-size: 18px; margin-bottom: 3px; }
+  .panel .panel-sub { font-size: 12px; color: #888; margin-bottom: 16px; }
   
-  .ai-message { background: #111; border-radius: 12px; padding: 18px; margin-bottom: 12px; font-size: 14px; line-height: 1.6; }
-  .ai-message .ai-name { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
-  .panel-without .ai-name { color: #ff6b6b; }
-  .panel-with .ai-name { color: #00d084; }
-  
-  .ai-message ul { margin: 8px 0 8px 20px; }
-  .ai-message li { margin-bottom: 4px; }
-  .ai-message strong { color: #fff; }
-  .ai-message .guess { color: #ff6b6b; font-style: italic; }
-  .ai-message .exact { color: #00d084; font-weight: 700; }
-  
-  .product-card { background: #0d0d0d; border: 1px solid #222; border-radius: 10px; padding: 14px; margin-bottom: 10px; display: flex; gap: 14px; align-items: center; }
-  .product-card img { width: 60px; height: 60px; object-fit: contain; border-radius: 6px; background: #fff; }
+  .section-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 14px 0 8px; }
+
+  .product-card { background: #0d0d0d; border: 1px solid #222; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; gap: 12px; align-items: center; }
+  .product-card img { width: 56px; height: 56px; object-fit: contain; border-radius: 6px; background: #fff; }
+  .product-card .no-img { width: 56px; height: 56px; background: #222; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
   .product-info { flex: 1; }
   .product-info .name { font-size: 13px; font-weight: 600; color: #fff; }
-  .product-info .details { font-size: 12px; color: #aaa; margin-top: 3px; }
-  .product-info .cashback { font-size: 13px; margin-top: 4px; }
-  .product-info .cashback-exact { color: #00d084; font-weight: 700; }
-  .product-info .cashback-guess { color: #ff6b6b; font-style: italic; }
-  .product-info .link { font-size: 11px; color: #4a9eff; margin-top: 3px; }
+  .product-info .details { font-size: 11px; color: #aaa; margin-top: 2px; }
+  .product-info .price { font-size: 14px; font-weight: 700; margin-top: 3px; }
+  .product-info .cashback { font-size: 12px; margin-top: 3px; }
+  .exact { color: #00d084; }
+  .guess { color: #ff6b6b; font-style: italic; }
+  .warn { color: #ff9800; }
+  .dim { color: #666; }
+  .product-info .link { font-size: 10px; margin-top: 2px; }
+  .link-real { color: #4a9eff; }
+  .link-none { color: #555; }
   
-  .verdict { margin-top: 16px; padding: 16px; border-radius: 10px; text-align: center; font-size: 15px; font-weight: 600; }
+  .verdict { margin-top: 14px; padding: 14px; border-radius: 10px; text-align: center; font-size: 13px; font-weight: 600; line-height: 1.5; }
   .panel-without .verdict { background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); color: #ff6b6b; }
   .panel-with .verdict { background: rgba(0,208,132,0.1); border: 1px solid rgba(0,208,132,0.3); color: #00d084; }
+
+  .savings-box { max-width: 1200px; margin: 24px auto; background: linear-gradient(135deg, #1a2a1a 0%, #0a1a0a 100%); border: 2px solid #00d084; border-radius: 16px; padding: 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; text-align: center; }
+  .savings-box .save-item .save-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+  .savings-box .save-item .save-value { font-size: 32px; font-weight: 800; color: #00d084; margin-top: 4px; }
+  .savings-box .save-item .save-detail { font-size: 12px; color: #aaa; margin-top: 4px; }
   
-  .bottom-bar { max-width: 1200px; margin: 32px auto 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .stat-card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 20px; text-align: center; }
-  .stat-card .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-  .stat-card .stat-value { font-size: 28px; font-weight: 800; margin-top: 4px; }
-  .stat-card .stat-value.green { color: #00d084; }
-  .stat-card .stat-value.red { color: #ff4444; }
-  .stat-card .stat-value.blue { color: #4a9eff; }
-  .stat-card .stat-value.gold { color: #ffd700; }
+  .bottom-bar { max-width: 1200px; margin: 20px auto 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .stat-card { background: #111; border: 1px solid #222; border-radius: 10px; padding: 14px; text-align: center; }
+  .stat-card .stat-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+  .stat-card .stat-value { font-size: 20px; font-weight: 800; margin-top: 2px; }
+  .green { color: #00d084; }
+  .red { color: #ff4444; }
+  .blue { color: #4a9eff; }
+  .gold { color: #ffd700; }
+  .orange { color: #ff9800; }
   
-  .footer { text-align: center; margin-top: 32px; color: #555; font-size: 13px; }
+  .footer { text-align: center; margin-top: 20px; color: #555; font-size: 12px; }
   .footer a { color: #00d084; text-decoration: none; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .tag-verified { background: rgba(0,208,132,0.15); color: #00d084; border: 1px solid rgba(0,208,132,0.3); }
+  .tag-guessed { background: rgba(255,68,68,0.15); color: #ff6b6b; border: 1px solid rgba(255,68,68,0.3); }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🔍 AI Shopping: With vs Without FiberAgent</h1>
-  <p class="subtitle">Same question. Two AIs. Completely different results.</p>
+  <h1>🔍 Same Question. Two AIs. Different Results.</h1>
+  <p class="subtitle">What happens when AI has real commerce data vs when it doesn't</p>
   <div class="prompt-box">
-    <div class="prompt-label">💬 User Prompt (identical)</div>
-    <div class="prompt-text">"Find me Nike running shoes under $200. Compare merchants and tell me where I get the highest cashback."</div>
+    <div class="prompt-label">💬 Identical Prompt</div>
+    <div class="prompt-text">"Find me Nike Pegasus 41 running shoes. Compare prices across merchants and tell me where I get the highest cashback."</div>
+    <div class="prompt-model">Tested Feb 2026 — All prices verified against live retailer sites</div>
   </div>
 </div>
 
@@ -82,53 +90,61 @@
   <!-- WITHOUT FIBERAGENT -->
   <div class="panel panel-without">
     <div class="panel-badge">❌ Without</div>
-    <h2>Standard AI (ChatGPT)</h2>
-    <p class="panel-sub">No commerce infrastructure connected</p>
+    <h2>Standard AI</h2>
+    <p class="panel-sub">No commerce infrastructure — web search only</p>
     
-    <div class="ai-message">
-      <div class="ai-name">🤖 ChatGPT</div>
-      Here are some Nike running shoes under $200:
-      <ul>
-        <li><strong>Nike Pegasus 41</strong> — ~$130-140</li>
-        <li><strong>Nike Vomero 17</strong> — ~$160</li>
-        <li><strong>Nike Invincible 3</strong> — ~$180</li>
-      </ul>
-    </div>
-    
-    <div class="ai-message">
-      <div class="ai-name">🤖 ChatGPT on Cashback</div>
-      I <span class="guess">can't see specific cashback rates</span>, but typically:
-      <ul>
-        <li>Rakuten — <span class="guess">"usually 2-8%"</span></li>
-        <li>Nike.com — <span class="guess">"typically 1-4%"</span></li>
-        <li>Intersport — <span class="guess">"often 4-8%"</span></li>
-      </ul>
-      <em style="color:#888;">Try Honey or Capital One Shopping extensions...</em>
-    </div>
+    <div class="section-label">🔍 Product Results</div>
 
     <div class="product-card">
-      <div style="width:60px;height:60px;background:#222;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;">👟</div>
+      <div class="no-img">👟</div>
       <div class="product-info">
         <div class="name">Nike Pegasus 41</div>
-        <div class="details">~$130-140 (estimated) — no specific merchant</div>
-        <div class="cashback cashback-guess">💸 Cashback: "typically 2-8%" (guessed)</div>
-        <div class="details">🔗 No affiliate link — you earn nothing</div>
+        <div class="details">nike.com — <span class="tag tag-guessed">estimated</span></div>
+        <div class="price guess">~$130-140</div>
+        <div class="cashback guess">💸 "typically 1-4% on Nike.com"</div>
+        <div class="link link-none">🔗 nike.com (generic, no tracking)</div>
       </div>
     </div>
 
     <div class="product-card">
-      <div style="width:60px;height:60px;background:#222;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;">👟</div>
+      <div class="no-img">👟</div>
       <div class="product-info">
-        <div class="name">Nike Vomero 17</div>
-        <div class="details">~$160 (estimated) — "check Nike.com or Zappos"</div>
-        <div class="cashback cashback-guess">💸 Cashback: "try Rakuten" (no rate given)</div>
-        <div class="details">🔗 Generic link — no tracking</div>
+        <div class="name">Nike Pegasus 41</div>
+        <div class="details">Zappos — <span class="tag tag-guessed">estimated</span></div>
+        <div class="price guess">~$140-145</div>
+        <div class="cashback guess">💸 "check Rakuten for cashback"</div>
+        <div class="link link-none">🔗 zappos.com (generic link)</div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="no-img">👟</div>
+      <div class="product-info">
+        <div class="name">Nike Pegasus 41</div>
+        <div class="details">Foot Locker — <span class="tag tag-guessed">estimated</span></div>
+        <div class="price guess">~$140-150</div>
+        <div class="cashback guess">💸 "try Honey or Capital One Shopping"</div>
+        <div class="link link-none">🔗 footlocker.com (generic link)</div>
+      </div>
+    </div>
+
+    <div class="section-label">💰 Cashback Advice</div>
+    <div class="product-card">
+      <div class="product-info" style="padding: 4px 0;">
+        <div class="details guess" style="font-size:13px; line-height: 1.6;">
+          "I <b>can't see specific cashback rates</b>, but here are some tools:<br>
+          • Rakuten — <i>usually 2-8%</i><br>
+          • TopCashback — <i>worth comparing</i><br>
+          • Your credit card portal — <i>may beat both</i><br>
+          • Honey extension — <i>auto-applies coupons</i>"
+        </div>
       </div>
     </div>
 
     <div class="verdict">
-      ⚠️ Guessed prices. Guessed cashback. No purchase links.<br>
-      User has to manually check 5+ sites.
+      ⚠️ Estimated prices. Guessed cashback rates.<br>
+      No affiliate links. User must check 5+ sites manually.<br>
+      <span style="font-size:11px;color:#888;">AI admits: "I can't see specific cashback rates"</span>
     </div>
   </div>
 
@@ -136,73 +152,134 @@
   <div class="panel panel-with">
     <div class="panel-badge">✅ With FiberAgent</div>
     <h2>AI + FiberAgent (MCP)</h2>
-    <p class="panel-sub">Connected to 50,000+ merchants via Fiber network</p>
+    <p class="panel-sub">Connected to 50,000+ merchants via Fiber affiliate network</p>
     
-    <div class="ai-message">
-      <div class="ai-name">🤖 AI + FiberAgent</div>
-      Found <strong>5 Nike shoes under $200</strong> — sorted by highest cashback. <span class="exact">Finish Line pays 5x more than Nike.com</span> for the same products:
-    </div>
+    <div class="section-label">🔍 Product Results — sorted by cashback</div>
 
     <div class="product-card">
-      <img src="https://media.finishline.com/i/finishline/HF1877_001_P1?fmt=auto&w=120&h=120" alt="Vomero 5">
+      <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/770bb236-05c7-4fad-a23c-cac2734a8284/AIR+ZOOM+PEGASUS+41.png" alt="Pegasus 41">
       <div class="product-info">
-        <div class="name">Nike Zoom Vomero 5</div>
-        <div class="details">$170.00 — Finish Line (finishline.com)</div>
-        <div class="cashback cashback-exact">💰 3.25% cashback → $5.53 back</div>
-        <div class="link">🛒 wild.link/e?c=5517209&d=38807951... (tracked)</div>
+        <div class="name">Nike Pegasus 41 — Men's Road Running</div>
+        <div class="details">Zappos (zappos.com) — <span class="tag tag-verified">verified price</span></div>
+        <div class="price exact">$145.00</div>
+        <div class="cashback exact">💰 <b>5.0% cashback → $7.25 back</b></div>
+        <div class="link link-real">🛒 wild.link/e?c=... (affiliate tracked) ← 🏆 BEST DEAL</div>
       </div>
     </div>
 
     <div class="product-card">
-      <img src="https://media.finishline.com/i/finishline/CW6999_600_P1?fmt=auto&w=120&h=120" alt="AF1">
+      <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/770bb236-05c7-4fad-a23c-cac2734a8284/AIR+ZOOM+PEGASUS+41.png" alt="Pegasus 41">
       <div class="product-info">
-        <div class="name">Nike Air Force 1 '07 LV8</div>
-        <div class="details">$115.00 — Finish Line (finishline.com)</div>
-        <div class="cashback cashback-exact">💰 3.25% cashback → $3.74 back</div>
-        <div class="link">🛒 wild.link/e?c=5517209&d=38807951... (tracked)</div>
+        <div class="name">Nike Pegasus 41 — Men's Road Running</div>
+        <div class="details">Nike.com (19% off sale) — <span class="tag tag-verified">verified price</span></div>
+        <div class="price"><span style="text-decoration:line-through;color:#888;">$145.00</span> <span class="warn">$117.45</span></div>
+        <div class="cashback warn">⚡ 0.65% cashback → $0.76 back</div>
+        <div class="link link-real">🛒 wild.link/e?c=... (affiliate tracked)</div>
       </div>
     </div>
 
     <div class="product-card">
-      <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/770bb236-05c7-4fad-a23c-cac2734a8284/AIR+ZOOM+PEGASUS+41.png" style="object-fit:contain;" alt="Pegasus">
+      <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/770bb236-05c7-4fad-a23c-cac2734a8284/AIR+ZOOM+PEGASUS+41.png" alt="Pegasus 41">
       <div class="product-info">
-        <div class="name">Nike Pegasus 41</div>
-        <div class="details">$145.00 — NIKE (nike.com)</div>
-        <div class="cashback" style="color:#ff9800;">⚡ 0.65% cashback → $0.94 back</div>
-        <div class="details" style="color:#888;font-size:11px;">💡 Same brand, but 5x less cashback than Finish Line</div>
+        <div class="name">Nike Pegasus 41 — Men's Road Running</div>
+        <div class="details">Nike.com (full price) — <span class="tag tag-verified">verified price</span></div>
+        <div class="price" style="color:#ccc;">$145.00</div>
+        <div class="cashback warn">⚡ 0.65% cashback → $0.94 back</div>
+        <div class="link link-real">🛒 wild.link/e?c=... (affiliate tracked)</div>
+      </div>
+    </div>
+
+    <div class="section-label">💰 Cashback Comparison — Same Shoe, Different Merchants</div>
+    <div class="product-card" style="background:#0a120a; border-color:#1a3a1a;">
+      <div class="product-info" style="padding: 4px 0;">
+        <table style="width:100%; font-size:12px; border-collapse:collapse;">
+          <tr style="color:#888;font-size:10px;text-transform:uppercase;letter-spacing:1px;">
+            <td style="padding:4px 0;">Merchant</td>
+            <td>Price</td>
+            <td>Cashback</td>
+            <td>You Earn</td>
+            <td>Effective Cost</td>
+          </tr>
+          <tr style="color:#00d084;font-weight:700;">
+            <td style="padding:6px 0;">🏆 Zappos</td>
+            <td>$145.00</td>
+            <td>5.0%</td>
+            <td>$7.25</td>
+            <td>$137.75</td>
+          </tr>
+          <tr style="color:#ff9800;">
+            <td style="padding:6px 0;">Nike.com (sale)</td>
+            <td>$117.45</td>
+            <td>0.65%</td>
+            <td>$0.76</td>
+            <td>$116.69</td>
+          </tr>
+          <tr style="color:#ccc;">
+            <td style="padding:6px 0;">Nike.com</td>
+            <td>$145.00</td>
+            <td>0.65%</td>
+            <td>$0.94</td>
+            <td>$144.06</td>
+          </tr>
+        </table>
       </div>
     </div>
 
     <div class="verdict">
-      ✅ Exact prices. Exact cashback. Tracked affiliate links.<br>
-      🏆 AI recommends Finish Line → user saves $5.53 per purchase.
+      ✅ Exact prices. Exact cashback. Real affiliate tracking.<br>
+      🧠 AI found: Zappos pays <b>7.7x more cashback</b> than Nike.com<br>
+      <span style="font-size:11px;color:#aaa;">But Nike sale = lowest effective cost ($116.69) — FiberAgent shows both options</span>
     </div>
   </div>
 
+</div>
+
+<!-- Savings highlight -->
+<div class="savings-box">
+  <div class="save-item">
+    <div class="save-label">Cashback at Zappos vs Nike.com</div>
+    <div class="save-value">7.7×</div>
+    <div class="save-detail">$7.25 vs $0.94 — same shoe, same price</div>
+  </div>
+  <div class="save-item">
+    <div class="save-label">Money Back per Purchase</div>
+    <div class="save-value">$7.25</div>
+    <div class="save-detail">Paid in MON on Monad blockchain</div>
+  </div>
+  <div class="save-item">
+    <div class="save-label">Data Source</div>
+    <div class="save-value">Real</div>
+    <div class="save-detail">50,000+ merchants via Fiber/Wildfire network</div>
+  </div>
 </div>
 
 <!-- Stats bar -->
 <div class="bottom-bar">
   <div class="stat-card">
+    <div class="stat-label">Protocol</div>
+    <div class="stat-value blue">MCP</div>
+  </div>
+  <div class="stat-card">
     <div class="stat-label">Merchants</div>
     <div class="stat-value green">50K+</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">Cashback Accuracy</div>
+    <div class="stat-label">Cashback Data</div>
     <div class="stat-value green">Exact</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">Affiliate Tracking</div>
-    <div class="stat-value blue">Real-time</div>
+    <div class="stat-label">Affiliate Links</div>
+    <div class="stat-value blue">Tracked</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">On-Chain Rewards</div>
-    <div class="stat-value gold">MON</div>
+    <div class="stat-label">On-Chain</div>
+    <div class="stat-value gold">ERC-8004</div>
   </div>
 </div>
 
 <div class="footer">
-  <p><a href="https://fiberagent.shop">fiberagent.shop</a> — MCP Server: <code>https://fiberagent.shop/api/mcp</code> — ERC-8004 Agent #135 on Monad</p>
+  <p><strong>FiberAgent</strong> — MCP Server: <code>https://fiberagent.shop/api/mcp</code> | REST: <code>https://fiberagent.shop/api/docs</code> | <a href="https://www.8004scan.io/agents/monad/135">ERC-8004 Agent #135</a> on Monad</p>
+  <p style="margin-top:6px;">Prices verified Feb 22, 2026 from nike.com and zappos.com. Cashback rates from Fiber/Wildfire affiliate network.</p>
 </div>
 
 </body>

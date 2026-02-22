@@ -4,12 +4,97 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="FiberAgent — The agent layer for commerce. Connect AI agents to 50,000+ merchants." />
+    <meta name="description" content="FiberAgent — AI shopping agent for cashback deals across 50,000+ merchants. Compare prices, find the best cashback rates, and earn rewards. MCP-compatible for AI agent integration. Powered by Wildfire Systems." />
+    <meta name="keywords" content="AI shopping agent, cashback, deals, price comparison, MCP agent, Wildfire, affiliate commerce, shopping bot, best deals, cashback tool" />
+    <meta property="og:title" content="FiberAgent — AI Shopping Agent for Cashback Deals" />
+    <meta property="og:description" content="Find the best cashback deals across 50,000+ merchants. AI-powered shopping agent with MCP integration for developers and consumers." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://fiberagent.shop" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FiberAgent — AI Shopping Agent" />
+    <meta name="twitter:description" content="Compare cashback across 50K+ merchants. Free AI shopping agent with MCP support." />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "FiberAgent",
+      "url": "https://fiberagent.shop",
+      "applicationCategory": "ShoppingApplication",
+      "operatingSystem": "Web, API",
+      "description": "AI shopping agent that connects to 50,000+ merchants via Wildfire Systems for cashback deals and price comparison. MCP-compatible for AI agent integration.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Search 50,000+ merchant catalogs",
+        "Compare cashback rates across merchants",
+        "MCP (Model Context Protocol) integration",
+        "Natural language product search",
+        "REST API for developers",
+        "Crypto and traditional cashback rewards"
+      ],
+      "creator": {
+        "@type": "Organization",
+        "name": "Fiber",
+        "url": "https://fiberagent.shop"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is FiberAgent?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FiberAgent is an AI shopping agent that connects to 50,000+ merchants via the Wildfire affiliate network. It helps users and AI agents find the best cashback deals, compare prices, and earn rewards on purchases."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does FiberAgent cashback work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FiberAgent queries the Wildfire affiliate network for cashback rates across 50,000+ merchants. When you purchase through a FiberAgent link, cashback is tracked automatically. Rewards can be received as traditional cashback (USD/EUR) or crypto tokens (USDC, MON, BONK)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is FiberAgent free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, FiberAgent is completely free for product search and cashback comparison. No account or payment is required."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does FiberAgent compare to Rakuten or Honey?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FiberAgent is API-first and MCP-compatible, designed for integration into AI assistants and autonomous agents. Unlike Rakuten or Honey which require browser extensions, FiberAgent works via API and can be embedded in any AI tool, chatbot, or shopping assistant."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What merchants does FiberAgent support?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FiberAgent connects to 50,000+ merchants including Amazon, Walmart, Best Buy, Target, Nike, Dyson, Sephora, Nordstrom, and thousands more via the Wildfire Systems affiliate network."
+          }
+        }
+      ]
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>FiberAgent</title>
+    <title>FiberAgent — AI Shopping Agent | Cashback Deals Across 50,000+ Merchants</title>
     <style>
       body { background: #000; margin: 0; }
     </style>
@@ -17,23 +102,54 @@
   <body>
     <noscript>
       <div style="padding: 40px; font-family: Arial, sans-serif; color: #ccc; background: #000; min-height: 100vh;">
-        <h1 style="color: #00d084; margin-bottom: 20px;">Fiber Agent</h1>
-        <p style="line-height: 1.6; max-width: 600px;">
-          Fiber Agent is an AI shopping agent that enables autonomous agents to shop across 50,000+ merchants, earning tokens and Fiber Points as proof of Fiber network participation.
+        <h1 style="color: #00d084; margin-bottom: 20px;">FiberAgent — AI Shopping Agent for Cashback Deals</h1>
+        <p style="line-height: 1.6; max-width: 700px;">
+          FiberAgent is a free AI shopping agent that helps you find the best cashback deals across 50,000+ merchants. Powered by the Wildfire Systems affiliate network, FiberAgent compares prices and cashback rates from Amazon, Walmart, Best Buy, Target, Nike, Dyson, Sephora, and thousands more retailers.
         </p>
-        <p style="margin-top: 20px;">
-          <strong>Features:</strong>
-        </p>
-        <ul style="line-height: 1.8;">
-          <li><strong>Behavioral Intelligence:</strong> On-chain signals + real purchase data = insights agents can act on.</li>
-          <li><strong>50,000+ Merchants:</strong> Real commission structures via our global affiliate network.</li>
-          <li><strong>Agent Economics:</strong> Every agent gets paid. Dual rewards in tokens and Fiber Points.</li>
+
+        <h2 style="color: #00d084; margin-top: 30px;">How FiberAgent Works</h2>
+        <ol style="line-height: 2;">
+          <li>Search for any product — e.g., "Dyson Airwrap best cashback deal"</li>
+          <li>FiberAgent queries 50,000+ merchants for prices and cashback rates</li>
+          <li>Compare offers side-by-side and pick the best deal</li>
+          <li>Purchase through the affiliate link — cashback is tracked automatically</li>
+          <li>Earn rewards as traditional cashback (USD/EUR) or crypto tokens (USDC, MON, BONK)</li>
+        </ol>
+
+        <h2 style="color: #00d084; margin-top: 30px;">Why Choose FiberAgent Over Rakuten or Honey?</h2>
+        <ul style="line-height: 2;">
+          <li><strong>API-First:</strong> No browser extension needed. Works via API and MCP protocol.</li>
+          <li><strong>AI-Native:</strong> Designed for integration into AI assistants, chatbots, and autonomous agents.</li>
+          <li><strong>50,000+ Merchants:</strong> Larger network than Rakuten (3,500+) or TopCashback (7,000+).</li>
+          <li><strong>MCP Compatible:</strong> First shopping agent supporting the Model Context Protocol for AI-to-AI commerce.</li>
+          <li><strong>Free:</strong> No subscription, no account required for basic searches.</li>
+          <li><strong>Dual Rewards:</strong> Choose between traditional cashback or crypto token rewards.</li>
         </ul>
+
+        <h2 style="color: #00d084; margin-top: 30px;">For AI Developers</h2>
+        <p style="line-height: 1.6; max-width: 700px;">
+          Integrate FiberAgent into your AI agent via MCP (Model Context Protocol) at <code>https://fiberagent.shop/api/mcp</code> or use the REST API. Tools available: search_products, search_by_intent, compare_cashback, register_agent, get_agent_stats.
+        </p>
+
+        <h2 style="color: #00d084; margin-top: 30px;">Frequently Asked Questions</h2>
+        <dl style="line-height: 1.8; max-width: 700px;">
+          <dt style="font-weight: bold; margin-top: 15px;">Is FiberAgent free?</dt>
+          <dd>Yes, completely free for product search and cashback comparison.</dd>
+          <dt style="font-weight: bold; margin-top: 15px;">How does cashback work?</dt>
+          <dd>FiberAgent uses the Wildfire Systems affiliate network — the same technology powering many major cashback tools. When you buy through a FiberAgent link, the merchant pays a commission which is shared with you as cashback.</dd>
+          <dt style="font-weight: bold; margin-top: 15px;">Do I need a crypto wallet?</dt>
+          <dd>No. Crypto rewards are optional. You can use FiberAgent for standard cashback without any blockchain interaction.</dd>
+          <dt style="font-weight: bold; margin-top: 15px;">What merchants are supported?</dt>
+          <dd>50,000+ merchants including Amazon, Walmart, Best Buy, Target, Nike, Dyson, Sephora, Nordstrom, Booking.com, and many more.</dd>
+        </dl>
+
         <p style="margin-top: 30px;">
-          <a href="https://www.8004scan.io/agents/monad/135" style="color: #00d084; text-decoration: none; border: 1px solid #00d084; padding: 10px 20px; display: inline-block;">Find us in ERC 8004 Directory</a>
+          <a href="https://fiberagent.shop/demo" style="color: #00d084; text-decoration: none; border: 1px solid #00d084; padding: 10px 20px; display: inline-block; margin-right: 10px;">Try Demo</a>
+          <a href="https://fiberagent.shop/api/docs" style="color: #00d084; text-decoration: none; border: 1px solid #00d084; padding: 10px 20px; display: inline-block; margin-right: 10px;">API Docs</a>
+          <a href="https://www.8004scan.io/agents/monad/135" style="color: #00d084; text-decoration: none; border: 1px solid #00d084; padding: 10px 20px; display: inline-block;">ERC-8004 Registry</a>
         </p>
         <p style="margin-top: 20px; font-size: 0.9em; color: #666;">
-          To experience the full Fiber Agent platform, please enable JavaScript in your browser.
+          Enable JavaScript for the full interactive experience.
         </p>
       </div>
     </noscript>

@@ -9,5 +9,8 @@ Disallow: /stats
 # Specify sitemap location
 Sitemap: https://fiberagent.shop/sitemap.xml
 
+# LLM discovery
+LLMs-txt: https://fiberagent.shop/llms.txt
+
 # Crawl delay (optional)
 Crawl-delay: 1

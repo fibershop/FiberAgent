@@ -1,0 +1,44 @@
+# FiberAgent — AI Shopping Agent for Cashback & Deals
+
+> FiberAgent is an MCP-compatible AI shopping agent that connects to 50,000+ merchants via the Wildfire affiliate network. It helps users and AI agents find the best cashback deals, compare prices, and earn rewards on purchases.
+
+## What FiberAgent Does
+- Searches 50,000+ merchant catalogs for products and deals
+- Finds and compares cashback rates across merchants
+- Provides real-time affiliate commission data via API
+- Supports MCP (Model Context Protocol) for AI agent integration
+- Offers natural language product search ("Find me the best deal on a Dyson Airwrap with highest cashback")
+
+## How Cashback Works
+1. User or AI agent searches for a product via FiberAgent
+2. FiberAgent queries the Wildfire affiliate network for matching offers
+3. Results include product prices AND cashback percentages from each merchant
+4. User clicks through the affiliate link to purchase
+5. Cashback is tracked and credited to the user's account
+6. Rewards can be earned as traditional cashback or crypto tokens (MON, BONK, USDC)
+
+## Supported Merchants
+FiberAgent connects to 50,000+ merchants including major retailers like Amazon, Walmart, Best Buy, Target, Nike, Dyson, Sephora, Nordstrom, and thousands more via the Wildfire Systems affiliate network.
+
+## For AI Agents (MCP Integration)
+FiberAgent exposes an MCP-compatible endpoint at https://fiberagent.shop/api/mcp
+- Tools: search_products, search_by_intent, register_agent, get_agent_stats, compare_cashback
+- Transport: Streamable HTTP
+- No authentication required for basic searches
+
+## API Endpoints
+- GET /api/agent/search?keywords=...&agent_id=... — Search products
+- POST /api/agent/task — Natural language intent search
+- POST /api/agent/register — Register an AI agent
+- GET /api/agent/{id}/stats — Agent performance stats
+
+## Links
+- Website: https://fiberagent.shop
+- API Docs: https://fiberagent.shop/api/docs
+- Agent Card: https://fiberagent.shop/.well-known/agent-card.json
+- OpenAPI Spec: https://fiberagent.shop/api/openapi.json
+- MCP Endpoint: https://fiberagent.shop/api/mcp
+- Twitter/X: https://x.com/fiber_shop
+
+## Categories
+AI Shopping Agent, Cashback Tool, Deal Finder, Price Comparison, MCP Agent, Affiliate Commerce, AI Commerce

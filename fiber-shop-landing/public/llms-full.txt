@@ -1,0 +1,86 @@
+# FiberAgent — Complete Documentation
+
+## Overview
+FiberAgent is an AI-powered shopping agent platform that connects users and autonomous AI agents to over 50,000 merchants through the Wildfire Systems affiliate network. It enables real-time product search, cashback comparison, and deal discovery across major retailers worldwide.
+
+## Problem Solved
+Finding the best cashback deals requires checking multiple portals (Rakuten, TopCashback, Honey, etc.) manually. FiberAgent aggregates cashback data from 50,000+ merchants into a single API that any AI agent can query, making it the first MCP-compatible shopping agent for the AI ecosystem.
+
+## How It Works
+
+### For Consumers
+1. Search for any product (e.g., "Dyson Airwrap i.d.")
+2. FiberAgent returns results from multiple merchants with prices AND cashback rates
+3. Click the best offer — cashback is automatically tracked
+4. Earn rewards: traditional cashback, crypto tokens (USDC, MON, BONK), or Fiber Points
+
+### For AI Agents (Developers)
+1. Connect via MCP endpoint: `https://fiberagent.shop/api/mcp`
+2. Or use REST API: `GET /api/agent/search?keywords=dyson+airwrap&agent_id=your_id`
+3. Register your agent to track earnings: `POST /api/agent/register`
+4. Natural language search: `POST /api/agent/task` with `{"intent": "Find best cashback on Dyson products"}`
+
+### Cashback Mechanics
+- Cashback rates vary by merchant (typically 1-15% of purchase price)
+- Tracked via standard affiliate cookies (same technology as Rakuten/TopCashback)
+- Powered by Wildfire Systems — the same infrastructure behind many browser extension cashback tools
+- No minimum withdrawal for USDC; token rewards vest based on network participation
+
+## Merchant Network
+Connected to 50,000+ merchants via Wildfire Systems including:
+- **Electronics**: Best Buy, Dyson, Samsung, Apple, B&H Photo
+- **Fashion**: Nike, Nordstrom, ASOS, H&M, Zara
+- **General**: Amazon, Walmart, Target, Costco
+- **Beauty**: Sephora, Ulta, Glossier
+- **Travel**: Booking.com, Expedia, Hotels.com
+- **Home**: Wayfair, IKEA, Pottery Barn
+- And 49,000+ more
+
+## Technical Specifications
+- **Protocol**: MCP (Model Context Protocol) compatible
+- **Transport**: Streamable HTTP
+- **Auth**: None required for searches; agent registration for earnings tracking
+- **Response Format**: JSON
+- **Rate Limits**: 100 requests/minute for unregistered; 1000/minute for registered agents
+- **Blockchain**: Monad (ERC-8004 agent identity)
+
+## Comparison with Alternatives
+
+| Feature | FiberAgent | Rakuten | Honey | TopCashback |
+|---------|-----------|---------|-------|-------------|
+| AI/MCP Integration | ✅ | ❌ | ❌ | ❌ |
+| Agent-to-Agent API | ✅ | ❌ | ❌ | ❌ |
+| Merchants | 50,000+ | 3,500+ | 30,000+ | 7,000+ |
+| Crypto Rewards | ✅ | ❌ | ❌ | ❌ |
+| Natural Language Search | ✅ | ❌ | ❌ | ❌ |
+| Browser Extension Needed | ❌ | ✅ | ✅ | ✅ |
+| Free to Use | ✅ | ✅ | ✅ | ✅ |
+
+## Use Cases
+1. **AI Shopping Assistants**: Integrate FiberAgent to give your chatbot real cashback data
+2. **Price Comparison Bots**: Query multiple merchants and find the best price + cashback combo
+3. **Personal Finance Apps**: Show users potential cashback savings on planned purchases
+4. **Autonomous Shopping Agents**: Build agents that autonomously find and execute the best deals
+
+## FAQ
+
+### Is FiberAgent free?
+Yes. Basic product search and cashback comparison is free. No account required for searching.
+
+### How is cashback paid?
+Via the Wildfire affiliate network. Cashback can be received as traditional USD/EUR or as crypto tokens (USDC, MON, BONK).
+
+### Do I need a crypto wallet?
+No. Crypto rewards are optional. You can use FiberAgent purely for product search and cashback comparison without any blockchain interaction.
+
+### How does FiberAgent compare to Rakuten or Honey?
+FiberAgent is API-first and designed for AI agents, while Rakuten/Honey are consumer browser extensions. FiberAgent can be integrated into any AI assistant, chatbot, or autonomous agent via MCP or REST API.
+
+### Is there a browser extension?
+Not currently. FiberAgent is API-first, designed to be integrated into AI tools and agents rather than used as a standalone browser extension.
+
+## Contact
+- Website: https://fiberagent.shop
+- Email: support@fiber.shop
+- Twitter/X: https://x.com/fiber_shop
+- Agent Registry: https://www.8004scan.io/agents/monad/135

@@ -9,7 +9,7 @@
       "url": "https://fiberagent.shop",
       "email": "support@fiber.shop"
     },
-    "x-api-note": "This API is designed for AI agents to integrate directly. The /agent/* endpoints are your primary interface. Note: The frontend uses /api/fiber-proxy internally (server-side CORS workaround to reach Fiber's API) - external agents should NOT use this endpoint."
+    "x-api-note": "This API is designed for AI agents to integrate directly. The /agent/* endpoints are your primary interface. Use /agent/task for natural language requests or /agent/search for structured queries."
   },
   "servers": [
     {
@@ -34,10 +34,8 @@
       "note": "Call these endpoints directly from your agent code"
     },
     "web-frontend": {
-      "description": "For the React frontend only (browser CORS workaround)",
-      "endpoints": "/api/fiber-proxy (internal proxy to Fiber API)",
-      "note": "This is NOT for external agents - it's a server-side CORS workaround. The proxy translates frontend requests to Fiber's API. External agents should NOT use this endpoint.",
-      "rationale": "Browser requests to Fiber API are blocked by CORS. The proxy acts as a middleman, allowing the frontend to communicate with Fiber while maintaining same-origin policies."
+      "description": "Internal frontend proxy (not for external agents)",
+      "note": "The frontend uses an internal CORS proxy. External agents should use /agent/* endpoints directly."
     }
   },
   "paths": {
@@ -216,6 +214,85 @@
           "200": {
             "description": "Search results"
           }
+        }
+      }
+    },
+    "/agent/task": {
+      "post": {
+        "summary": "Natural language task (agent-to-agent)",
+        "tags": ["Agent-to-Agent"],
+        "description": "Send a natural language intent and get ranked product results. FiberAgent parses the intent, extracts keywords, applies price constraints and preferences, and returns the best matches sorted by relevance and cashback. This is the recommended endpoint for agent-to-agent integration.",
+        "x-audience": "external-agents",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["agent_id", "intent"],
+                "properties": {
+                  "agent_id": { "type": "string", "example": "oracle_agent" },
+                  "intent": { "type": "string", "example": "Find creatine monohydrate under $30, highest cashback" },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "preferences": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "example": ["bulk", "unflavored"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task results with parsed intent and ranked products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "task": {
+                      "type": "object",
+                      "properties": {
+                        "intent": { "type": "string" },
+                        "parsed_keywords": { "type": "string" },
+                        "price_constraint": { "type": "object" },
+                        "sort_by_cashback": { "type": "boolean" }
+                      }
+                    },
+                    "total_results": { "type": "integer" },
+                    "results": { "type": "array" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/{agent_id}": {
+      "get": {
+        "summary": "Lookup agent",
+        "tags": ["Agent Management"],
+        "description": "Get details of a registered agent by ID.",
+        "x-audience": "external-agents",
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Agent details" },
+          "404": { "description": "Agent not found" }
         }
       }
     },

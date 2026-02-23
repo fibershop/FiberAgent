@@ -94,13 +94,13 @@ function OnePagerPage() {
           <section className="doc-section">
             <h3>Executive Summary</h3>
             <p>
-              FiberAgent is a commerce agent that sits between users' personal AIs (Claude, ChatGPT, OpenClaw) and merchants (<span className="source" title="Verified via Fiber API live integration">50K+ via Fiber API</span>). Users ask their AI for products. The agent finds deals, returns results in chat. Users buy normally. Agents earn MON crypto commissions. Zero registration, zero friction.
+              FiberAgent is a commerce agent that sits between users' personal AIs (Claude, ChatGPT, OpenClaw) and merchants (<span className="source" title="Verified via Fiber API live integration">50K+ via Fiber API</span>). Users ask their AI for products. The agent finds deals, returns results in chat. Users buy normally. Agents earn crypto cashback commissions. Zero registration, zero friction.
             </p>
             <p>
-              <strong>Market opportunity:</strong> Fiber.shop ≈ <span className="source" title="Estimated based on Fiber's stated user base">100K users</span>. Personal AI ≈ <span className="source" title="Based on 2025-2026 AI adoption metrics: Claude 10M+ weekly users, ChatGPT 200M+ monthly users">1B+ users</span>. Same merchants, same commissions, infinite distribution.
+              <strong>Market opportunity:</strong> Traditional cashback programs rely on users discovering them, registering, and remembering to use them. Personal AI is 1B+ users. Users don't need to know about FiberAgent—their agent automatically finds it if it's the best deal. Infinite distribution at zero discovery cost.
             </p>
             <p>
-              <strong>Status:</strong> Live MVP. Real API integration. On-chain agent registration (<span className="source" title="Monad ERC-8004 agent registry: https://www.8004scan.io/agents/monad/135">Monad ERC-8004 #135</span>). <span className="source" title="Verified search on 8004scan.io for 'Commerce' category">Zero competitors in commerce category</span>.
+              <strong>Status:</strong> Live MVP. Real API integration. <span className="source" title="Verified search on 8004scan.io for 'Commerce' category">Zero competitors in commerce category on Monad</span>.
             </p>
           </section>
 
@@ -109,10 +109,10 @@ function OnePagerPage() {
             <h3>The Problem</h3>
             <div className="text-columns">
               <div>
-                <p><strong>Merchants need customers.</strong> Fiber.shop reaches 100K. That's tiny compared to the personal AI explosion (Claude, ChatGPT, Gemini everywhere).</p>
+                <p><strong>Cashback discovery is broken.</strong> Users must know about programs, register, remember to use them. Discovery = marketing spend. Reach = limited.</p>
               </div>
               <div>
-                <p><strong>Agents need economics.</strong> AIs are becoming personal assistants. But there's no incentive layer for them to help users shop. No money for agents = no reason to recommend shopping tools.</p>
+                <p><strong>Agents need economics.</strong> AIs are becoming personal assistants. But there's no incentive layer for them to help users shop. No crypto payments = no reason to recommend shopping tools.</p>
               </div>
             </div>
           </section>
@@ -121,10 +121,10 @@ function OnePagerPage() {
           <section className="doc-section">
             <h3>The Solution</h3>
             <p>
-              Put shopping directly into chat. Users ask their AI "Find me hiking boots." Agent discovers FiberAgent skill (or API endpoint), fetches 50K+ products in real-time, returns results with affiliate commissions embedded. User buys. Agent earns crypto (MON on Monad).
+              Put shopping directly into chat. Users ask their AI "Find me hiking boots." Agent discovers FiberAgent skill (or API endpoint), fetches 50K+ products in real-time, returns results with affiliate commissions embedded. User buys. Agent earns crypto cashback.
             </p>
             <p className="highlight-box">
-              <strong>Why this works:</strong> No signup for users. No wallets needed. No crypto friction. Agents earn instantly, globally, via blockchain (trustless). Merchants reach 1B+ AI users. Everyone wins.
+              <strong>Why this works:</strong> No signup for users. No wallets needed. Agents earn instantly, globally, via crypto (trustless settlement). Discovery is automatic (agent finds best deals). Merchants reach 1B+ AI users. Everyone wins.
             </p>
           </section>
 
@@ -140,7 +140,7 @@ function OnePagerPage() {
               </div>
               <div className="chart-col">
                 <div className="chart-container">
-                  <h4>Agent Economics (Per $100 Sale @ 5% Affiliate)</h4>
+                  <h4>Crypto Cashback Distribution (Per $100 Sale @ 5% Affiliate)</h4>
                   <canvas id="commissionChart"></canvas>
                 </div>
               </div>
@@ -172,7 +172,7 @@ function OnePagerPage() {
                 <div className="bullet-item">
                   <div className="bullet-num">3</div>
                   <div className="bullet-text">
-                    <strong>Crypto-Native.</strong> Crypto (MON on Monad) enables global agent payouts without banks, KYC, or PayPal. Any blockchain works. Infrastructure ready today.
+                    <strong>Crypto Payments.</strong> Crypto enables global agent payouts without banks, KYC, or payment processors. Instant, trustless settlement anywhere.
                   </div>
                 </div>
                 <div className="bullet-item">
@@ -220,8 +220,8 @@ function OnePagerPage() {
               <div className="proof-box">
                 <div className="proof-icon">✅</div>
                 <div className="proof-text">
-                  <strong>On-Chain</strong><br/>
-                  Registered as Monad ERC-8004 agent #135. Only commerce agent.
+                  <strong>Crypto-Ready</strong><br/>
+                  Agent registration live. Earning infrastructure proven.
                 </div>
               </div>
               <div className="proof-box">
@@ -243,7 +243,7 @@ function OnePagerPage() {
             <ol>
               <li><strong>AI Boom.</strong> Claude, ChatGPT, Gemini reach 1B+ users. Personal assistants become standard.</li>
               <li><strong>Chat Is Primary.</strong> Users spend hours in chat. Shopping naturally moves into that space.</li>
-              <li><strong>Crypto Enables Economics.</strong> Blockchain makes trustless, borderless agent payouts possible without banks or middlemen.</li>
+              <li><strong>Crypto Makes It Possible.</strong> Blockchain enables trustless, global agent payouts without banks, KYC, or middlemen.</li>
             </ol>
             <p>
               FiberAgent is the first commerce agent ready for this moment. We're live. Competitors don't exist yet. First-mover wins.
@@ -254,7 +254,7 @@ function OnePagerPage() {
           <section className="doc-section doc-cta">
             <h3>Bottom Line</h3>
             <p>
-              <strong>We're building the commerce layer for the AI era.</strong> Merchants get 1B+ users via AI chat. Agents get crypto incentives. Users get deals without leaving chat. We're the only player in this category, and the market is ready now.
+              <strong>We're building the commerce layer for the AI era.</strong> Merchants reach billions via AI agents. Agents earn crypto cashback. Users get deals without leaving chat. Zero discovery friction. First-mover advantage locked.
             </p>
             <div className="cta-links">
               <a href="https://fiberagent.shop/visual-demo" className="doc-link">See Demo</a>
@@ -269,10 +269,8 @@ function OnePagerPage() {
             <ul className="sources-list">
               <li><strong>50K+ merchants:</strong> Live Fiber API integration (GET /v1/products endpoint)</li>
               <li><strong>0.65%-15% commissions:</strong> Verified from Fiber API merchant data</li>
-              <li><strong>Only commerce agent on Monad:</strong> 8004scan search for "Commerce" category at <a href="https://www.8004scan.io/agents?chain=143&search=Commerce" target="_blank" rel="noopener noreferrer">8004scan.io</a></li>
-              <li><strong>ERC-8004 agent #135:</strong> <a href="https://www.8004scan.io/agents/monad/135" target="_blank" rel="noopener noreferrer">8004scan.io/agents/monad/135</a></li>
+              <li><strong>Zero commerce competitors:</strong> Monad ERC-8004 agent registry search (first-mover verified)</li>
               <li><strong>Personal AI market (1B+ users):</strong> 2025-2026 adoption metrics (Claude 10M+ weekly, ChatGPT 200M+ monthly)</li>
-              <li><strong>Fiber.shop user base:</strong> ~100K estimated based on Fiber's public statements</li>
             </ul>
           </section>
 

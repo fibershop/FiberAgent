@@ -13,6 +13,7 @@
   min-height: 100vh;
   overflow-x: hidden;
   font-family: var(--font-hero);
+  padding-top: 64px;
 }
 
 /* --- Hero Section --- */

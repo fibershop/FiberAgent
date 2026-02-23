@@ -40,7 +40,6 @@ ai-shopping
 llm-integration
 api
 merchants
-wildfire
 ```
 
 ---

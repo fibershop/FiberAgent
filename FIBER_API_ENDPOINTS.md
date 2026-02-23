@@ -62,7 +62,7 @@ curl -s "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&a
         "rate_percent": 3.25,
         "display": "3.25%"
       },
-      "affiliate_link": "https://wild.link/e?d=altrarunning.com&u=..."
+      "affiliate_link": "https://api.staging.fiber.shop/r/w?c=123456&d=38604255&url=https%3A%2F%2Fwww.altrarunning.com%2F..."
     }
   ],
   "pagination": {

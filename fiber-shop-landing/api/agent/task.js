@@ -128,7 +128,7 @@ export default async function handler(req, res) {
       brand: p.brand || '',
       price: p.price || 0,
       url: p.url || p.product_url || p.affiliateUrl || null,
-      affiliateUrl: p.affiliateUrl || p.affiliate_url || p.wild_link || null,
+      affiliateUrl: p.affiliateUrl || p.affiliate_url || null,
       merchant: p.shop?.name || p.merchant_name || p.merchant || 'Unknown',
       merchantDomain: p.shop?.domain || p.merchant_domain || '',
       cashbackRate: parseFloat(p.cashback?.rate) || p.cashback_rate || 0,

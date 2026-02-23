@@ -31,7 +31,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/770bb236-05c7-4fad-a23c-cac2734a8284/AIR+ZOOM+PEGASUS+41.png',
       url: 'https://www.nike.com/w/pegasus-shoes-8nexhzy7ok',
-      affiliateUrl: 'https://wild.link/e?c=3922888&d=38807951&url=https%3A%2F%2Fwww.nike.com%2Fw%2Fpegasus-shoes-8nexhzy7ok',
+      affiliateUrl: '',
       shop: { merchantId: 3922888, name: 'NIKE', domain: 'nike.com', score: 9.4 },
       cashback: { rate: '0.65%', amount: 0.94, type: 'percentage' }
     },
@@ -44,7 +44,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/33d6f8d4-a863-437b-ab3d-c6307831cdd9/NIKE+VOMERO+PREMIUM.png',
       url: 'https://www.nike.com/w/zoom-vomero-shoes-7gee1zy7ok',
-      affiliateUrl: 'https://wild.link/e?c=3922888&d=38807951&url=https%3A%2F%2Fwww.nike.com%2Fw%2Fzoom-vomero-shoes-7gee1zy7ok',
+      affiliateUrl: '',
       shop: { merchantId: 3922888, name: 'NIKE', domain: 'nike.com', score: 9.4 },
       cashback: { rate: '0.65%', amount: 1.50, type: 'percentage' }
     },
@@ -57,7 +57,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://media.finishline.com/i/finishline/HF1877_001_P1?bg=rgb(237,237,237)&fmt=auto&w=400&h=400',
       url: 'https://www.finishline.com/pdp/womens-nike-zoom-vomero-5-casual-shoes/prod2866808/HF1877/001',
-      affiliateUrl: 'https://wild.link/e?c=5517209&d=38807951&url=https%3A%2F%2Fwww.finishline.com%2Fpdp%2Fwomens-nike-zoom-vomero-5-casual-shoes%2Fprod2866808%2FHF1877%2F001',
+      affiliateUrl: '',
       shop: { merchantId: 5517209, name: 'Finish Line', domain: 'finishline.com', score: 8.7 },
       cashback: { rate: '3.25%', amount: 5.53, type: 'percentage' }
     },
@@ -70,7 +70,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/6ae6bf27-085b-4d8d-b370-fd96b7ad3d33/AIR+MAX+270.png',
       url: 'https://www.nike.com/w/air-max-270-shoes-5ix6dzy7ok',
-      affiliateUrl: 'https://wild.link/e?c=3922888&d=38807951&url=https%3A%2F%2Fwww.nike.com%2Fw%2Fair-max-270-shoes-5ix6dzy7ok',
+      affiliateUrl: '',
       shop: { merchantId: 3922888, name: 'NIKE', domain: 'nike.com', score: 9.4 },
       cashback: { rate: '0.65%', amount: 1.11, type: 'percentage' }
     },
@@ -83,7 +83,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://media.finishline.com/i/finishline/CW6999_600_P1?bg=rgb(237,237,237)&fmt=auto&w=400&h=400',
       url: 'https://www.finishline.com/pdp/mens-nike-air-force-1-07-lv8-casual-shoes/prod2785305/CW6999/600',
-      affiliateUrl: 'https://wild.link/e?c=5517209&d=38807951&url=https%3A%2F%2Fwww.finishline.com%2Fpdp%2Fmens-nike-air-force-1-07-lv8-casual-shoes%2Fprod2785305%2FCW6999%2F600',
+      affiliateUrl: '',
       shop: { merchantId: 5517209, name: 'Finish Line', domain: 'finishline.com', score: 8.7 },
       cashback: { rate: '3.25%', amount: 3.74, type: 'percentage' }
     },
@@ -97,7 +97,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://assets.adidas.com/images/w_400,f_auto,q_auto/68ae7ea7849b43eca70aaf1601151571_9366/Ultraboost_5_Running_Shoes_Black_ID8816_01_standard.jpg',
       url: 'https://www.adidas.com/us/ultraboost-5-running-shoes/ID8816.html',
-      affiliateUrl: 'https://wild.link/e?c=4211003&d=38807951&url=https%3A%2F%2Fwww.adidas.com%2Fus%2Fultraboost-5-running-shoes%2FID8816.html',
+      affiliateUrl: '',
       shop: { merchantId: 4211003, name: 'Adidas', domain: 'adidas.com', score: 9.0 },
       cashback: { rate: '3.5%', amount: 6.65, type: 'percentage' }
     },
@@ -110,7 +110,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://assets.adidas.com/images/w_400,f_auto,q_auto/36ee3e89895c4a0489c6af1601157781_9366/Samba_OG_Shoes_White_B75806_01_standard.jpg',
       url: 'https://www.adidas.com/us/samba-og-shoes/B75806.html',
-      affiliateUrl: 'https://wild.link/e?c=4211003&d=38807951&url=https%3A%2F%2Fwww.adidas.com%2Fus%2Fsamba-og-shoes%2FB75806.html',
+      affiliateUrl: '',
       shop: { merchantId: 4211003, name: 'Adidas', domain: 'adidas.com', score: 9.0 },
       cashback: { rate: '3.5%', amount: 3.85, type: 'percentage' }
     },
@@ -123,7 +123,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://assets.adidas.com/images/w_400,f_auto,q_auto/904cdbc97a8240db97b3af9200bcf67b_9366/Gazelle_Indoor_Shoes_Green_IG1596_01_standard.jpg',
       url: 'https://www.adidas.com/us/gazelle-indoor-shoes/IG1596.html',
-      affiliateUrl: 'https://wild.link/e?c=4211003&d=38807951&url=https%3A%2F%2Fwww.adidas.com%2Fus%2Fgazelle-indoor-shoes%2FIG1596.html',
+      affiliateUrl: '',
       shop: { merchantId: 4211003, name: 'Adidas', domain: 'adidas.com', score: 9.0 },
       cashback: { rate: '3.5%', amount: 4.20, type: 'percentage' }
     },
@@ -137,7 +137,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://m.media-amazon.com/images/I/61e2s-cF+xL._AC_SX400_.jpg',
       url: 'https://www.amazon.com/dp/B002DYIZEO',
-      affiliateUrl: 'https://wild.link/e?c=1234567&d=38807951&url=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB002DYIZEO',
+      affiliateUrl: '',
       shop: { merchantId: 1234567, name: 'Amazon', domain: 'amazon.com', score: 9.5 },
       cashback: { rate: '1%', amount: 0.33, type: 'percentage' }
     },
@@ -150,7 +150,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://www.bodybuilding.com/images/store/400/400/143651.jpg',
       url: 'https://www.bodybuilding.com/store/muscletech/cell-tech.html',
-      affiliateUrl: 'https://wild.link/e?c=2345678&d=38807951&url=https%3A%2F%2Fwww.bodybuilding.com%2Fstore%2Fmuscletech%2Fcell-tech.html',
+      affiliateUrl: '',
       shop: { merchantId: 2345678, name: 'Bodybuilding.com', domain: 'bodybuilding.com', score: 8.8 },
       cashback: { rate: '5%', amount: 2.50, type: 'percentage' }
     },
@@ -163,7 +163,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://www.gnc.com/dw/image/v2/BBLB_PRD/on/demandware.static/-/Sites-masterCatalog_GNC/default/dw_400x400/images/hi-res/350163_web.jpg',
       url: 'https://www.gnc.com/creatine/350163.html',
-      affiliateUrl: 'https://wild.link/e?c=3456789&d=38807951&url=https%3A%2F%2Fwww.gnc.com%2Fcreatine%2F350163.html',
+      affiliateUrl: '',
       shop: { merchantId: 3456789, name: 'GNC', domain: 'gnc.com', score: 8.3 },
       cashback: { rate: '4%', amount: 0.80, type: 'percentage' }
     },
@@ -177,7 +177,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://m.media-amazon.com/images/I/51aXvjzcukL._AC_SX400_.jpg',
       url: 'https://www.amazon.com/dp/B0BX2L8PZG',
-      affiliateUrl: 'https://wild.link/e?c=1234567&d=38807951&url=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0BX2L8PZG',
+      affiliateUrl: '',
       shop: { merchantId: 1234567, name: 'Amazon', domain: 'amazon.com', score: 9.5 },
       cashback: { rate: '1%', amount: 3.48, type: 'percentage' }
     },
@@ -190,7 +190,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQD83?wid=400&fmt=jpeg',
       url: 'https://www.bestbuy.com/site/apple-airpods-pro-2/6447382.p',
-      affiliateUrl: 'https://wild.link/e?c=4567890&d=38807951&url=https%3A%2F%2Fwww.bestbuy.com%2Fsite%2Fapple-airpods-pro-2%2F6447382.p',
+      affiliateUrl: '',
       shop: { merchantId: 4567890, name: 'Best Buy', domain: 'bestbuy.com', score: 9.2 },
       cashback: { rate: '1.5%', amount: 3.74, type: 'percentage' }
     },
@@ -204,7 +204,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://dyson-h.assetsadobe2.com/is/image/content/dam/dyson/images/products/primary/448867-01.png?$responsive$&cropPathE=desktop&fit=stretch,1&wid=400',
       url: 'https://www.dyson.com/hair-care/hair-stylers/airwrap/multi-styler-complete-long',
-      affiliateUrl: 'https://wild.link/e?c=7890123&d=38807951&url=https%3A%2F%2Fwww.dyson.com%2Fhair-care%2Fhair-stylers%2Fairwrap',
+      affiliateUrl: '',
       shop: { merchantId: 7890123, name: 'Dyson', domain: 'dyson.com', score: 9.6 },
       cashback: { rate: '10%', amount: 55.00, type: 'percentage' }
     },
@@ -217,7 +217,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://dyson-h.assetsadobe2.com/is/image/content/dam/dyson/images/products/primary/389922-01.png?$responsive$&cropPathE=desktop&fit=stretch,1&wid=400',
       url: 'https://www.dyson.com/hair-care/hair-dryers/supersonic/nickel-copper',
-      affiliateUrl: 'https://wild.link/e?c=7890123&d=38807951&url=https%3A%2F%2Fwww.dyson.com%2Fhair-care%2Fhair-dryers%2Fsupersonic',
+      affiliateUrl: '',
       shop: { merchantId: 7890123, name: 'Dyson', domain: 'dyson.com', score: 9.6 },
       cashback: { rate: '10%', amount: 43.00, type: 'percentage' }
     },
@@ -230,7 +230,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://dyson-h.assetsadobe2.com/is/image/content/dam/dyson/images/products/primary/394472-01.png?$responsive$&cropPathE=desktop&fit=stretch,1&wid=400',
       url: 'https://www.dyson.com/vacuum-cleaners/cordless/v15/detect-absolute',
-      affiliateUrl: 'https://wild.link/e?c=7890123&d=38807951&url=https%3A%2F%2Fwww.dyson.com%2Fvacuum-cleaners%2Fcordless%2Fv15',
+      affiliateUrl: '',
       shop: { merchantId: 7890123, name: 'Dyson', domain: 'dyson.com', score: 9.6 },
       cashback: { rate: '10%', amount: 75.00, type: 'percentage' }
     },
@@ -243,7 +243,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://www.sephora.com/productimages/sku/s2693490-main-zoom.jpg',
       url: 'https://www.sephora.com/product/dyson-airwrap-multi-styler-complete-long-P504771',
-      affiliateUrl: 'https://wild.link/e?c=8901234&d=38807951&url=https%3A%2F%2Fwww.sephora.com%2Fproduct%2Fdyson-airwrap',
+      affiliateUrl: '',
       shop: { merchantId: 8901234, name: 'Sephora', domain: 'sephora.com', score: 9.3 },
       cashback: { rate: '5%', amount: 27.50, type: 'percentage' }
     },
@@ -257,7 +257,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://images.thenorthface.com/is/image/TheNorthFace/NF0A3C8D_JK3_hero?wid=400&fmt=jpeg',
       url: 'https://www.thenorthface.com/en-us/jackets-and-vests/mens-jackets-and-vests-c211793/1996-retro-nuptse-jacket-pNF0A3C8D',
-      affiliateUrl: 'https://wild.link/e?c=5678901&d=38807951&url=https%3A%2F%2Fwww.thenorthface.com%2Fen-us%2Fjackets',
+      affiliateUrl: '',
       shop: { merchantId: 5678901, name: 'The North Face', domain: 'thenorthface.com', score: 9.1 },
       cashback: { rate: '2.5%', amount: 8.25, type: 'percentage' }
     },
@@ -270,7 +270,7 @@ const mockProducts = {
       inStock: true,
       image: 'https://images.lululemon.com/is/image/lululemon/LM5AQDS_0001_1?wid=400&fmt=jpeg',
       url: 'https://shop.lululemon.com/p/men-pants/Abc-Classic-Fit-Pant/_/prod8980473',
-      affiliateUrl: 'https://wild.link/e?c=6789012&d=38807951&url=https%3A%2F%2Fshop.lululemon.com%2Fp%2Fmen-pants%2FAbc-Classic-Fit-Pant',
+      affiliateUrl: '',
       shop: { merchantId: 6789012, name: 'lululemon', domain: 'lululemon.com', score: 9.3 },
       cashback: { rate: '3%', amount: 4.14, type: 'percentage' }
     }

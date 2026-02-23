@@ -41,7 +41,7 @@ async function searchFiberAPI(keywords, agentId, size = 10) {
         inStock: p.in_stock !== false,
         image: p.image_url || p.image || p.thumbnail || null,
         url: p.url || p.product_url || null,
-        affiliateUrl: p.affiliate_url || p.wild_link || null,
+        affiliateUrl: p.affiliate_url || null,
         shop: {
           merchantId: p.merchant_id || 0,
           name: p.merchant_name || p.merchant || 'Unknown',

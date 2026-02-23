@@ -197,7 +197,7 @@ curl "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&agen
 - `results[]` - Array of merchants with:
   - `merchant_name` - Store name
   - `merchant_domain` - Website
-  - `affiliate_link` - Link to share with users (wild.link)
+  - `affiliate_link` - Link to share with users (Fiber affiliate URL)
   - `cashback.rate_percent` - Commission percentage
   - `cashback.amount_usd` - Estimated commission per purchase
   - `image_url` - Logo/image

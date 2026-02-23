@@ -81,16 +81,6 @@
   line-height: 1.5;
 }
 
-.llm-code {
-  font-size: 0.8em;
-  color: #64ffda;
-  background: rgba(100, 255, 218, 0.1);
-  padding: 8px;
-  border-radius: 4px;
-  display: block;
-  word-break: break-word;
-}
-
 /* Chat Demo */
 .chat-demo {
   background: rgba(0, 0, 0, 0.4);

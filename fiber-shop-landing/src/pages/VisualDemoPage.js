@@ -12,34 +12,24 @@ function VisualDemoPage() {
     });
   }, []);
 
-  const copyCommand = () => {
-    const cmd = 'npm install github:openclawlaurent/FiberAgent#v1.0.1';
-    navigator.clipboard.writeText(cmd).then(() => {
-      alert('Command copied! Paste into your terminal.');
-    });
-  };
-
   const llmCards = [
     {
       id: 'openclaw',
-      badge: 'OpenClaw Skill',
+      badge: 'Auto-Discover',
       name: 'OpenClaw',
-      desc: 'Local AI assistant with extensible skills. Works offline.',
-      code: 'npm install github:openclawlaurent/FiberAgent',
+      desc: 'Your personal AI automatically discovers FiberAgent. Just ask for products. No setup needed.',
     },
     {
       id: 'claude',
-      badge: 'MCP Protocol',
-      name: 'Claude (Anthropic)',
-      desc: 'Desktop or web. Works via Model Context Protocol.',
-      code: '{"mcpServers":{"fiberagent":{"url":"...api/mcp"}}}',
+      badge: 'Works Everywhere',
+      name: 'Claude Desktop / Web',
+      desc: 'Works in Claude Desktop, Claude.ai, or any Claude integration. Zero friction for users.',
     },
     {
       id: 'gpt4',
       badge: 'REST API',
-      name: 'GPT-4 (OpenAI)',
-      desc: 'Via function calling. Any LLM that speaks REST.',
-      code: 'curl https://fiberagent.shop/api/agent/search',
+      name: 'Any LLM',
+      desc: 'Works with ChatGPT, Claude, local models, or any AI. Pure API integration.',
     },
   ];
 
@@ -102,7 +92,6 @@ function VisualDemoPage() {
               <div className="llm-badge">{card.badge}</div>
               <div className="llm-name">{card.name}</div>
               <div className="llm-desc">{card.desc}</div>
-              <code className="llm-code">{card.code}</code>
             </div>
           ))}
         </div>
@@ -250,16 +239,13 @@ function VisualDemoPage() {
 
         {/* CTA */}
         <div className="cta-section">
-          <div className="cta-text">Ready to integrate FiberAgent into your AI?</div>
+          <div className="cta-text">Ready to use FiberAgent?</div>
           <div className="cta-buttons">
-            <button className="btn btn-primary" onClick={copyCommand}>
-              Copy Install Command
-            </button>
             <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">
-              <button className="btn btn-secondary">View on GitHub</button>
+              <button className="btn btn-primary">Learn More</button>
             </a>
             <a href="https://fiberagent.shop" target="_blank" rel="noopener noreferrer">
-              <button className="btn btn-secondary">Live Demo</button>
+              <button className="btn btn-secondary">Try Live Demo</button>
             </a>
           </div>
         </div>

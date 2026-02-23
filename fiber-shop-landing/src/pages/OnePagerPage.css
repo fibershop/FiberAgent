@@ -164,6 +164,20 @@
   margin-bottom: 4px;
 }
 
+/* Source Citations */
+.source {
+  position: relative;
+  border-bottom: 1px dotted #00d084;
+  cursor: help;
+}
+
+.source:hover {
+  color: #00d084;
+  background: rgba(0, 208, 132, 0.05);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
 /* Proof Grid */
 .proof-grid {
   display: grid;
@@ -299,6 +313,45 @@
     display: block;
     text-align: center;
   }
+}
+
+/* Sources */
+.doc-sources {
+  border-top: 2px solid #f0f0f0;
+  padding-top: 40px;
+  margin-top: 60px;
+  background: #fafafa;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.sources-list {
+  margin: 0;
+  padding-left: 24px;
+  list-style: disc;
+}
+
+.sources-list li {
+  margin-bottom: 12px;
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.6;
+  margin-left: 8px;
+}
+
+.sources-list strong {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.sources-list a {
+  color: #00d084;
+  text-decoration: none;
+  border-bottom: 1px dotted #00d084;
+}
+
+.sources-list a:hover {
+  color: #00c978;
 }
 
 /* Print */

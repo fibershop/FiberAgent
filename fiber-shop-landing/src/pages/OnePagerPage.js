@@ -20,10 +20,10 @@ function OnePagerPage() {
         new window.Chart(marketCtx.getContext('2d'), {
           type: 'line',
           data: {
-            labels: ['2024\n(Fiber.shop)', '2025\n(Personal AI boom)', '2026\n(FiberAgent everywhere)', '2027+\n(AI commerce standard)'],
+            labels: ['2024\n(Early adopters)', '2025\n(AI boom)', '2026\n(Mainstream)', '2027+\n(Standard)'],
             datasets: [{
-              label: 'Market Size (Users)',
-              data: [100000, 5000000, 100000000, 1000000000],
+              label: 'Personal AI Shopping Agents (Users)',
+              data: [500000, 20000000, 150000000, 500000000],
               borderColor: '#00d084',
               backgroundColor: 'rgba(0, 208, 132, 0.1)',
               borderWidth: 3,
@@ -39,10 +39,23 @@ function OnePagerPage() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: true, position: 'top' }
+              legend: { 
+                display: true, 
+                position: 'top',
+                labels: { color: '#ffffff', font: { size: 12 } }
+              }
             },
             scales: {
-              y: { type: 'logarithmic', title: { display: true, text: 'Users (log scale)' } }
+              y: { 
+                type: 'logarithmic',
+                title: { display: true, text: 'Users (log scale)', color: '#aaa' },
+                ticks: { color: '#aaa' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              },
+              x: {
+                ticks: { color: '#aaa' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              }
             }
           }
         });

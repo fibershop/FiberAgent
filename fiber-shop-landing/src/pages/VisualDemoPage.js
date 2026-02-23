@@ -42,7 +42,7 @@ function VisualDemoPage() {
     {
       num: '2',
       title: 'Zero Friction',
-      text: 'No signup. No wallet. No crypto. Just chat. "Find me shoes" → instant results → click & buy. Users never touch anything but the shopping link.',
+      text: 'No signup, no wallet for you. Your agent creates one, handles everything. Just chat: "Find me shoes" → results ranked by price + cashback → click & buy. You never touch crypto directly.',
     },
     {
       num: '3',
@@ -143,7 +143,7 @@ function VisualDemoPage() {
               <code style={{ color: '#64ffda', display: 'block', marginTop: '8px' }}>
                 https://fiberagent.shop/r/columbia-ridge...
               </code>
-              <div style={{ marginTop: '8px', fontSize: '0.9em' }}>Click and buy normally. No signup, no wallet, no crypto steps. I earn the commission in the background. 🚀</div>
+              <div style={{ marginTop: '8px', fontSize: '0.9em' }}>Click and buy normally. No signup, no wallet for you. I handle everything in the background—including crypto settlement. The only trustless way for me to get paid globally. 🚀</div>
             </div>
           </div>
         </div>

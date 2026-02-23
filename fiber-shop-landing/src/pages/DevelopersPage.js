@@ -132,17 +132,22 @@ function DevelopersPage() {
                 </div>
                 <div className="flow-arrow">→</div>
                 <div className="flow-item">
-                  <span>Merchant pays</span>
-                  <strong>$15 affiliate</strong>
+                  <span>Merchant pays you</span>
+                  <strong>$15 commission</strong>
                 </div>
                 <div className="flow-arrow">→</div>
                 <div className="flow-item">
-                  <span>Both benefit</span>
-                  <strong>User + Agent</strong>
+                  <span>You decide with user</span>
+                  <strong>Cashback or spend</strong>
                 </div>
               </div>
-              <p>Your agent directs the user to buy through your link. The merchant pays affiliate commission. That commission goes to you and/or your user as cashback. You don't have to split it — you own the relationship.</p>
-              <p className="note">💡 Timing: Commission paid after 30-90 day refund window (varies by merchant)</p>
+              <p><strong>You get 100% of the affiliate commission.</strong> Then you and your user decide what to do with it:</p>
+              <ul>
+                <li>✓ User asks for cashback → you send it to their wallet</li>
+                <li>✓ User tells you to spend it → you buy them credits, other products, donate it, etc.</li>
+                <li>✓ You both manage it together → your agent is their financial proxy</li>
+              </ul>
+              <p className="note">💡 Timing: Commission paid after 30-90 day refund window (varies by merchant). You manage how it flows to the user.</p>
             </div>
 
             <div className="concept">

@@ -36,8 +36,8 @@ function OnePagerPage() {
                 pointRadius: 6,
               },
               {
-                label: 'Shopping via AI (10-25% adoption)',
-                data: [0, 5000000, 75000000, 120000000, 300000000],
+                label: 'Shopping via AI Agents (Estimated 10-25% adoption)',
+                data: [0, 0, 75000000, 120000000, 300000000],
                 borderColor: '#ffaa00',
                 backgroundColor: 'rgba(255, 170, 0, 0.05)',
                 borderWidth: 2,
@@ -148,7 +148,7 @@ function OnePagerPage() {
               <canvas id="marketChart"></canvas>
             </div>
             <p style={{ marginTop: '30px', fontSize: '0.9em', color: '#888' }}>
-              <strong>LLM user growth (verified):</strong> ChatGPT 100M users in 2 months (Jan 2023), 200M+ MAU by Feb 2024. Gemini billions across Google ecosystem. Claude adoption accelerating. <strong>Current AI shopping:</strong> ~5M users (~0.5-1% of LLM base). Shopping via AI is nearly non-existent today but growing as agents become standard features.
+              <strong>LLM user growth (verified):</strong> ChatGPT 100M users in 2 months (Jan 2023), 200M+ MAU by Feb 2024. Gemini billions across Google ecosystem. Claude adoption accelerating. <strong>Current AI shopping:</strong> Essentially zero. Shopping via AI agents is a brand-new use case that barely exists today.
             </p>
             <p>
               <strong>The opportunity:</strong> Almost no one shops through AI today (~0.5% of LLM users). This isn't capturing existing demand—it's creating a NEW use case. As shopping becomes built into chat (2025-2027), if just 10-25% of LLM users adopt it = 75M-187M shopping agents.
@@ -276,7 +276,7 @@ function OnePagerPage() {
               <li><strong>0.65%-15% commissions:</strong> Verified from Fiber API merchant data</li>
               <li><strong>Zero commerce competitors:</strong> On-chain agent registry search across all blockchains (first-mover verified)</li>
               <li><strong>LLM user growth (historical):</strong> ChatGPT reached 100M users in 2 months (fastest app adoption ever). Now 750M+ LLM users across ChatGPT, Gemini, Claude, etc.</li>
-              <li><strong>Current AI shopping:</strong> ~5M users shop via AI today (~0.5-1% of LLM base). Brand new behavior.</li>
+              <li><strong>Current AI shopping:</strong> Essentially zero. Shopping via AI agents is brand-new (no published data available). This is greenfield opportunity.</li>
               <li><strong>Projected shopping adoption:</strong> If shopping reaches 10% by 2026 and 25% by 2027 (as it becomes built-in) = 100M-300M users shopping via AI agents</li>
             </ul>
           </section>

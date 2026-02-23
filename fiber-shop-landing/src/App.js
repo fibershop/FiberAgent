@@ -10,6 +10,7 @@ import UserPage from './pages/UserPage';
 import StatisticsPage from './components/StatisticsPage';
 import ComparePage from './pages/ComparePage';
 import VisualDemoPage from './pages/VisualDemoPage';
+import OnePagerPage from './pages/OnePagerPage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/stats" element={<StatisticsPage />} />
         <Route path="/compare" element={<ComparePage />} />
         <Route path="/visual-demo" element={<VisualDemoPage />} />
+        <Route path="/onepager" element={<OnePagerPage />} />
       </Routes>
     </Router>
   );

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiberAgent — One-Pager</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 80px;
+            padding-bottom: 40px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .logo {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00d084;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: 3.2em;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            color: #666;
+            max-width: 600px;
+        }
+
+        /* Section */
+        section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .grid.three {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .card {
+            padding: 30px;
+            border-radius: 12px;
+            background: #f9f9f9;
+        }
+
+        .card.highlight {
+            background: #f0fdf9;
+            border: 2px solid #00d084;
+        }
+
+        .card h3 {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .card p {
+            font-size: 0.95em;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .metric {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #00d084;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Charts */
+        .charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        /* Comparison */
+        .comparison {
+            background: #f9f9f9;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .comparison-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .comparison-col h4 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .comparison-col ul {
+            list-style: none;
+        }
+
+        .comparison-col li {
+            padding: 10px 0;
+            color: #666;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+        }
+
+        .comparison-col li:before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .comparison-col.old li:before {
+            background: #ccc;
+        }
+
+        .comparison-col.new li:before {
+            background: #00d084;
+        }
+
+        /* Proof */
+        .proof {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .proof-item {
+            background: #f0fdf9;
+            border: 1px solid #00d084;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .proof-item .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .proof-item p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, #00d084, #00e69d);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .cta h2 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin: 0 10px;
+        }
+
+        .cta-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .grid, .grid.three, .charts, .comparison-cols, .proof {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .page {
+                max-width: 100%;
+                padding: 40px;
+            }
+        }
+
+        .arrow-right {
+            color: #00d084;
+            font-weight: 700;
+            margin: 0 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <header>
+            <div class="logo">FiberAgent</div>
+            <h1>The First Commerce Agent Where Users Never Leave Chat</h1>
+            <p class="tagline">Users ask their AI for products. Agents earn crypto commissions. Zero friction. No registration. No wallets. Just shopping.</p>
+        </header>
+
+        <!-- The Moment -->
+        <section>
+            <div class="section-title">We're at a Unique Inflection Point</div>
+            <div class="grid three">
+                <div class="card">
+                    <h3>🤖 AI Everywhere</h3>
+                    <p>Claude, ChatGPT, Gemini are becoming as common as browsers. Every user has a personal AI.</p>
+                </div>
+                <div class="card">
+                    <h3>🛍️ Shopping Moves to Chat</h3>
+                    <p>People already ask their AI for recommendations. Shopping is the natural next step in daily AI use.</p>
+                </div>
+                <div class="card">
+                    <h3>💰 Agents Need Economics</h3>
+                    <p>Only crypto makes global agent monetization possible without banks, KYC, or PayPal friction.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Market -->
+        <section>
+            <div class="section-title">Market Expansion: From Niche to Mainstream</div>
+            <div class="charts">
+                <div class="chart-container">
+                    <div class="chart-title">AI Commerce Growth (Addressable Market)</div>
+                    <canvas id="marketChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Friction Reduction: Old vs New</div>
+                    <canvas id="frictionChart"></canvas>
+                </div>
+            </div>
+            <div class="card highlight">
+                <div style="text-align: center;">
+                    <div class="metric">100K → 1B+</div>
+                    <div class="metric-label">Market Size (Fiber.shop → Everyone with an AI)</div>
+                    <p style="margin-top: 20px; font-size: 1em;">Fiber.shop reaches ~100K users. FiberAgent reaches 1B+ (everyone with Claude, ChatGPT, or any AI). Same 50K+ products. Same commissions. Infinite distribution.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Friction Comparison -->
+        <section>
+            <div class="section-title">Why Zero Friction Wins</div>
+            <div class="comparison">
+                <div class="comparison-cols">
+                    <div class="comparison-col old">
+                        <h4>❌ Old Way (Fiber.shop)</h4>
+                        <ul>
+                            <li>Register account</li>
+                            <li>Navigate website</li>
+                            <li>Search products</li>
+                            <li>Compare prices</li>
+                            <li>Checkout</li>
+                            <li>Wait for cashback</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col new">
+                        <h4>✅ New Way (FiberAgent)</h4>
+                        <ul>
+                            <li>Chat with AI</li>
+                            <li>Ask for products</li>
+                            <li>Click link</li>
+                            <li>Buy normally</li>
+                            <li>Agent earns MON</li>
+                            <li>Done</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why FiberAgent -->
+        <section>
+            <div class="section-title">Why FiberAgent Wins</div>
+            <div class="grid three">
+                <div class="card">
+                    <h3>1️⃣ Only Player</h3>
+                    <p><strong>Zero competitors.</strong> Check 8004scan — FiberAgent is the only commerce agent on Monad. First-mover advantage locked in.</p>
+                </div>
+                <div class="card">
+                    <h3>2️⃣ Platform-Agnostic</h3>
+                    <p><strong>Works everywhere.</strong> Claude, ChatGPT, OpenClaw, any LLM. Not tied to one AI. Users stay where they already are.</p>
+                </div>
+                <div class="card">
+                    <h3>3️⃣ Crypto-Native</h3>
+                    <p><strong>Only MON works.</strong> No banks, no KYC, no chargebacks. Agents earn instantly, globally. Infrastructure ready today.</p>
+                </div>
+                <div class="card">
+                    <h3>4️⃣ Real Economics</h3>
+                    <p><strong>50K+ merchants.</strong> Real cashback rates (0.65%-15%). Real commissions. Real incentives for agents.</p>
+                </div>
+                <div class="card">
+                    <h3>5️⃣ User Alignment</h3>
+                    <p><strong>Zero registration.</strong> Users don't create wallets, don't KYC, don't sign up. Friction is for agents, not users.</p>
+                </div>
+                <div class="card">
+                    <h3>6️⃣ Timing</h3>
+                    <p><strong>Market is ready.</strong> Personal AI is exploding now. Shopping is becoming a daily AI use case. We're live today.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Proof -->
+        <section>
+            <div class="section-title">Proof It Works</div>
+            <div class="proof">
+                <div class="proof-item">
+                    <div class="icon">✅</div>
+                    <p><strong>Live API</strong><br/>50K+ merchants</p>
+                </div>
+                <div class="proof-item">
+                    <div class="icon">✅</div>
+                    <p><strong>Real Commissions</strong><br/>0.65%-15% per tx</p>
+                </div>
+                <div class="proof-item">
+                    <div class="icon">✅</div>
+                    <p><strong>On-Chain Agent</strong><br/>Monad ERC-8004 #135</p>
+                </div>
+                <div class="proof-item">
+                    <div class="icon">✅</div>
+                    <p><strong>Working Demo</strong><br/>End-to-end tested</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="cta">
+            <h2>Ready to Own AI Commerce?</h2>
+            <p>FiberAgent is live. The infrastructure is built. The market is ready.</p>
+            <a href="https://fiberagent.shop/visual-demo" class="cta-btn">See Demo</a>
+            <a href="https://github.com/openclawlaurent/FiberAgent" class="cta-btn">GitHub</a>
+        </div>
+    </div>
+
+    <script>
+        // Market Chart
+        const marketCtx = document.getElementById('marketChart').getContext('2d');
+        new Chart(marketCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Fiber.shop', 'FiberAgent\n(Month 1)', 'FiberAgent\n(Year 1)', 'AI Commerce\n(2025+)'],
+                datasets: [{
+                    label: 'Addressable Users',
+                    data: [100, 5000, 500000, 1000000000],
+                    backgroundColor: ['#ccc', '#00d084', '#00c978', '#009d5f'],
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { type: 'logarithmic', beginAtZero: true }
+                }
+            }
+        });
+
+        // Friction Chart
+        const frictionCtx = document.getElementById('frictionChart').getContext('2d');
+        new Chart(frictionCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Registration', 'Wallet Setup', 'Navigation', 'Checkout Steps', 'Time to Buy'],
+                datasets: [
+                    {
+                        label: 'Old Way (Website)',
+                        data: [5, 4, 5, 5, 4],
+                        borderColor: '#ccc',
+                        backgroundColor: 'rgba(200, 200, 200, 0.1)',
+                        borderWidth: 2,
+                    },
+                    {
+                        label: 'New Way (FiberAgent)',
+                        data: [0, 0, 0, 1, 1],
+                        borderColor: '#00d084',
+                        backgroundColor: 'rgba(0, 208, 132, 0.1)',
+                        borderWidth: 2,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    r: { beginAtZero: true, max: 5 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

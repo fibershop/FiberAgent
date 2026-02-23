@@ -1,0 +1,298 @@
+.onepager-page {
+  background: #ffffff;
+  color: #1a1a1a;
+  line-height: 1.6;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 40px;
+}
+
+/* Header */
+.onepager-header {
+  margin-bottom: 80px;
+  padding-bottom: 40px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #00d084;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.onepager-header h1 {
+  font-size: 3.2em;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+}
+
+.tagline {
+  font-size: 1.2em;
+  color: #666;
+  max-width: 600px;
+}
+
+/* Section */
+.onepager-section {
+  margin-bottom: 80px;
+}
+
+.section-title {
+  font-size: 1.8em;
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: #1a1a1a;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.grid.grid-three {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Card */
+.card {
+  padding: 30px;
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+
+.card h3 {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.card p {
+  font-size: 0.95em;
+  color: #666;
+  line-height: 1.6;
+}
+
+.card-highlight {
+  background: #f0fdf9;
+  border: 2px solid #00d084;
+}
+
+.card-center {
+  text-align: center;
+}
+
+.metric {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #00d084;
+  margin-bottom: 8px;
+}
+
+.metric-label {
+  font-size: 0.9em;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.metric-desc {
+  font-size: 1em;
+  color: #666;
+}
+
+/* Charts */
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.chart-container {
+  background: #f9f9f9;
+  padding: 30px;
+  border-radius: 12px;
+  position: relative;
+  height: 300px;
+}
+
+.chart-title {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+}
+
+/* Comparison */
+.comparison {
+  background: #f9f9f9;
+  padding: 40px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+.comparison-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.comparison-col h4 {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+}
+
+.comparison-col ul {
+  list-style: none;
+}
+
+.comparison-col li {
+  padding: 10px 0;
+  color: #666;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+}
+
+.comparison-col li:before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.comparison-col.old li:before {
+  background: #ccc;
+}
+
+.comparison-col.new li:before {
+  background: #00d084;
+}
+
+/* Proof */
+.proof {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.proof-item {
+  background: #f0fdf9;
+  border: 1px solid #00d084;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.proof-item .icon {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.proof-item p {
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* CTA */
+.cta {
+  background: linear-gradient(135deg, #00d084, #00e69d);
+  color: white;
+  padding: 60px 40px;
+  border-radius: 12px;
+  text-align: center;
+  margin-top: 80px;
+}
+
+.cta h2 {
+  font-size: 2.2em;
+  margin-bottom: 20px;
+}
+
+.cta p {
+  font-size: 1.1em;
+  margin-bottom: 30px;
+  opacity: 0.95;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  margin: 0 10px;
+}
+
+.cta-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .onepager-page {
+    padding: 40px 20px;
+  }
+
+  .onepager-header h1 {
+    font-size: 2.2em;
+  }
+
+  .grid, .charts, .comparison-cols, .proof {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .section-title {
+    font-size: 1.4em;
+  }
+
+  .metric {
+    font-size: 1.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  .onepager-page {
+    padding: 30px 15px;
+  }
+
+  .onepager-header h1 {
+    font-size: 1.8em;
+  }
+
+  .tagline {
+    font-size: 1em;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .cta {
+    padding: 40px 20px;
+  }
+
+  .cta-btn {
+    margin: 5px;
+  }
+}

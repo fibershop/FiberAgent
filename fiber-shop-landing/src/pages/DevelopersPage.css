@@ -255,13 +255,15 @@
 .concept ol,
 .concept ul {
   margin: 0 0 16px 0;
-  padding-left: 24px;
+  padding-left: 0;
+  list-style: none;
   color: var(--text-muted);
   line-height: 1.8;
 }
 
 .concept li {
   margin-bottom: 8px;
+  padding-left: 0;
 }
 
 .concept strong {

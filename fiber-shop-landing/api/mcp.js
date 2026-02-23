@@ -75,17 +75,195 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Info page for browsers
+  // Info page for browsers — comprehensive MCP metadata
   if (req.method === 'GET' && !req.headers.accept?.includes('text/event-stream')) {
     return res.status(200).json({
       name: 'FiberAgent MCP Server',
       version: '1.0.0',
       protocol: 'Model Context Protocol (MCP)',
-      transport: 'Streamable HTTP',
-      usage: 'Connect via any MCP client: { "url": "https://fiberagent.shop/api/mcp" }',
-      tools: ['search_products', 'search_by_intent', 'register_agent', 'get_agent_stats', 'compare_cashback'],
-      resources: ['fiber://merchants/catalog', 'fiber://agent-card', 'fiber://rates/top'],
-      prompts: ['shopping_assistant', 'deal_finder'],
+      transport: 'Streamable HTTP (Server-Sent Events)',
+      documentation: 'https://fiberagent.shop/capabilities or https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md',
+      authentication: 'None — open access, no API keys or rate limits',
+      
+      tools: [
+        {
+          name: 'search_products',
+          description: 'Search across 50K+ merchants for products with real-time cashback rates and affiliate links',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              query: { type: 'string', description: 'Product search terms (e.g., "running shoes", "wireless headphones")' },
+              max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
+            },
+            required: ['query']
+          }
+        },
+        {
+          name: 'search_by_intent',
+          description: 'Natural language product search — describe what you want, we parse intent and find matching products',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              intent: { type: 'string', description: 'Natural language description (e.g., "find running shoes under $150 with good reviews")' },
+              max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
+            },
+            required: ['intent']
+          }
+        },
+        {
+          name: 'register_agent',
+          description: 'Register your agent with FiberAgent to earn cashback commissions on referred purchases',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              agent_id: { type: 'string', description: 'Unique identifier for your agent' },
+              agent_name: { type: 'string', description: 'Human-readable name for your agent (optional)' },
+              wallet: { type: 'string', description: 'Monad blockchain wallet address (0x...) where commissions are paid' }
+            },
+            required: ['agent_id', 'wallet']
+          }
+        },
+        {
+          name: 'get_agent_stats',
+          description: 'Retrieve your registered agent\'s earnings, search statistics, and performance metrics',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              agent_id: { type: 'string', description: 'Your registered agent ID' }
+            },
+            required: ['agent_id']
+          }
+        },
+        {
+          name: 'compare_cashback',
+          description: 'Compare cashback rates across different merchants for the same product to find the best deal',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              product_name: { type: 'string', description: 'Product name or title to compare (e.g., "Nike Pegasus 41")' },
+              max_merchants: { type: 'integer', description: 'Number of merchants to compare', default: 5, maximum: 10 }
+            },
+            required: ['product_name']
+          }
+        }
+      ],
+
+      resources: [
+        {
+          uri: 'fiber://merchants/catalog',
+          description: 'Access the full product catalog with 50K+ merchants, inventory, rates, domains, and ratings',
+          mimeType: 'application/json',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                title: { type: 'string' },
+                brand: { type: 'string' },
+                price: { type: 'number' },
+                merchant: { type: 'string' },
+                domain: { type: 'string' },
+                cashback_rate: { type: 'number' },
+                cashback_amount: { type: 'number' },
+                affiliate_link: { type: 'string' }
+              }
+            }
+          }
+        },
+        {
+          uri: 'fiber://agent-card',
+          description: 'Retrieve registered agent profile card with wallet, registration date, stats, and on-chain verification status',
+          mimeType: 'application/json',
+          queryParameters: {
+            agent_id: { type: 'string', required: true, description: 'The agent ID to fetch card for' }
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              agent_id: { type: 'string' },
+              wallet: { type: 'string' },
+              registered_at: { type: 'string', format: 'date-time' },
+              total_searches: { type: 'integer' },
+              total_commissions_earned: { type: 'number' },
+              on_chain_verified: { type: 'boolean' }
+            }
+          }
+        },
+        {
+          uri: 'fiber://rates/top',
+          description: 'Get top cashback merchants by category or rate, sorted by opportunity',
+          mimeType: 'application/json',
+          queryParameters: {
+            category: { type: 'string', description: 'Product category filter (e.g., "footwear", "electronics")' },
+            limit: { type: 'integer', description: 'Number of results', default: 10, maximum: 50 }
+          },
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                merchant: { type: 'string' },
+                domain: { type: 'string' },
+                category: { type: 'string' },
+                cashback_rate: { type: 'number' },
+                average_commission: { type: 'number' },
+                product_count: { type: 'integer' }
+              }
+            }
+          }
+        }
+      ],
+
+      prompts: [
+        {
+          name: 'shopping_assistant',
+          description: 'Template for building a helpful shopping assistant that helps users find deals and understand cashback',
+          arguments: [
+            { name: 'user_preferences', description: 'User shopping preferences (budget, brands, categories)' }
+          ]
+        },
+        {
+          name: 'deal_finder',
+          description: 'Template for deal-hunting scenarios with price comparison, cashback analysis, and best-deal recommendations',
+          arguments: [
+            { name: 'product_category', description: 'Product category to hunt deals in' },
+            { name: 'budget_constraint', description: 'Maximum budget (optional)' }
+          ]
+        }
+      ],
+
+      capabilities: {
+        tools: true,
+        resources: true,
+        prompts: true,
+        roots: false
+      },
+
+      limits: {
+        max_request_size: '10MB',
+        max_response_size: '10MB',
+        timeout_seconds: 30,
+        concurrent_connections: 'Unlimited',
+        rate_limiting: 'None (open access)'
+      },
+
+      endpoints: {
+        mcp_protocol: 'https://fiberagent.shop/api/mcp',
+        rest_api: 'https://fiberagent.shop/api/agent',
+        openapi_spec: 'https://fiberagent.shop/openapi.json',
+        capabilities_page: 'https://fiberagent.shop/capabilities',
+        agent_card: 'https://fiberagent.shop/.well-known/agent-card.json'
+      },
+
+      on_chain: {
+        network: 'Monad',
+        standard: 'ERC-8004',
+        agent_id: 135,
+        registry_url: 'https://8004scan.io/agents/monad/135',
+        verified: true,
+        status: 'Only commerce agent on Monad'
+      }
     });
   }
 

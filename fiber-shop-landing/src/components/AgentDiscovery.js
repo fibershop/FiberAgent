@@ -60,7 +60,7 @@ export default function AgentDiscovery() {
       title: 'Direct Agent Call',
       icon: '🔗',
       description: 'If an agent knows about FiberAgent, they can call us directly at our API endpoint.',
-      code: `GET /v1/agent/search?keywords=blue+rain+shoes&agent_id=calling-agent&wallet=wallet_address\nHost: api.staging.fiber.shop\n\nResponse:\n{\n  "success": true,\n  "results": [\n    {\n      "merchant_name": "Nike",\n      "cashback": "3.25%",\n      "affiliate_link": "https://wild.link/..."\n    }\n  ]\n}`
+      code: `GET /v1/agent/search?keywords=blue+rain+shoes&agent_id=calling-agent&wallet=wallet_address\nHost: api.staging.fiber.shop\n\nResponse:\n{\n  "success": true,\n  "results": [\n    {\n      "merchant_name": "Nike",\n      "cashback": "3.25%",\n      "affiliate_link": "https://api.staging.fiber.shop/r/w?c=123456&d=38604255&url=..."\n    }\n  ]\n}`
     },
     {
       title: 'Agent Marketplace',

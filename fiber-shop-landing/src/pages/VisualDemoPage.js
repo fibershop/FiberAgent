@@ -15,21 +15,21 @@ function VisualDemoPage() {
   const llmCards = [
     {
       id: 'openclaw',
-      badge: 'Auto-Discover',
-      name: 'OpenClaw',
-      desc: 'Your personal AI automatically discovers FiberAgent. Just ask for products. No setup needed.',
+      badge: 'Local AI',
+      name: 'On Your Mac',
+      desc: 'Your personal OpenClaw agent discovers FiberAgent automatically. Just chat. No setup.',
     },
     {
       id: 'claude',
-      badge: 'Works Everywhere',
-      name: 'Claude Desktop / Web',
-      desc: 'Works in Claude Desktop, Claude.ai, or any Claude integration. Zero friction for users.',
+      badge: 'Desktop App',
+      name: 'Claude Desktop',
+      desc: 'Use Claude on your desktop. Ask for products, get results. Same zero-friction experience.',
     },
     {
       id: 'gpt4',
-      badge: 'REST API',
-      name: 'Any LLM',
-      desc: 'Works with ChatGPT, Claude, local models, or any AI. Pure API integration.',
+      badge: 'Web Browser',
+      name: 'Any Web Chat',
+      desc: 'ChatGPT, Claude.ai, or any web-based AI. Works anywhere, no installation.',
     },
   ];
 

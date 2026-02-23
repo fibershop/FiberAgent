@@ -151,6 +151,133 @@ function CapabilitiesPage() {
           </div>
         </section>
 
+        {/* MCP Protocol */}
+        <section className="cap-section">
+          <h2>Model Context Protocol (MCP)</h2>
+          <p className="section-desc">FiberAgent implements the Model Context Protocol standard, enabling seamless integration with Claude, ChatGPT, and any MCP-compatible LLM client.</p>
+          
+          <div className="mcp-overview">
+            <div className="mcp-stat">
+              <div className="mcp-stat-label">Protocol Version</div>
+              <div className="mcp-stat-value">MCP 1.0.0</div>
+            </div>
+            <div className="mcp-stat">
+              <div className="mcp-stat-label">Transport</div>
+              <div className="mcp-stat-value">Streamable HTTP (SSE)</div>
+            </div>
+            <div className="mcp-stat">
+              <div className="mcp-stat-label">Authentication</div>
+              <div className="mcp-stat-value">None (open access)</div>
+            </div>
+            <div className="mcp-stat">
+              <div className="mcp-stat-label">Rate Limiting</div>
+              <div className="mcp-stat-value">Unlimited</div>
+            </div>
+          </div>
+
+          <h3>MCP Tools (5)</h3>
+          <div className="mcp-tools">
+            <div className="mcp-tool">
+              <strong>search_products</strong>
+              <p>Search across 50K+ merchants for products with cashback rates</p>
+              <code>POST /api/mcp (JSON-RPC)</code>
+              <div className="tool-params">
+                <div className="param">
+                  <code>query</code> <span className="required">required</span>: Search terms (string)
+                </div>
+                <div className="param">
+                  <code>max_results</code> <span className="optional">optional</span>: 1-20, default 5 (integer)
+                </div>
+              </div>
+            </div>
+
+            <div className="mcp-tool">
+              <strong>search_by_intent</strong>
+              <p>Natural language product search</p>
+              <code>POST /api/mcp (JSON-RPC)</code>
+              <div className="tool-params">
+                <div className="param">
+                  <code>intent</code> <span className="required">required</span>: Natural language request (string)
+                </div>
+                <div className="param">
+                  <code>max_results</code> <span className="optional">optional</span>: 1-20, default 5 (integer)
+                </div>
+              </div>
+            </div>
+
+            <div className="mcp-tool">
+              <strong>register_agent</strong>
+              <p>Register agent to earn cashback commissions</p>
+              <code>POST /api/mcp (JSON-RPC)</code>
+              <div className="tool-params">
+                <div className="param">
+                  <code>agent_id</code> <span className="required">required</span>: Unique ID (string)
+                </div>
+                <div className="param">
+                  <code>agent_name</code> <span className="optional">optional</span>: Human-readable name (string)
+                </div>
+                <div className="param">
+                  <code>wallet</code> <span className="required">required</span>: Monad wallet (0x...) (string)
+                </div>
+              </div>
+            </div>
+
+            <div className="mcp-tool">
+              <strong>get_agent_stats</strong>
+              <p>Get agent earnings, searches, and metrics</p>
+              <code>POST /api/mcp (JSON-RPC)</code>
+              <div className="tool-params">
+                <div className="param">
+                  <code>agent_id</code> <span className="required">required</span>: Registered agent ID (string)
+                </div>
+              </div>
+            </div>
+
+            <div className="mcp-tool">
+              <strong>compare_cashback</strong>
+              <p>Compare cashback across merchants for same product</p>
+              <code>POST /api/mcp (JSON-RPC)</code>
+              <div className="tool-params">
+                <div className="param">
+                  <code>product_name</code> <span className="required">required</span>: Product title (string)
+                </div>
+                <div className="param">
+                  <code>max_merchants</code> <span className="optional">optional</span>: 1-10, default 5 (integer)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3>MCP Resources (3)</h3>
+          <div className="mcp-resources">
+            <div className="mcp-resource">
+              <code>fiber://merchants/catalog</code> — Full product catalog with 50K+ merchants, inventory, rates, domains
+            </div>
+            <div className="mcp-resource">
+              <code>fiber://agent-card</code> — Agent registration card with wallet, registration date, stats, on-chain verification
+            </div>
+            <div className="mcp-resource">
+              <code>fiber://rates/top</code> — Top cashback merchants by category, sorted by opportunity
+            </div>
+          </div>
+
+          <h3>MCP Setup (Claude Desktop)</h3>
+          <div className="code-section">
+            <div className="code-header">claude_desktop_config.json</div>
+            <pre className="code-block"><code>{`{
+  "mcpServers": {
+    "fiberagent": {
+      "url": "https://fiberagent.shop/api/mcp"
+    }
+  }
+}`}</code></pre>
+          </div>
+
+          <p className="resource-note">
+            📖 Full MCP integration guide with cURL, Python, Node.js, and JavaScript examples: <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer">MCP_INTEGRATION_GUIDE.md</a>
+          </p>
+        </section>
+
         {/* Endpoints */}
         <section className="cap-section">
           <h2>Available Endpoints</h2>

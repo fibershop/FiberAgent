@@ -211,6 +211,30 @@ export default function DemoPage() {
             </div>
           </motion.section>
         )}
+
+        {/* Comparison callout */}
+        <motion.section
+          className={styles.panel}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          style={{ textAlign: 'center', marginTop: '40px' }}
+        >
+          <h3 style={{ marginBottom: '12px', color: '#fff' }}>💡 See the difference?</h3>
+          <p style={{ color: '#aaa', marginBottom: '20px' }}>Watch how FiberAgent adds $75+ in cashback to the exact same purchase a standard AI would suggest.</p>
+          <a href="/compare" style={{
+            display: 'inline-block',
+            background: '#00d084',
+            color: '#000',
+            padding: '12px 28px',
+            borderRadius: '6px',
+            fontWeight: 600,
+            textDecoration: 'none',
+            transition: 'all 0.3s'
+          }} onMouseOver={e => e.target.style.background = '#00c978'} onMouseOut={e => e.target.style.background = '#00d084'}>
+            View Comparison →
+          </a>
+        </motion.section>
       </div>
     </div>
     </>

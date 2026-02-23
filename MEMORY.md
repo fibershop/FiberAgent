@@ -2,20 +2,30 @@
 
 ## Active Projects
 
-### 🎉 FiberAgent OpenClaw Skill v1.0.1 - PUBLISHED! (Feb 23)
+### 🎉 FiberAgent OpenClaw Skill v1.0.1 - PUBLISHED + EXTENDED! (Feb 23)
 
-**STATUS: 🟢 LIVE ON GITHUB**
+**STATUS: 🟢 LIVE ON GITHUB + PRODUCTION PAGES LIVE**
 - ✅ Skill source code in `/Users/laurentsalou/.openclaw/workspace-fiber/skills/fiberagent/`
 - ✅ Git tag created: `openclaw-skill-v1.0.1`
 - ✅ GitHub release pushed: https://github.com/openclawlaurent/FiberAgent/releases/tag/openclaw-skill-v1.0.1
 - ✅ Installable: `npm install github:openclawlaurent/FiberAgent#openclaw-skill-v1.0.1`
 - ✅ Agents can discover & use it locally in workspace
+- ✅ Visual Demo page live (`/visual-demo`)
+- ✅ Capabilities page live (`/capabilities`)
+- ✅ MCP Integration Guide (13KB, 4-language examples)
+- ✅ Enhanced MCP endpoint with full schemas
 
 **Publishing Status:**
 - npm: Blocked on 2FA requirement (can retry with new Automation token)
 - GitHub: ✅ LIVE (tag pushed)
 - ClawHub: Ready for manual web upload (folder cleaned)
 - Community: Ready to promote (Reddit, Discord, Dev.to)
+
+**⚠️ CRITICAL SECURITY ISSUE:**
+- Private key exposed on GitHub (deleted, but historically visible in commit history)
+- Exposed key: `0x3da0efa32346a43dacc9d77316c0e4379e19dd49678104f000d611dab678dc5e`
+- Affected wallets: `0xeC6E8DD2BE0053A4a47E6d551902dBADBd6c314b`, `0x790b405d466f7fddcee4be90d504eb56e3fedcae`
+- **ACTION REQUIRED:** Move funds, create new wallets, update .env
 
 ---
 
@@ -158,12 +168,38 @@
 
 ## Environment
 
-- **Workspace:** `/home/nuc/.openclaw/workspace-fiber`
+- **Workspace:** `/Users/laurentsalou/.openclaw/workspace-fiber`
+- **Host:** Mac mini (Darwin 25.2.0 arm64)
 - **Timezone:** Europe/Paris
-- **OS:** Linux 6.8.0-90-generic (x64), Node.js v22.22.0
+- **OS:** macOS, Node.js v22.22.0
 - **Model:** Claude Haiku 4.5
 - **Reasoning:** Off (toggle /reasoning if needed)
+- **Deployment:** 24/7 local on Mac mini, always working, self-directed
 
 ---
 
-*Last updated: Session compaction point before major deployment phase*
+## URGENT: Session Compaction Point (Feb 23)
+
+### Critical Items
+1. **🚨 Private key rotation required** — Exposed key visible in deleted GitHub commits
+   - Action: Move funds from wallets, create new ones, update .env
+   - Affected addresses: `0xeC6E8DD2BE0053A4a47E6d551902dBADBd6c314b`, `0x790b405d466f7fddcee4be90d504eb56e3fedcae`
+
+2. **ERC-8004 description update** — Apply Option 2 description on 8004scan.io
+   - URL: https://www.8004scan.io/agents/monad/135
+
+### Phase 1 Extended Completions
+- ✅ MCP_INTEGRATION_GUIDE.md (13KB, 4 languages, full schemas)
+- ✅ Visual Demo page (`/visual-demo`) — Interactive investor pitch
+- ✅ Capabilities page (`/capabilities`) — Technical docs for developers
+- ✅ Enhanced MCP metadata endpoint — Full tool/resource schemas
+- ✅ All wild.link references removed — Using native Fiber API affiliate_link
+
+### Next Steps (Priority Order)
+1. Rotate compromised wallets (URGENT)
+2. Apply ERC-8004 description update
+3. ClawHub submission (manual)
+4. Community promotion (Reddit → Discord → Dev.to)
+5. Monitor adoption metrics
+
+*Last updated: Session compaction point — Phase 1 shipped, Phase 2 planning*

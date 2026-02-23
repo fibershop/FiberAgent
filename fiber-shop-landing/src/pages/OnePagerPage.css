@@ -153,6 +153,55 @@ canvas {
   max-height: 100%;
 }
 
+/* CTA Links */
+.cta-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.cta-links a {
+  display: inline-block;
+  background: var(--accent);
+  color: #000;
+  padding: 14px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.cta-links a:hover {
+  background: #00c978;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 208, 132, 0.3);
+}
+
+/* Doc CTA Section */
+.doc-cta {
+  text-align: center;
+  background: rgba(0, 208, 132, 0.06);
+  border: 1px solid rgba(0, 208, 132, 0.2);
+  border-radius: 12px;
+  padding: 40px;
+  margin-top: 40px;
+}
+
+.doc-cta h3 {
+  color: var(--accent);
+  margin-top: 0;
+}
+
+.doc-cta p {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
 /* Why FiberAgent Wins - Bullets */
 .bullets {
   display: flex;
@@ -279,5 +328,19 @@ canvas {
 
   .proof-grid {
     grid-template-columns: 1fr;
+  }
+
+  .cta-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .cta-links a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .doc-cta {
+    padding: 30px 20px;
   }
 }

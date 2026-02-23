@@ -241,9 +241,9 @@ function OnePagerPage() {
               <strong>We're building the commerce layer for the AI era.</strong> Merchants reach billions via AI agents. Agents earn crypto cashback. Users get deals without leaving chat. Zero discovery friction. First-mover advantage locked.
             </p>
             <div className="cta-links">
-              <a href="https://fiberagent.shop/visual-demo" className="doc-link">See Demo</a>
-              <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className="doc-link">GitHub</a>
-              <a href="https://fiberagent.shop" target="_blank" rel="noopener noreferrer" className="doc-link">Live Site</a>
+              <a href="https://fiberagent.shop/visual-demo">See Demo</a>
+              <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://fiberagent.shop" target="_blank" rel="noopener noreferrer">Live Site</a>
             </div>
           </section>
 

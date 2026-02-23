@@ -52,7 +52,7 @@ function VisualDemoPage() {
     {
       num: '2',
       title: 'Zero Friction',
-      text: 'No signup. No navigation. Just chat. "Find me shoes" → instant results with cashback. Users never leave the conversation.',
+      text: 'No signup. No navigation. Just chat. "Find me shoes" → instant results with affiliate rewards. Users never leave the conversation.',
     },
     {
       num: '3',
@@ -66,8 +66,8 @@ function VisualDemoPage() {
     },
     {
       num: '5',
-      title: 'Agents Earn Crypto',
-      text: 'Now agents have economic incentive. They earn MON commissions per transaction. Viral adoption loop: agents promote FiberAgent to users.',
+      title: 'Agents Own the Commissions',
+      text: 'Agents earn MON directly (after purchase + no refunds). The agent controls the tokens — can share with user, reinvest, or keep. True economic alignment.',
     },
     {
       num: '6',
@@ -120,26 +120,26 @@ function VisualDemoPage() {
                 <div className="product-item">
                   <div className="product-name">Columbia Ridge Backpacker</div>
                   <div className="product-price">$119.99</div>
-                  <div className="product-cashback">4% = $4.80 MON</div>
+                  <div className="product-cashback">4% affiliate = $4.80 MON</div>
                 </div>
                 <div className="product-item">
                   <div className="product-name">Salomon Quest 4D</div>
                   <div className="product-price">$249.99</div>
-                  <div className="product-cashback">2% = $5.00 MON</div>
+                  <div className="product-cashback">2% affiliate = $5.00 MON</div>
                 </div>
                 <div className="product-item">
                   <div className="product-name">Merrell Moab 3</div>
                   <div className="product-price">$149.99</div>
-                  <div className="product-cashback">3% = $4.50 MON</div>
+                  <div className="product-cashback">3% affiliate = $4.50 MON</div>
                 </div>
                 <div className="product-item">
                   <div className="product-name">ASICS Gel-Venture</div>
                   <div className="product-price">$99.99</div>
-                  <div className="product-cashback">5% = $5.00 MON</div>
+                  <div className="product-cashback">5% affiliate = $5.00 MON</div>
                 </div>
               </div>
               <div style={{ marginTop: '12px', fontSize: '0.9em', color: '#a0a0a0' }}>
-                💰 You'll get cashback. 🤖 I (your agent) earn commission. All in MON crypto, no signup needed.
+                🤖 I'll earn MON commissions on whichever you choose (after purchase is confirmed). I control those tokens — I can share them with you or use them myself.
               </div>
             </div>
           </div>
@@ -154,7 +154,7 @@ function VisualDemoPage() {
               <code style={{ color: '#64ffda', display: 'block', marginTop: '8px' }}>
                 https://fiberagent.shop/r/columbia-ridge...
               </code>
-              <div style={{ marginTop: '8px', fontSize: '0.9em' }}>When you buy, you'll get $4.80 MON instantly. 🚀</div>
+              <div style={{ marginTop: '8px', fontSize: '0.9em' }}>Once you complete the purchase and no refunds occur, I'll earn the $4.80 MON commission. 🚀</div>
             </div>
           </div>
         </div>
@@ -185,16 +185,16 @@ function VisualDemoPage() {
             </div>
           </div>
 
-          <div className="code-label">📤 Sample API Request</div>
+          <div className="code-label">📤 Sample API Request (from Agent)</div>
           <div className="code-block">
             <span style={{ color: '#64ffda' }}>POST</span> /api/agent/search<br />
             {'{'}
             <br />
             &nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"keywords"</span>: ["hiking", "boots"],
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"agent_id"</span>: "my-shopping-agent",
+            &nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"agent_id"</span>: "claude-shopping-agent-001",
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"wallet"</span>: "0x790b405d..."
+            &nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"wallet"</span>: "0x790b405d466f7fdd..."
             <br />
             {'}'}
           </div>
@@ -212,19 +212,19 @@ function VisualDemoPage() {
             <br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"price"</span>: 119.99,
             <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"cashback_rate"</span>: 0.04,
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"affiliate_rate"</span>: 0.04,
             <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"cashback_amount_mon"</span>: 4.80,
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"affiliate_commission_mon"</span>: 4.80,
             <br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"affiliate_link"</span>: "https://fiberagent.shop/r/...",
             <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"agent_commission_mon"</span>: 1.20
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"merchant"</span>: "Amazon"
             <br />
             &nbsp;&nbsp;&nbsp;&nbsp;{'}'}
             <br />
             &nbsp;&nbsp;],
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"total_agent_earnings_mon"</span>: 1.20
+            &nbsp;&nbsp;<span style={{ color: '#64ffda' }}>"potential_agent_earnings_mon"</span>: 4.80
             <br />
             {'}'}
           </div>

@@ -12,6 +12,7 @@ import ComparePage from './pages/ComparePage';
 import VisualDemoPage from './pages/VisualDemoPage';
 import OnePagerPage from './pages/OnePagerPage';
 import CapabilitiesPage from './pages/CapabilitiesPage';
+import DevelopersPage from './pages/DevelopersPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/visual-demo" element={<VisualDemoPage />} />
         <Route path="/onepager" element={<OnePagerPage />} />
         <Route path="/capabilities" element={<CapabilitiesPage />} />
+        <Route path="/developers" element={<DevelopersPage />} />
       </Routes>
     </Router>
   );

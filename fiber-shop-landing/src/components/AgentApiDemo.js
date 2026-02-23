@@ -213,7 +213,7 @@ export default function AgentApiDemo() {
     });
   };
 
-  // 4. Note: Fiber API handles purchase tracking automatically via Wildfire
+  // 4. Note: Fiber API handles purchase tracking automatically automatically
   // No manual track-purchase endpoint needed - purchases tracked via affiliate links
 
   // 5. Get Agent Earnings from Fiber (via proxy)
@@ -491,7 +491,7 @@ export default function AgentApiDemo() {
                   <span className="arrow">→</span>
                   <div className="timeline-step">
                     <span className="day">Days 1-90</span>
-                    <p>Merchant confirms via Wildfire</p>
+                    <p>Merchant confirms automatically</p>
                   </div>
                   <span className="arrow">→</span>
                   <div className="timeline-step">

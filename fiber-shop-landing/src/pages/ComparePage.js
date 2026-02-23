@@ -222,7 +222,7 @@ export default function ComparePage() {
         <p style={{ marginTop: 6 }}>
           <span style={styles.sourceTag}>ChatGPT 5.2 response: real, unedited (Feb 22, 2026)</span>
           <span style={styles.sourceTag}>Cashback rates: CashbackMonitor.com verified (Feb 22, 2026)</span>
-          <span style={styles.sourceTag}>Wildfire affiliate network — 50K+ merchants</span>
+          <span style={styles.sourceTag}>Fiber merchant network — 50K+ merchants</span>
         </p>
       </div>
     </div>

@@ -52,12 +52,12 @@ function VisualDemoPage() {
     {
       num: '2',
       title: 'Zero Friction',
-      text: 'No signup. No navigation. Just chat. "Find me shoes" → instant results with affiliate rewards. Users never leave the conversation.',
+      text: 'No signup. No wallet. No crypto. Just chat. "Find me shoes" → instant results → click & buy. Users never touch anything but the shopping link.',
     },
     {
       num: '3',
-      title: 'Crypto Required',
-      text: 'Only MON makes global agent payouts possible. No banks. No KYC. No PayPal. Just wallet addresses and instant settlement, worldwide.',
+      title: 'Crypto Powers Agent Payouts',
+      text: 'Agents earn MON directly (users don\'t touch crypto). No banks, no KYC, no PayPal. Pure wallet-to-wallet settlement. Global, trustless, instant.',
     },
     {
       num: '4',
@@ -67,7 +67,7 @@ function VisualDemoPage() {
     {
       num: '5',
       title: 'Agents Own the Commissions',
-      text: 'Agents earn MON directly (after purchase + no refunds). The agent controls the tokens — can share with user, reinvest, or keep. True economic alignment.',
+      text: 'Agents earn MON directly (users don\'t see crypto). Agent controls tokens — can share value with user, reinvest, or keep. Economics locked in.',
     },
     {
       num: '6',
@@ -139,7 +139,7 @@ function VisualDemoPage() {
                 </div>
               </div>
               <div style={{ marginTop: '12px', fontSize: '0.9em', color: '#a0a0a0' }}>
-                🤖 I'll earn MON commissions on whichever you choose (after purchase is confirmed). I control those tokens — I can share them with you or use them myself.
+                🤖 I'll earn MON commissions (after purchase is confirmed). No wallet setup needed for you — I handle all the crypto. Just shop normally.
               </div>
             </div>
           </div>
@@ -154,7 +154,7 @@ function VisualDemoPage() {
               <code style={{ color: '#64ffda', display: 'block', marginTop: '8px' }}>
                 https://fiberagent.shop/r/columbia-ridge...
               </code>
-              <div style={{ marginTop: '8px', fontSize: '0.9em' }}>Once you complete the purchase and no refunds occur, I'll earn the $4.80 MON commission. 🚀</div>
+              <div style={{ marginTop: '8px', fontSize: '0.9em' }}>Click and buy normally. No signup, no wallet, no crypto steps. I earn the commission in the background. 🚀</div>
             </div>
           </div>
         </div>

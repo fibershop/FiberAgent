@@ -11,6 +11,7 @@ import StatisticsPage from './components/StatisticsPage';
 import ComparePage from './pages/ComparePage';
 import VisualDemoPage from './pages/VisualDemoPage';
 import OnePagerPage from './pages/OnePagerPage';
+import CapabilitiesPage from './pages/CapabilitiesPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/compare" element={<ComparePage />} />
         <Route path="/visual-demo" element={<VisualDemoPage />} />
         <Route path="/onepager" element={<OnePagerPage />} />
+        <Route path="/capabilities" element={<CapabilitiesPage />} />
       </Routes>
     </Router>
   );

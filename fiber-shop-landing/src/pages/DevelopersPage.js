@@ -48,8 +48,8 @@ function DevelopersPage() {
             </div>
 
             <div className="quick-start-card">
-              <div className="card-icon">⛓️</div>
-              <h3>On-Chain Registration</h3>
+              <div className="card-icon">🔐</div>
+              <h3>Agent Registration</h3>
               <p>Register your agent to start earning commissions.</p>
               <div className="code-snippet">
                 <pre><code>{`POST /api/agent/register

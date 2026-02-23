@@ -48,6 +48,10 @@
   list-style: none;
 }
 
+.nav-item.nav-right {
+  margin-left: auto;
+}
+
 .nav-link {
   font-size: 14px;
   font-weight: 500;

@@ -20,9 +20,6 @@ export default function Navigation() {
           <li className={`nav-item ${isActive('/')}`}>
             <Link to="/" className="nav-link" aria-current={isActive('/') ? 'page' : undefined}>Home</Link>
           </li>
-          <li className={`nav-item ${isActive('/about')}`}>
-            <Link to="/about" className="nav-link" aria-current={isActive('/about') ? 'page' : undefined}>About</Link>
-          </li>
           <li className={`nav-item ${isActive('/demo')}`}>
             <Link to="/demo" className="nav-link" aria-current={isActive('/demo') ? 'page' : undefined}>Demo</Link>
           </li>
@@ -31,6 +28,9 @@ export default function Navigation() {
           </li>
           <li className={`nav-item ${isActive('/developers')}`}>
             <Link to="/developers" className="nav-link" aria-current={isActive('/developers') ? 'page' : undefined}>Docs</Link>
+          </li>
+          <li className={`nav-item nav-right ${isActive('/about')}`}>
+            <Link to="/about" className="nav-link" aria-current={isActive('/about') ? 'page' : undefined}>About</Link>
           </li>
         </ul>
       </div>

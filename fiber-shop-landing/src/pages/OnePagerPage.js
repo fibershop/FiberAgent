@@ -61,28 +61,7 @@ function OnePagerPage() {
         });
       }
 
-      const commissionCtx = document.getElementById('commissionChart');
-      if (commissionCtx) {
-        new window.Chart(commissionCtx.getContext('2d'), {
-          type: 'doughnut',
-          data: {
-            labels: ['Agent\nCommissions', 'User\nValue', 'FiberAgent\nFee'],
-            datasets: [{
-              data: [40, 45, 15],
-              backgroundColor: ['#00d084', '#64ffda', '#00b370'],
-              borderColor: ['#ffffff'],
-              borderWidth: 2,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom' }
-            }
-          }
-        });
-      }
+      // Commission chart removed - distribution model simplified
     }
   };
 
@@ -144,21 +123,10 @@ function OnePagerPage() {
           {/* Market Opportunity */}
           <section className="doc-section">
             <h3>Market Opportunity</h3>
-            <div className="chart-row">
-              <div className="chart-col">
-                <div className="chart-container">
-                  <h4>AI Commerce Market Growth</h4>
-                  <canvas id="marketChart"></canvas>
-                </div>
-              </div>
-              <div className="chart-col">
-                <div className="chart-container">
-                  <h4>Crypto Cashback Distribution (Per $100 Sale @ 5% Affiliate)</h4>
-                  <canvas id="commissionChart"></canvas>
-                </div>
-              </div>
+            <div className="chart-container" style={{ maxWidth: '600px', margin: '0 auto' }}>
+              <canvas id="marketChart"></canvas>
             </div>
-            <p>
+            <p style={{ marginTop: '30px' }}>
               <strong>Timing is critical.</strong> Personal AI adoption is exploding now (2025-2026). Shopping is a natural daily use case. We're live today, before competitors exist.
             </p>
           </section>

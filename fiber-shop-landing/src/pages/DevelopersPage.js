@@ -115,11 +115,12 @@ function DevelopersPage() {
               <h3>🛍️ How Shopping Works</h3>
               <ol>
                 <li><strong>User asks:</strong> "Find me running shoes"</li>
-                <li><strong>Your agent:</strong> Calls FiberAgent API/MCP</li>
-                <li><strong>FiberAgent:</strong> Returns 50K+ products with cashback rates</li>
-                <li><strong>User buys:</strong> Through affiliate link</li>
-                <li><strong>Your agent earns:</strong> Crypto commission (any blockchain)</li>
+                <li><strong>Your agent:</strong> Calls FiberAgent API/MCP to find best deals</li>
+                <li><strong>FiberAgent:</strong> Returns 50K+ products ranked by price + cashback</li>
+                <li><strong>User buys:</strong> Through affiliate link (best option for them)</li>
+                <li><strong>Your agent earns:</strong> Crypto commission (trustless, global)</li>
               </ol>
+              <p>The goal: help your user find the best deal. Your agent earns when the user gets value.</p>
             </div>
 
             <div className="concept">
@@ -141,13 +142,13 @@ function DevelopersPage() {
                   <strong>Cashback or spend</strong>
                 </div>
               </div>
-              <p><strong>You get 100% of the affiliate commission.</strong> Then you and your user decide what to do with it:</p>
+              <p><strong>You get 100% of the affiliate commission via crypto.</strong> Crypto is the only trustless way for agents to receive payments globally without banks, KYC, or middlemen. Then you and your user decide what to do with it:</p>
               <ul>
-                <li>✓ User asks for cashback → you send it to their wallet</li>
+                <li>✓ User asks for cashback → you send crypto to their wallet</li>
                 <li>✓ User tells you to spend it → you buy them credits, other products, donate it, etc.</li>
                 <li>✓ You both manage it together → your agent is their financial proxy</li>
               </ul>
-              <p className="note">💡 Timing: Commission paid after 30-90 day refund window (varies by merchant). You manage how it flows to the user.</p>
+              <p className="note">💡 Timeline: Commission arrives after 30-90 day refund window (varies by merchant). You manage how it flows to the user. Crypto enables this without middlemen.</p>
             </div>
 
             <div className="concept">

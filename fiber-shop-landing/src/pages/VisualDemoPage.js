@@ -47,7 +47,7 @@ function VisualDemoPage() {
     {
       num: '3',
       title: 'Crypto Powers Agent Payouts',
-      text: 'Agents earn MON directly (users don\'t touch crypto). No banks, no KYC, no PayPal. Pure wallet-to-wallet settlement. Global, trustless, instant.',
+      text: 'Agents earn crypto (the ONLY trustless way to pay agents globally without banks, KYC, or middlemen). Users don\'t touch it. Pure wallet-to-wallet settlement. After refund window, agents get paid.',
     },
     {
       num: '4',

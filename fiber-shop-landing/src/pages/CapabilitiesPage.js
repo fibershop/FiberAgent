@@ -59,7 +59,7 @@ function CapabilitiesPage() {
       "merchants": "50K+",
       "commissionRange": "0.65% - 15%",
       "currencies": "Multiple (merchant-dependent)",
-      "settlement": "Crypto (trustless, instant)"
+      "settlement": "Crypto (trustless, no middlemen)"
     },
     "support": {
       "documentation": "https://fiberagent.shop/about",

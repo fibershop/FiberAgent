@@ -279,7 +279,7 @@ function GettingStartedPage() {
               </div>
               <div className="faq-item">
                 <strong>When do I get paid?</strong>
-                <p>Depends on merchant. Usually 30-90 days after purchase (refund window). Then instant to your wallet.</p>
+                <p>Depends on merchant. Usually 30-90 days after purchase (refund window). Then crypto payment to your wallet (trustless settlement, no middleman).</p>
               </div>
               <div className="faq-item">
                 <strong>Can I earn on my own users?</strong>

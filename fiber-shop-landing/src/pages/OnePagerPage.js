@@ -116,7 +116,7 @@ function OnePagerPage() {
               Put shopping directly into chat. Users ask their AI "Find me hiking boots." Agent discovers FiberAgent skill (or API endpoint), fetches 50K+ products in real-time, returns results with affiliate commissions embedded. User buys. Agent earns crypto cashback.
             </p>
             <p className="highlight-box">
-              <strong>Why this works:</strong> No signup for users. No wallets needed. Agents earn instantly, globally, via crypto (trustless settlement). Discovery is automatic (agent finds best deals). Merchants reach 1B+ AI users. Everyone wins.
+              <strong>Why this works:</strong> No signup for users. No wallets needed. Agents earn commissions globally via crypto (the only trustless payment mechanism). Discovery is automatic (agent finds best deals for users). Merchants reach 1B+ AI users. Everyone wins.
             </p>
           </section>
 

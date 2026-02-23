@@ -173,13 +173,6 @@
   font-size: 0.9em;
 }
 
-.path li:before {
-  content: "✓ ";
-  color: #00d084;
-  font-weight: 700;
-  margin-right: 8px;
-}
-
 .path code {
   display: block;
   background: #0d0d0d;

@@ -2,6 +2,23 @@
 
 ## Active Projects
 
+### 🎉 FiberAgent OpenClaw Skill v1.0.1 - PUBLISHED! (Feb 23)
+
+**STATUS: 🟢 LIVE ON GITHUB**
+- ✅ Skill source code in `/Users/laurentsalou/.openclaw/workspace-fiber/skills/fiberagent/`
+- ✅ Git tag created: `openclaw-skill-v1.0.1`
+- ✅ GitHub release pushed: https://github.com/openclawlaurent/FiberAgent/releases/tag/openclaw-skill-v1.0.1
+- ✅ Installable: `npm install github:openclawlaurent/FiberAgent#openclaw-skill-v1.0.1`
+- ✅ Agents can discover & use it locally in workspace
+
+**Publishing Status:**
+- npm: Blocked on 2FA requirement (can retry with new Automation token)
+- GitHub: ✅ LIVE (tag pushed)
+- ClawHub: Ready for manual web upload (folder cleaned)
+- Community: Ready to promote (Reddit, Discord, Dev.to)
+
+---
+
 ### FiberAgent (Moltiverse Hackathon) - Agent Track
 - **Goal:** Platform for external agents to help their users find products via Fiber. User's Agent → FiberAgent → Fiber API. Agents earn cashback commissions. Built on ERC-8004 reputation.
 - **Status:** 🚀 Phase 1 MVP COMPLETE | Fiber API Integration LIVE | Agent-to-Agent Demo WORKING (Feb 10 20:35)

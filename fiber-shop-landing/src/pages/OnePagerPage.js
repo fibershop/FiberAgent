@@ -20,11 +20,11 @@ function OnePagerPage() {
         new window.Chart(marketCtx.getContext('2d'), {
           type: 'bar',
           data: {
-            labels: ['ChatGPT\n(OpenAI)', 'Claude\n(Anthropic)', 'Gemini\n(Google)', 'Total LLM\nMonthly Users'],
+            labels: ['Total LLM Users\nToday', 'Using for\nShopping (Now)', '10%\nAdoption\n(2025-26)', '25%\nAdoption\n(2027)'],
             datasets: [{
-              label: 'Monthly Active Users (Verified Sources)',
-              data: [200000000, 50000000, 500000000, 750000000],
-              backgroundColor: ['#00d084', '#00a060', '#00d084', '#64ffda'],
+              label: 'Monthly Active Users',
+              data: [750000000, 5000000, 75000000, 187500000],
+              backgroundColor: ['#666', '#cc3333', '#ffaa00', '#00d084'],
               borderColor: '#ffffff',
               borderWidth: 1,
             }]
@@ -116,7 +116,7 @@ function OnePagerPage() {
               Put shopping directly into chat. Users ask their AI "Find me hiking boots." Agent discovers FiberAgent skill (or API endpoint), fetches 50K+ products in real-time, returns results with affiliate commissions embedded. User buys. Agent earns crypto cashback.
             </p>
             <p className="highlight-box">
-              <strong>Why this works:</strong> No signup for users. No wallets needed. Agents earn commissions globally via crypto (the only trustless payment mechanism). Discovery is automatic (agent finds best deals for users). Merchants reach 1B+ AI users. Everyone wins.
+              <strong>Why this works:</strong> Shopping in chat is brand new. No signup for users. No wallets needed. Agents earn commissions globally via crypto (the only trustless payment mechanism). Discovery is automatic (agent finds best deals). As this feature spreads across Claude Desktop, ChatGPT, OpenClaw, etc., merchants reach 1B+ AI users organically. Everyone wins.
             </p>
           </section>
 
@@ -127,10 +127,10 @@ function OnePagerPage() {
               <canvas id="marketChart"></canvas>
             </div>
             <p style={{ marginTop: '30px', fontSize: '0.9em', color: '#888' }}>
-              <strong>Sources:</strong> ChatGPT 200M+ MAU (OpenAI, Feb 2024) | Gemini billions across Google ecosystem | Claude adoption growing rapidly. Total addressable market: 750M+ LLM users who could benefit from AI shopping agents.
+              <strong>Key numbers:</strong> ChatGPT 200M+ MAU | Gemini billions across Google | Claude growing | Total: 750M+ LLM users. Current shopping adoption: ~0.5-1%. This is a brand new use case, not existing demand.
             </p>
             <p>
-              <strong>Market inflection:</strong> Most of these users don't actively shop through AI yet. As agents become standard features in Claude Desktop, ChatGPT, and other LLMs (2025-2026), shopping adoption could reach 10-30% penetration = 75M-225M potential users.
+              <strong>The opportunity:</strong> Almost no one shops through AI today (~0.5% of LLM users). This isn't capturing existing demand—it's creating a NEW use case. As shopping becomes built into chat (2025-2027), if just 10-25% of LLM users adopt it = 75M-187M shopping agents.
             </p>
           </section>
 
@@ -230,7 +230,7 @@ function OnePagerPage() {
               <li><strong>Crypto Makes It Possible.</strong> Blockchain enables trustless, global agent payouts without banks, KYC, or middlemen.</li>
             </ol>
             <p>
-              FiberAgent is the first commerce agent ready for this moment. We're live. Competitors don't exist yet. First-mover wins.
+              FiberAgent is creating an entirely new category: shopping in chat. No competitors exist because this use case didn't exist 6 months ago. As agents become standard in Claude, ChatGPT, and OpenClaw (2025-2027), shopping adoption will follow. First-mover = define the category.
             </p>
           </section>
 
@@ -255,7 +255,8 @@ function OnePagerPage() {
               <li><strong>0.65%-15% commissions:</strong> Verified from Fiber API merchant data</li>
               <li><strong>Zero commerce competitors:</strong> On-chain agent registry search across all blockchains (first-mover verified)</li>
               <li><strong>LLM user base (750M+ monthly):</strong> ChatGPT 200M+ MAU (OpenAI Feb 2024), Gemini billions across Google ecosystem, Claude adoption growing</li>
-              <li><strong>Shopping agent penetration estimate:</strong> If 10-30% of LLM users shop via agents by 2026-2027 = 75M-225M potential market</li>
+              <li><strong>Current AI shopping adoption:</strong> ~0.5-1% of LLM users shop via AI (it's a brand-new use case, not mature market)</li>
+              <li><strong>Shopping agent TAM by 2026-27:</strong> If 10-25% adoption = 75M-187M users (assumes shopping becomes standard LLM feature)</li>
             </ul>
           </section>
 

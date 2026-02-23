@@ -1,6 +1,6 @@
 {
   "name": "fiberagent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OpenClaw skill for FiberAgent — find products with crypto cashback across 50,000+ merchants on Monad",
   "main": "index.js",
   "scripts": {

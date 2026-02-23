@@ -38,7 +38,17 @@
 - `DEPLOYMENT_PLAN.md` — Day-by-day checklist for Feb 6-15 execution
 - `memory/wallet-setup.md` — Wallet address + security notes
 
-**Latest Progress (Feb 11 12:43 GMT+1):**
+**Latest Progress (Feb 23 — Compaction Point):**
+- ✅ **OpenClaw Skill v1.0.1 COMPLETE & READY FOR PUBLISH**
+  - Skill location: `/Users/laurentsalou/.openclaw/workspace-fiber/skills/fiberagent/`
+  - Implementations: search_products, register_agent, get_agent_stats
+  - Local testing verified: works end-to-end with Fiber API
+  - Git committed with supporting docs (SKILL.md, README.md, PUBLISHING.md, .npmignore)
+  - **BLOCKED:** `npm login` + `npm publish --access public` requires Laurent's npm credentials
+  - Next: npm → ClawHub (official OpenClaw registry) → GitHub release → community (Reddit, Discord, Dev.to)
+  - Publishing guide: `memory/fiberagent-skill-publishing.md` (step-by-step with all links + checklists)
+
+**Earlier Progress (Feb 11 12:43 GMT+1):**
 - ✅ **Fixed Affiliate Links** - Now properly redirect to merchants
   - Fiber API returns incomplete wild.link URLs
   - Created /api/redirect.js proxy (mimics Fiber's /r/w handler)

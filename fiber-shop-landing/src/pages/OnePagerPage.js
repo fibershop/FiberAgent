@@ -20,11 +20,11 @@ function OnePagerPage() {
         new window.Chart(marketCtx.getContext('2d'), {
           type: 'line',
           data: {
-            labels: ['2023\nChatGPT Launch', '2024\n(Current)', '2025\nProjection', '2026\nProjection', '2027\nProjection'],
+            labels: ['2023\nChatGPT Launch', '2024\nGrowth', '2025\nWide Adoption', '2026\n(Now)', '2027+\nProjection'],
             datasets: [
               {
                 label: 'Total LLM Users (Monthly Active)',
-                data: [200000000, 750000000, 1000000000, 1200000000, 1500000000],
+                data: [200000000, 400000000, 600000000, 750000000, 1000000000],
                 borderColor: '#00d084',
                 backgroundColor: 'rgba(0, 208, 132, 0.1)',
                 borderWidth: 3,
@@ -36,8 +36,8 @@ function OnePagerPage() {
                 pointRadius: 6,
               },
               {
-                label: 'Shopping via AI Agents (Estimated 10-25% adoption)',
-                data: [0, 0, 75000000, 120000000, 300000000],
+                label: 'Shopping via AI Agents (Estimated 5-30% adoption by 2027)',
+                data: [0, 0, 0, 5000000, 225000000],
                 borderColor: '#ffaa00',
                 backgroundColor: 'rgba(255, 170, 0, 0.05)',
                 borderWidth: 2,
@@ -241,17 +241,17 @@ function OnePagerPage() {
 
           {/* The Moment */}
           <section className="doc-section">
-            <h3>Why Now</h3>
+            <h3>Why Now (2026)</h3>
             <p>
-              Three trends converge in 2025-2026:
+              Three trends are converging right now:
             </p>
             <ol>
-              <li><strong>AI Boom.</strong> Claude, ChatGPT, Gemini reach 1B+ users. Personal assistants become standard.</li>
-              <li><strong>Chat Is Primary.</strong> Users spend hours in chat. Shopping naturally moves into that space.</li>
+              <li><strong>AI Boom.</strong> Claude, ChatGPT, Gemini reach 750M+ users and growing. Personal assistants are becoming standard.</li>
+              <li><strong>Chat Is Primary.</strong> Users spend hours in chat. Shopping is naturally moving into that space as agents get shopping capabilities.</li>
               <li><strong>Crypto Makes It Possible.</strong> Blockchain enables trustless, global agent payouts without banks, KYC, or middlemen.</li>
             </ol>
             <p>
-              FiberAgent is creating an entirely new category: shopping in chat. No competitors exist because this use case didn't exist 6 months ago. As agents become standard in Claude, ChatGPT, and OpenClaw (2025-2027), shopping adoption will follow. First-mover = define the category.
+              FiberAgent is creating an entirely new category: shopping in chat. No competitors exist because this use case barely existed a year ago. As shopping becomes standard in Claude Desktop, ChatGPT, and OpenClaw (2026-2027), adoption will follow naturally. First-mover = define the category.
             </p>
           </section>
 
@@ -277,7 +277,7 @@ function OnePagerPage() {
               <li><strong>Zero commerce competitors:</strong> On-chain agent registry search across all blockchains (first-mover verified)</li>
               <li><strong>LLM user growth (historical):</strong> ChatGPT reached 100M users in 2 months (fastest app adoption ever). Now 750M+ LLM users across ChatGPT, Gemini, Claude, etc.</li>
               <li><strong>Current AI shopping:</strong> Essentially zero. Shopping via AI agents is brand-new (no published data available). This is greenfield opportunity.</li>
-              <li><strong>Projected shopping adoption:</strong> If shopping reaches 10% by 2026 and 25% by 2027 (as it becomes built-in) = 100M-300M users shopping via AI agents</li>
+              <li><strong>Projected shopping adoption:</strong> If shopping adoption grows from ~0% now (2026) to 5-10% by late 2026, then 25-30% by 2027 (as it becomes built-in feature across LLMs) = 50M-225M+ users shopping via AI agents</li>
             </ul>
           </section>
 

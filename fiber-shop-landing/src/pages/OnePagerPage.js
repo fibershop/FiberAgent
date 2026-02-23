@@ -4,7 +4,6 @@ import './OnePagerPage.css';
 
 function OnePagerPage() {
   useEffect(() => {
-    // Load Chart.js dynamically
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
     script.async = true;
@@ -16,66 +15,57 @@ function OnePagerPage() {
 
   const initCharts = () => {
     if (window.Chart) {
-      // Market Chart
       const marketCtx = document.getElementById('marketChart');
       if (marketCtx) {
         new window.Chart(marketCtx.getContext('2d'), {
-          type: 'bar',
+          type: 'line',
           data: {
-            labels: ['Fiber.shop', 'FiberAgent (Month 1)', 'FiberAgent (Year 1)', 'AI Commerce (2025+)'],
+            labels: ['2024\n(Fiber.shop)', '2025\n(Personal AI boom)', '2026\n(FiberAgent everywhere)', '2027+\n(AI commerce standard)'],
             datasets: [{
-              label: 'Addressable Users',
-              data: [100, 5000, 500000, 1000000000],
-              backgroundColor: ['#ccc', '#00d084', '#00c978', '#009d5f'],
-              borderRadius: 6,
+              label: 'Market Size (Users)',
+              data: [100000, 5000000, 100000000, 1000000000],
+              borderColor: '#00d084',
+              backgroundColor: 'rgba(0, 208, 132, 0.1)',
+              borderWidth: 3,
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: '#00d084',
+              pointBorderColor: '#ffffff',
+              pointBorderWidth: 2,
+              pointRadius: 6,
             }]
           },
           options: {
-            indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: true, position: 'top' }
             },
             scales: {
-              x: { type: 'logarithmic', beginAtZero: true }
+              y: { type: 'logarithmic', title: { display: true, text: 'Users (log scale)' } }
             }
           }
         });
       }
 
-      // Friction Chart
-      const frictionCtx = document.getElementById('frictionChart');
-      if (frictionCtx) {
-        new window.Chart(frictionCtx.getContext('2d'), {
-          type: 'radar',
+      const commissionCtx = document.getElementById('commissionChart');
+      if (commissionCtx) {
+        new window.Chart(commissionCtx.getContext('2d'), {
+          type: 'doughnut',
           data: {
-            labels: ['Registration', 'Wallet Setup', 'Navigation', 'Checkout Steps', 'Time to Buy'],
-            datasets: [
-              {
-                label: 'Old Way (Website)',
-                data: [5, 4, 5, 5, 4],
-                borderColor: '#ccc',
-                backgroundColor: 'rgba(200, 200, 200, 0.1)',
-                borderWidth: 2,
-              },
-              {
-                label: 'New Way (FiberAgent)',
-                data: [0, 0, 0, 1, 1],
-                borderColor: '#00d084',
-                backgroundColor: 'rgba(0, 208, 132, 0.1)',
-                borderWidth: 2,
-              }
-            ]
+            labels: ['Agent\nCommissions', 'User\nValue', 'FiberAgent\nFee'],
+            datasets: [{
+              data: [40, 45, 15],
+              backgroundColor: ['#00d084', '#64ffda', '#00b370'],
+              borderColor: ['#ffffff'],
+              borderWidth: 2,
+            }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
               legend: { position: 'bottom' }
-            },
-            scales: {
-              r: { beginAtZero: true, max: 5 }
             }
           }
         });
@@ -86,151 +76,194 @@ function OnePagerPage() {
   return (
     <>
       <Helmet>
-        <title>FiberAgent One-Pager</title>
+        <title>FiberAgent — One-Pager</title>
         <meta name="description" content="The first commerce agent where users never leave chat." />
       </Helmet>
 
-      <div className="onepager-page">
-        {/* Header */}
-        <header className="onepager-header">
-          <div className="logo">FiberAgent</div>
-          <h1>The First Commerce Agent Where Users Never Leave Chat</h1>
-          <p className="tagline">Users ask their AI for products. Agents earn crypto commissions. Zero friction. No registration. No wallets. Just shopping.</p>
-        </header>
+      <div className="onepager-container">
+        <article className="onepager-doc">
+          
+          {/* Title */}
+          <header className="doc-header">
+            <h1>FiberAgent</h1>
+            <h2 className="subtitle">The First Commerce Agent for the AI Era</h2>
+            <p className="date">February 2026</p>
+          </header>
 
-        {/* The Moment */}
-        <section className="onepager-section">
-          <h2 className="section-title">We're at a Unique Inflection Point</h2>
-          <div className="grid grid-three">
-            <div className="card">
-              <h3>🤖 AI Everywhere</h3>
-              <p>Claude, ChatGPT, Gemini are becoming as common as browsers. Every user has a personal AI.</p>
-            </div>
-            <div className="card">
-              <h3>🛍️ Shopping Moves to Chat</h3>
-              <p>People already ask their AI for recommendations. Shopping is the natural next step in daily AI use.</p>
-            </div>
-            <div className="card">
-              <h3>💰 Agents Need Economics</h3>
-              <p>Only crypto makes global agent monetization possible without banks, KYC, or PayPal friction.</p>
-            </div>
-          </div>
-        </section>
+          {/* Executive Summary */}
+          <section className="doc-section">
+            <h3>Executive Summary</h3>
+            <p>
+              FiberAgent is a commerce agent that sits between users' personal AIs (Claude, ChatGPT, OpenClaw) and merchants (50K+ via Fiber API). Users ask their AI for products. The agent finds deals, returns results in chat. Users buy normally. Agents earn MON crypto commissions. Zero registration, zero friction.
+            </p>
+            <p>
+              <strong>Market opportunity:</strong> Fiber.shop = 100K users. Personal AI = 1B+ users. Same products, same commissions, infinite distribution.
+            </p>
+            <p>
+              <strong>Status:</strong> Live MVP. Real API integration. On-chain agent registration (Monad ERC-8004 #135). Zero competitors in commerce category.
+            </p>
+          </section>
 
-        {/* The Market */}
-        <section className="onepager-section">
-          <h2 className="section-title">Market Expansion: From Niche to Mainstream</h2>
-          <div className="charts">
-            <div className="chart-container">
-              <div className="chart-title">AI Commerce Growth (Addressable Market)</div>
-              <canvas id="marketChart"></canvas>
-            </div>
-            <div className="chart-container">
-              <div className="chart-title">Friction Reduction: Old vs New</div>
-              <canvas id="frictionChart"></canvas>
-            </div>
-          </div>
-          <div className="card card-highlight">
-            <div className="card-center">
-              <div className="metric">100K → 1B+</div>
-              <div className="metric-label">Market Size (Fiber.shop → Everyone with an AI)</div>
-              <p className="metric-desc">Fiber.shop reaches ~100K users. FiberAgent reaches 1B+ (everyone with Claude, ChatGPT, or any AI). Same 50K+ products. Same commissions. Infinite distribution.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Friction Comparison */}
-        <section className="onepager-section">
-          <h2 className="section-title">Why Zero Friction Wins</h2>
-          <div className="comparison">
-            <div className="comparison-cols">
-              <div className="comparison-col old">
-                <h4>❌ Old Way (Fiber.shop)</h4>
-                <ul>
-                  <li>Register account</li>
-                  <li>Navigate website</li>
-                  <li>Search products</li>
-                  <li>Compare prices</li>
-                  <li>Checkout</li>
-                  <li>Wait for cashback</li>
-                </ul>
+          {/* The Problem */}
+          <section className="doc-section">
+            <h3>The Problem</h3>
+            <div className="text-columns">
+              <div>
+                <p><strong>Merchants need customers.</strong> Fiber.shop reaches 100K. That's tiny compared to the personal AI explosion (Claude, ChatGPT, Gemini everywhere).</p>
               </div>
-              <div className="comparison-col new">
-                <h4>✅ New Way (FiberAgent)</h4>
-                <ul>
-                  <li>Chat with AI</li>
-                  <li>Ask for products</li>
-                  <li>Click link</li>
-                  <li>Buy normally</li>
-                  <li>Agent earns MON</li>
-                  <li>Done</li>
-                </ul>
+              <div>
+                <p><strong>Agents need economics.</strong> AIs are becoming personal assistants. But there's no incentive layer for them to help users shop. No money for agents = no reason to recommend shopping tools.</p>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Why FiberAgent */}
-        <section className="onepager-section">
-          <h2 className="section-title">Why FiberAgent Wins</h2>
-          <div className="grid grid-three">
-            <div className="card">
-              <h3>1️⃣ Only Player</h3>
-              <p><strong>Zero competitors.</strong> Check 8004scan — FiberAgent is the only commerce agent on Monad. First-mover advantage locked in.</p>
-            </div>
-            <div className="card">
-              <h3>2️⃣ Platform-Agnostic</h3>
-              <p><strong>Works everywhere.</strong> Claude, ChatGPT, OpenClaw, any LLM. Not tied to one AI. Users stay where they already are.</p>
-            </div>
-            <div className="card">
-              <h3>3️⃣ Crypto-Native</h3>
-              <p><strong>Only MON works.</strong> No banks, no KYC, no chargebacks. Agents earn instantly, globally. Infrastructure ready today.</p>
-            </div>
-            <div className="card">
-              <h3>4️⃣ Real Economics</h3>
-              <p><strong>50K+ merchants.</strong> Real cashback rates (0.65%-15%). Real commissions. Real incentives for agents.</p>
-            </div>
-            <div className="card">
-              <h3>5️⃣ User Alignment</h3>
-              <p><strong>Zero registration.</strong> Users don't create wallets, don't KYC, don't sign up. Friction is for agents, not users.</p>
-            </div>
-            <div className="card">
-              <h3>6️⃣ Timing</h3>
-              <p><strong>Market is ready.</strong> Personal AI is exploding now. Shopping is becoming a daily AI use case. We're live today.</p>
-            </div>
-          </div>
-        </section>
+          {/* The Solution */}
+          <section className="doc-section">
+            <h3>The Solution</h3>
+            <p>
+              Put shopping directly into chat. Users ask their AI "Find me hiking boots with cashback." Agent discovers FiberAgent skill (or API endpoint), fetches 50K+ products in real-time, returns results with affiliate commissions embedded. User buys. Agent earns MON crypto.
+            </p>
+            <p className="highlight-box">
+              <strong>Why this works:</strong> No signup for users. No wallets needed. No crypto friction. Agents earn crypto globally (trustless). Merchants reach 1B+ AI users. Everyone wins.
+            </p>
+          </section>
 
-        {/* Proof */}
-        <section className="onepager-section">
-          <h2 className="section-title">Proof It Works</h2>
-          <div className="proof">
-            <div className="proof-item">
-              <div className="icon">✅</div>
-              <p><strong>Live API</strong><br/>50K+ merchants</p>
+          {/* Market Opportunity */}
+          <section className="doc-section">
+            <h3>Market Opportunity</h3>
+            <div className="chart-row">
+              <div className="chart-col">
+                <div className="chart-container">
+                  <h4>AI Commerce Market Growth</h4>
+                  <canvas id="marketChart"></canvas>
+                </div>
+              </div>
+              <div className="chart-col">
+                <div className="chart-container">
+                  <h4>Revenue Split (Per $100 Sale @ 5% Affiliate)</h4>
+                  <canvas id="commissionChart"></canvas>
+                </div>
+              </div>
             </div>
-            <div className="proof-item">
-              <div className="icon">✅</div>
-              <p><strong>Real Commissions</strong><br/>0.65%-15% per tx</p>
-            </div>
-            <div className="proof-item">
-              <div className="icon">✅</div>
-              <p><strong>On-Chain Agent</strong><br/>Monad ERC-8004 #135</p>
-            </div>
-            <div className="proof-item">
-              <div className="icon">✅</div>
-              <p><strong>Working Demo</strong><br/>End-to-end tested</p>
-            </div>
-          </div>
-        </section>
+            <p>
+              <strong>Timing is critical.</strong> Personal AI adoption is exploding now (2025-2026). Shopping is a natural daily use case. We're live today, before competitors exist.
+            </p>
+          </section>
 
-        {/* CTA */}
-        <div className="cta">
-          <h2>Ready to Own AI Commerce?</h2>
-          <p>FiberAgent is live. The infrastructure is built. The market is ready.</p>
-          <a href="/visual-demo" className="cta-btn">See Demo</a>
-          <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className="cta-btn">GitHub</a>
-        </div>
+          {/* Why We Win */}
+          <section className="doc-section">
+            <h3>Why FiberAgent Wins</h3>
+            <div className="bullets">
+              <div className="bullet-row">
+                <div className="bullet-item">
+                  <div className="bullet-num">1</div>
+                  <div className="bullet-text">
+                    <strong>Only Player in Commerce.</strong> Checked 8004scan — zero other commerce agents on Monad. First-mover advantage locked.
+                  </div>
+                </div>
+                <div className="bullet-item">
+                  <div className="bullet-num">2</div>
+                  <div className="bullet-text">
+                    <strong>Platform-Agnostic.</strong> Works with Claude, ChatGPT, OpenClaw, any LLM. Not dependent on one AI platform.
+                  </div>
+                </div>
+              </div>
+              <div className="bullet-row">
+                <div className="bullet-item">
+                  <div className="bullet-num">3</div>
+                  <div className="bullet-text">
+                    <strong>Crypto-Native.</strong> Only MON enables global agent payouts without banks, KYC, or PayPal. Infrastructure ready today.
+                  </div>
+                </div>
+                <div className="bullet-item">
+                  <div className="bullet-num">4</div>
+                  <div className="bullet-text">
+                    <strong>Real Economics Now.</strong> 50K+ merchants. 0.65%-15% commissions. Real incentives for agents. Not theoretical.
+                  </div>
+                </div>
+              </div>
+              <div className="bullet-row">
+                <div className="bullet-item">
+                  <div className="bullet-num">5</div>
+                  <div className="bullet-text">
+                    <strong>Zero User Friction.</strong> No registration, wallets, or crypto steps. Users shop normally. Agents handle all complexity.
+                  </div>
+                </div>
+                <div className="bullet-item">
+                  <div className="bullet-num">6</div>
+                  <div className="bullet-text">
+                    <strong>Market Ready.</strong> Live demo works. API proven. ERC-8004 registered. Demo agents earning MON. Ship-ready.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Traction */}
+          <section className="doc-section">
+            <h3>Traction</h3>
+            <div className="proof-grid">
+              <div className="proof-box">
+                <div className="proof-icon">✅</div>
+                <div className="proof-text">
+                  <strong>Live MVP</strong><br/>
+                  Vercel backend deployed. Real API calls working.
+                </div>
+              </div>
+              <div className="proof-box">
+                <div className="proof-icon">✅</div>
+                <div className="proof-text">
+                  <strong>Real Data</strong><br/>
+                  50K+ merchants from Fiber API. Real commissions (0.65%-15%).
+                </div>
+              </div>
+              <div className="proof-box">
+                <div className="proof-icon">✅</div>
+                <div className="proof-text">
+                  <strong>On-Chain</strong><br/>
+                  Registered as Monad ERC-8004 agent #135. Only commerce agent.
+                </div>
+              </div>
+              <div className="proof-box">
+                <div className="proof-icon">✅</div>
+                <div className="proof-text">
+                  <strong>Working Demo</strong><br/>
+                  End-to-end tested. Agent → FiberAgent → Fiber API → checkout.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* The Moment */}
+          <section className="doc-section">
+            <h3>Why Now</h3>
+            <p>
+              Three trends converge in 2025-2026:
+            </p>
+            <ol>
+              <li><strong>AI Boom.</strong> Claude, ChatGPT, Gemini reach 1B+ users. Personal assistants become standard.</li>
+              <li><strong>Chat Is Primary.</strong> Users spend hours in chat. Shopping naturally moves into that space.</li>
+              <li><strong>Crypto Solves Payments.</strong> Only MON makes trustless, borderless agent payouts possible without middlemen.</li>
+            </ol>
+            <p>
+              FiberAgent is the first commerce agent ready for this moment. We're live. Competitors don't exist yet. First-mover wins.
+            </p>
+          </section>
+
+          {/* Bottom Line */}
+          <section className="doc-section doc-cta">
+            <h3>Bottom Line</h3>
+            <p>
+              <strong>We're building the commerce layer for the AI era.</strong> Merchants get 1B+ users via AI chat. Agents get crypto incentives. Users get deals without leaving chat. We're the only player in this category, and the market is ready now.
+            </p>
+            <div className="cta-links">
+              <a href="https://fiberagent.shop/visual-demo" className="doc-link">See Demo</a>
+              <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className="doc-link">GitHub</a>
+              <a href="https://fiberagent.shop" target="_blank" rel="noopener noreferrer" className="doc-link">Live Site</a>
+            </div>
+          </section>
+
+        </article>
       </div>
     </>
   );

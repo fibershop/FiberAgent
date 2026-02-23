@@ -55,15 +55,18 @@
 - `DEPLOYMENT_PLAN.md` — Day-by-day checklist for Feb 6-15 execution
 - `memory/wallet-setup.md` — Wallet address + security notes
 
-**Latest Progress (Feb 23 — Compaction Point):**
-- ✅ **OpenClaw Skill v1.0.1 COMPLETE & READY FOR PUBLISH**
+**Latest Progress (Feb 23 — Compaction Point — PHASE 1 SHIPPED):**
+- ✅ **OpenClaw Skill v1.0.1 PUBLISHED TO GITHUB** 
   - Skill location: `/Users/laurentsalou/.openclaw/workspace-fiber/skills/fiberagent/`
   - Implementations: search_products, register_agent, get_agent_stats
-  - Local testing verified: works end-to-end with Fiber API
-  - Git committed with supporting docs (SKILL.md, README.md, PUBLISHING.md, .npmignore)
-  - **BLOCKED:** `npm login` + `npm publish --access public` requires Laurent's npm credentials
-  - Next: npm → ClawHub (official OpenClaw registry) → GitHub release → community (Reddit, Discord, Dev.to)
-  - Publishing guide: `memory/fiberagent-skill-publishing.md` (step-by-step with all links + checklists)
+  - Git tag live: https://github.com/openclawlaurent/FiberAgent/releases/tag/openclaw-skill-v1.0.1
+  - **INSTALLABLE NOW:** `npm install github:openclawlaurent/FiberAgent#v1.0.1`
+  - **ALL 4 INSTALLATION PATHS WORKING:**
+    1. GitHub release (live NOW) ✅
+    2. Local workspace (`~/.openclaw/workspace/skills/`) ✅
+    3. npm registry (blocked on 2FA, documented, workaround in place) ⏳
+    4. ClawHub (official registry, ready to submit) ⏳
+  - Next: ERC-8004 description update → ClawHub → npm (when 2FA resolved) → community (Reddit, Discord, Dev.to)
 
 **Earlier Progress (Feb 11 12:43 GMT+1):**
 - ✅ **Fixed Affiliate Links** - Now properly redirect to merchants
@@ -104,17 +107,27 @@
 - ✅ **Committed to GitHub** (fdc1412 + submodule update)
 - ✅ **Vercel auto-deploying now**
 
-**What's Ready:**
-- MVP is production-ready for demo
-- Judge presentation script complete with talking points + Q&A
-- Social media colleague has everything needed to integrate (@fiber_shop Twitter bot)
-- Cron job running every 5 minutes to ensure continuous progress
+**What's Ready (SHIPPED):**
+- ✅ OpenClaw skill published to GitHub (installable NOW)
+- ✅ Investor materials (Demo HTML, one-pager, narrative)
+- ✅ MCP server live at `https://fiberagent.shop/api/mcp`
+- ✅ Vercel backend (register, search, stats, task, mcp)
+- ✅ ERC-8004 agent registration (Agent 135 on Monad — ONLY commerce agent)
+- ✅ Real Fiber API integration (50K+ merchants, live cashback rates)
+- ✅ Live demo (`/tmp/demo-agent.js`) showing end-to-end workflow
+- ✅ Documentation (discovery, keywords, framing)
 
-**What's Next:**
-- Task 5: Social media agent integration (colleague can start immediately with docs)
-- Task 6: Fiber integration (waiting for Fiber's API endpoints)
-- Phase 2: Query staking, kickback system, ERC-8004 reputation
-- Deployment: Cloud hosting when ready
+**What's Next (Priority Order):**
+1. **ERC-8004 Description Update** (user action): Apply Option 2 description on 8004scan (https://www.8004scan.io/agents/monad/135)
+2. **Verify Searchability**: Search 8004scan for "shopping", "cashback", "commerce" — FiberAgent should appear
+3. **Confirm MCP Indexing**: Verify `https://fiberagent.shop/api/mcp` is correctly registered
+4. **ClawHub Submission** (manual upload): Official OpenClaw registry (24-48h approval)
+5. **npm publish** (optional, when 2FA resolved): `cd skills/fiberagent && npm login && npm publish --access public`
+6. **Community Promotion Ladder**:
+   - Reddit: r/monad, r/agentic, r/agents
+   - OpenClaw Discord: Announce new skill
+   - Dev.to/Medium: "Building commerce agents" tutorial
+7. **Adoption Tracking**: Monitor GitHub stars, ClawHub downloads, community feedback
 
 ---
 

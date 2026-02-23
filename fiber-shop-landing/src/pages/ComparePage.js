@@ -218,7 +218,7 @@ export default function ComparePage() {
 
       {/* Footer */}
       <div style={styles.footer}>
-        <p><strong>FiberAgent</strong> — MCP: <code>https://fiberagent.shop/api/mcp</code> | REST: <code>https://fiberagent.shop/api/docs</code> | <a href="https://www.8004scan.io/agents/monad/135" style={{ color: '#00d084', textDecoration: 'none' }}>ERC-8004 #135</a> on Monad</p>
+        <p><strong>FiberAgent</strong> — MCP: <code>https://fiberagent.shop/api/mcp</code> | REST: <code>https://fiberagent.shop/api/docs</code> | <a href="https://www.8004scan.io/agents/monad/135" style={{ color: '#00d084', textDecoration: 'none' }}>On-Chain Agent Registry</a></p>
         <p style={{ marginTop: 6 }}>
           <span style={styles.sourceTag}>ChatGPT 5.2 response: real, unedited (Feb 22, 2026)</span>
           <span style={styles.sourceTag}>Cashback rates: CashbackMonitor.com verified (Feb 22, 2026)</span>

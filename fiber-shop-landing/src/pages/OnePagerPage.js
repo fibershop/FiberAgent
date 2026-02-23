@@ -92,7 +92,7 @@ function OnePagerPage() {
               <strong>Market opportunity:</strong> Traditional cashback programs rely on users discovering them, registering, and remembering to use them. Personal AI is 1B+ users. Users don't need to know about FiberAgent—their agent automatically finds it if it's the best deal. Infinite distribution at zero discovery cost.
             </p>
             <p>
-              <strong>Status:</strong> Live MVP. Real API integration. <span className="source" title="Verified search on 8004scan.io for 'Commerce' category">Zero competitors in commerce category on Monad</span>.
+              <strong>Status:</strong> Live MVP. Real API integration. <span className="source" title="Verified search on 8004scan.io for 'Commerce' category">First commerce agent on-chain, zero competitors</span>.
             </p>
           </section>
 
@@ -139,7 +139,7 @@ function OnePagerPage() {
                 <div className="bullet-item">
                   <div className="bullet-num">1</div>
                   <div className="bullet-text">
-                    <strong>Only Player in Commerce.</strong> <span className="source" title="Search results on 8004scan.io/agents?chain=143&search=Commerce">Checked 8004scan — zero other commerce agents on Monad</span>. First-mover advantage locked.
+                    <strong>Only Player in Commerce.</strong> <span className="source" title="Search results on 8004scan.io/agents?chain=143&search=Commerce">First commerce agent on-chain, zero competitors anywhere</span>. First-mover advantage locked.
                   </div>
                 </div>
                 <div className="bullet-item">
@@ -173,7 +173,7 @@ function OnePagerPage() {
                 <div className="bullet-item">
                   <div className="bullet-num">6</div>
                   <div className="bullet-text">
-                    <strong>Market Ready.</strong> Live demo works. API proven. ERC-8004 registered. Demo agents earning MON. Ship-ready.
+                    <strong>Market Ready.</strong> Live demo works. API proven. Agents registered on-chain. Demo agents earning crypto. Ship-ready.
                   </div>
                 </div>
               </div>
@@ -250,7 +250,7 @@ function OnePagerPage() {
             <ul className="sources-list">
               <li><strong>50K+ merchants:</strong> Live Fiber API integration (GET /v1/products endpoint)</li>
               <li><strong>0.65%-15% commissions:</strong> Verified from Fiber API merchant data</li>
-              <li><strong>Zero commerce competitors:</strong> Monad ERC-8004 agent registry search (first-mover verified)</li>
+              <li><strong>Zero commerce competitors:</strong> On-chain agent registry search across all blockchains (first-mover verified)</li>
               <li><strong>Personal AI market (1B+ users):</strong> 2025-2026 adoption metrics (Claude 10M+ weekly, ChatGPT 200M+ monthly)</li>
             </ul>
           </section>

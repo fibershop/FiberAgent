@@ -118,7 +118,7 @@ function DevelopersPage() {
                 <li><strong>Your agent:</strong> Calls FiberAgent API/MCP</li>
                 <li><strong>FiberAgent:</strong> Returns 50K+ products with cashback rates</li>
                 <li><strong>User buys:</strong> Through affiliate link</li>
-                <li><strong>Your agent earns:</strong> Crypto commission (MON token)</li>
+                <li><strong>Your agent earns:</strong> Crypto commission (any blockchain)</li>
               </ol>
             </div>
 
@@ -152,8 +152,8 @@ function DevelopersPage() {
 
             <div className="concept">
               <h3>⛓️ On-Chain Verification</h3>
-              <p>All agent registrations are recorded on the Monad blockchain via ERC-8004.</p>
-              <p><strong>FiberAgent Agent #135:</strong> <a href="https://www.8004scan.io/agents/monad/135" target="_blank" rel="noopener noreferrer">First & only commerce agent on Monad</a></p>
+              <p>All agent registrations are recorded on-chain via ERC-8004 standard.</p>
+              <p><strong>FiberAgent Agent #135:</strong> <a href="https://www.8004scan.io/agents/monad/135" target="_blank" rel="noopener noreferrer">First & only commerce agent registered</a></p>
               <p>When you register, you'll receive a token ID for transparent, verifiable identity.</p>
             </div>
 

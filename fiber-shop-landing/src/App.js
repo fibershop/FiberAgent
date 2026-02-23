@@ -13,6 +13,7 @@ import VisualDemoPage from './pages/VisualDemoPage';
 import OnePagerPage from './pages/OnePagerPage';
 import CapabilitiesPage from './pages/CapabilitiesPage';
 import DevelopersPage from './pages/DevelopersPage';
+import GettingStartedPage from './pages/GettingStartedPage';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/onepager" element={<OnePagerPage />} />
         <Route path="/capabilities" element={<CapabilitiesPage />} />
         <Route path="/developers" element={<DevelopersPage />} />
+        <Route path="/getting-started" element={<GettingStartedPage />} />
       </Routes>
     </Router>
   );

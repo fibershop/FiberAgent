@@ -182,7 +182,7 @@
   font-size: 1.3em;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #64ffda;
+  color: #00d084;
 }
 
 .flow-steps {
@@ -214,8 +214,8 @@
 }
 
 .step-label {
-  color: #64ffda;
-  font-weight: 500;
+  color: #00d084;
+  font-weight: 600;
   margin-bottom: 4px;
 }
 
@@ -237,7 +237,7 @@
 }
 
 .code-label {
-  color: #64ffda;
+  color: #00d084;
   font-weight: 600;
   margin-bottom: 8px;
   margin-top: 16px;
@@ -257,7 +257,7 @@
 
 .bullets-header h2 {
   font-size: 2em;
-  color: #64ffda;
+  color: #00d084;
   margin-bottom: 12px;
 }
 
@@ -294,7 +294,7 @@
 
 .bullet-title {
   font-weight: 600;
-  color: #64ffda;
+  color: #00d084;
   margin-bottom: 8px;
   font-size: 1.05em;
 }
@@ -320,7 +320,8 @@
 .cta-text {
   font-size: 1.3em;
   margin-bottom: 20px;
-  color: #64ffda;
+  color: #000;
+  font-weight: 600;
 }
 
 .cta-buttons {
@@ -351,13 +352,15 @@
 }
 
 .btn-secondary {
-  background: rgba(100, 255, 218, 0.2);
-  color: #64ffda;
-  border: 1px solid #64ffda;
+  background: transparent;
+  color: #e0e0e0;
+  border: 1px solid #e0e0e0;
 }
 
 .btn-secondary:hover {
-  background: rgba(100, 255, 218, 0.3);
+  background: rgba(224, 224, 224, 0.15);
+  border-color: #fff;
+  color: #fff;
   transform: translateY(-2px);
 }
 

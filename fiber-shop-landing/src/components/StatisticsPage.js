@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import HeroBackground from '../components/HeroBackground'; // Reusing the fiber nodes
 import styles from '../styles/StatisticsPage.module.css';
@@ -87,21 +87,73 @@ const trendingVerticals = [
 ];
 
 export default function StatisticsPage() {
+  const [platformStats, setPlatformStats] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [trends, setTrends] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch real data from Fiber API (via our proxy endpoints)
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch platform stats
+        const platformRes = await fetch('/api/stats/platform');
+        const platformData = await platformRes.json();
+        setPlatformStats(platformData.stats);
+
+        // Fetch leaderboard
+        const leaderboardRes = await fetch('/api/stats/leaderboard?limit=10');
+        const leaderboardData = await leaderboardRes.json();
+        setLeaderboard(leaderboardData.leaderboard || []);
+
+        // Fetch trends
+        const trendsRes = await fetch('/api/stats/trends?days=30');
+        const trendsData = await trendsRes.json();
+        setTrends(trendsData.data || []);
+
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching stats:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // Fallback to demo data if API not available
   const brandData = useMemo(() => generateData(), []);
   const cashbackData = useMemo(() => generateCashbackData(), []);
 
-  // Aggregates (showing realistic Fiber network metrics)
-  // Session 2: Real data will be fetched from /api/agent/demo/stats and persistent database
-  const totalVolume = brandData.reduce((acc, curr) => acc + curr.volume, 0);
-  const totalSearches = brandData.reduce((acc, curr) => acc + curr.searches, 0);
+  // Use real data if available, otherwise use demo data
+  const stats = platformStats || {
+    total_searches: 5,
+    total_purchases_made: 3,
+    total_purchase_value_usd: 715,
+    dashboard: {
+      kpis: {
+        total_volume: { value_usd: 715, series: [0, 0, 0, 715, 0, 0] },
+        total_searches: { value: 5, series: [0, 0, 0, 0, 0, 5] },
+        active_agents: { value: 75, series: [0, 0, 0, 0, 0, 4] },
+        cashback_sent: { value_usd: 0.08, purchases_paid: 3 }
+      }
+    }
+  };
+
+  const totalVolume = stats.total_purchase_value_usd || 715;
+  const totalSearches = stats.total_searches || 5;
   
-  // Based on demo agents: claude-shopping-001, gpt-shopping-pro, openai-commerce-bot
   const networkStats = {
-    total_agents: 3,
-    total_searches: 5262,
-    total_conversions: 263,
-    total_network_revenue: 52700,
-    total_commissions_paid: 2635
+    total_agents: stats.total_agents_registered || 75,
+    total_searches: stats.total_searches || 5,
+    total_conversions: stats.total_purchases_made || 3,
+    total_network_revenue: stats.total_purchase_value_usd || 715,
+    total_commissions_paid: stats.total_cashback_sent_usd || 0.08
   };
 
   const containerVariants = {
@@ -189,28 +241,28 @@ export default function StatisticsPage() {
             </div>
           </motion.div>
 
-          {/* Cashback List (Scrollable) */}
+          {/* Cashback Token Ranking */}
           <motion.div className={`${styles.metricCard} ${styles.scrollCard}`} variants={itemVariants}>
             <div className={styles.cardHeader}>Cashback Token Ranking</div>
             <div className={styles.cashbackList}>
-              {cashbackData.map((token, index) => (
-                <div key={token.name} className={styles.cashbackItem}>
-                  <div className={styles.cashbackRank}>#{index + 1}</div>
+              {(stats.dashboard?.cashback_token_ranking || cashbackData).map((token, index) => (
+                <div key={token.symbol || token.name} className={styles.cashbackItem}>
+                  <div className={styles.cashbackRank}>#{token.rank || index + 1}</div>
                   <div className={styles.tokenAvatar} style={{
                     backgroundColor: token.logo ? 'transparent' : token.color,
-                    border: token.logo ? 'none' : `1px solid ${token.color}` // Clean look for logos
+                    border: token.logo ? 'none' : `1px solid ${token.color}`
                   }}>
                     {token.logo ? (
-                      <img src={token.logo} alt={token.name} className={styles.tokenLogoImg} />
+                      <img src={token.logo} alt={token.symbol || token.name} className={styles.tokenLogoImg} />
                     ) : (
-                      token.name[0]
+                      (token.symbol || token.name)[0]
                     )}
                   </div>
                   <div className={styles.tokenInfo}>
-                    <div className={styles.tokenName}>{token.name}</div>
+                    <div className={styles.tokenName}>{token.symbol || token.name}</div>
                     <div className={styles.tokenKey}>Selected by</div>
                   </div>
-                  <div className={styles.tokenCount}>{token.agents}</div>
+                  <div className={styles.tokenCount}>{token.selected_by || token.agents}</div>
                 </div>
               ))}
             </div>
@@ -220,42 +272,59 @@ export default function StatisticsPage() {
           <motion.div className={`${styles.dashboardCard} ${styles.colSpan1}`} variants={itemVariants}>
             <h3 className={styles.cardTitle}>Trending Verticals</h3>
             <div className={styles.verticalChart}>
-              {trendingVerticals.map((v, i) => (
-                <div key={v.name} className={styles.verticalBarContainer}>
-                  <div className={styles.vBarWrapper}>
-                    <motion.div
-                      className={styles.vBarFill}
-                      initial={{ height: 0 }}
-                      whileInView={{ height: `${v.value}%` }}
-                      transition={{ duration: 0.8, delay: i * 0.1 }}
-                      style={{ backgroundColor: v.color }}
-                    />
+              {(stats.dashboard?.trending_verticals || trendingVerticals).map((v, i) => {
+                const verticalName = v.vertical || v.name;
+                const value = v.sales_count ? Math.min((v.sales_count / 5) * 100, 100) : v.value;
+                return (
+                  <div key={verticalName} className={styles.verticalBarContainer}>
+                    <div className={styles.vBarWrapper}>
+                      <motion.div
+                        className={styles.vBarFill}
+                        initial={{ height: 0 }}
+                        whileInView={{ height: `${value}%` }}
+                        transition={{ duration: 0.8, delay: i * 0.1 }}
+                        style={{ backgroundColor: v.color }}
+                      />
+                    </div>
+                    <span className={styles.vBarLabel}>{verticalName}</span>
                   </div>
-                  <span className={styles.vBarLabel}>{v.name}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
 
           <motion.div className={`${styles.dashboardCard} ${styles.colSpan2}`} variants={itemVariants}>
-            <h3 className={styles.cardTitle}>Top Performing Brands</h3>
+            <h3 className={styles.cardTitle}>Top Performing Merchants</h3>
             <div className={styles.brandsGrid}>
-              {brandData.slice(0, 6).map((brand, index) => (
-                <div key={brand.name} className={styles.inputCard}> {/* Reusing styled card look */}
-                  <div className={styles.brandHeader}>
-                    <div className={styles.brandLogoContainer}>
-                      <img src={brand.logo} alt={brand.name} className={styles.brandLogoImg} />
+              {(stats.dashboard?.top_performing_brands || brandData.slice(0, 6)).map((merchant, index) => {
+                const merchantName = merchant.merchant || merchant.name;
+                const sales = merchant.sales_count !== undefined ? merchant.sales_count : merchant.conversions;
+                const maxSales = Math.max(
+                  ...(stats.dashboard?.top_performing_brands || brandData.slice(0, 6)).map(m => 
+                    m.sales_count !== undefined ? m.sales_count : m.conversions
+                  ),
+                  1
+                );
+                
+                return (
+                  <div key={merchantName} className={styles.inputCard}>
+                    <div className={styles.brandHeader}>
+                      <div className={styles.brandLogoContainer}>
+                        {merchant.logo && (
+                          <img src={merchant.logo} alt={merchantName} className={styles.brandLogoImg} />
+                        )}
+                      </div>
+                      <div>
+                        <div className={styles.brandName}>{merchantName}</div>
+                        <div className={styles.brandSub}>{sales} Sale{sales !== 1 ? 's' : ''}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className={styles.brandName}>{brand.name}</div>
-                      <div className={styles.brandSub}>{brand.conversions.toLocaleString()} Sales</div>
+                    <div className={styles.brandGraph}>
+                      <div className={styles.brandBarFill} style={{ width: `${(sales / maxSales) * 100}%` }}></div>
                     </div>
                   </div>
-                  <div className={styles.brandGraph}>
-                    <div className={styles.brandBarFill} style={{ width: `${(brand.conversions / brandData[0].conversions) * 100}%` }}></div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
         </motion.div>

@@ -2,10 +2,13 @@
  * GET/POST /api/agent/search
  * Search products by keywords
  * 
+ * Rate limited: 100 req/min per agent
  * Calls the REAL Fiber API first, falls back to mock data if unavailable
  */
 
 import * as utils from '../_lib/utils.js';
+import { enforceRateLimit } from '../_lib/ratelimit.js';
+import { sendError, handleFiberApiError, validateRequired, sendValidationError } from '../_lib/errors.js';
 
 const FIBER_API = 'https://api.fiber.shop/v1';
 

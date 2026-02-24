@@ -81,7 +81,14 @@ User Agent → FiberAgent API → Fiber API (stats)
 
 ---
 
-## Task 2: Product Comparison Endpoint (2-3 hours)
+## Task 2: Product Comparison Endpoint (2-3 hours) — ⏳ DEFERRED
+
+**Status:** Deferred for later (implementation strategy TBD)  
+**Note:** Store in `/TODO_COMPARISON.md` for future session
+
+---
+
+## Task 3: Rate Limiting & Error Handling (1-2 hours) ✅ NEXT
 
 ### What to do:
 1. **Create `/api/agent/compare.js`:**

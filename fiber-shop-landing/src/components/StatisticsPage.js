@@ -136,7 +136,9 @@ export default function StatisticsPage() {
   const brandData = useMemo(() => generateData(), []);
   const cashbackData = useMemo(() => generateCashbackData(), []);
 
-  // Map Fiber token data to include logos
+  // TODO: Once Fiber API includes token logos, remove this hardcoded mapping
+  // See: FIBER_API_ENHANCEMENT_PROPOSAL.md
+  // Proposed Fiber response should include: { symbol, name, logo_url, color, ... }
   const enrichCashbackTokens = (tokens) => {
     const logoMap = {
       'BONK': bonkLogo,
@@ -152,11 +154,14 @@ export default function StatisticsPage() {
     
     return tokens?.map(token => ({
       ...token,
+      // Once Fiber provides logo_url, use: logo: token.logo_url ? token.logo_url : null
       logo: logoMap[token.symbol] || null
     })) || null;
   };
 
-  // Assign colors to trending verticals (Fiber API might not include them)
+  // TODO: Once Fiber API includes category colors, remove this hardcoded mapping
+  // See: FIBER_API_ENHANCEMENT_PROPOSAL.md
+  // Proposed Fiber response should include: { vertical, color, sales_count, ... }
   const enrichTrendingVerticals = (verticals) => {
     const colorMap = {
       'Electronics': '#00D1FF',
@@ -173,6 +178,7 @@ export default function StatisticsPage() {
     
     return verticals?.map(v => ({
       ...v,
+      // Once Fiber provides color, use: color: v.color || colorMap[...] as fallback
       color: v.color || colorMap[v.vertical || v.name] || '#00D1FF'
     })) || null;
   };

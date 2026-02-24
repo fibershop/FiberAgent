@@ -202,4 +202,73 @@
 4. Community promotion (Reddit → Discord → Dev.to)
 5. Monitor adoption metrics
 
-*Last updated: Session compaction point — Phase 1 shipped, Phase 2 planning*
+---
+
+## CRITICAL MESSAGING & POSITIONING (Feb 24, 2026)
+
+### Core Message Architecture (FINAL)
+**User Experience:** Zero friction
+- Users just chat normally: "Find me running shoes"
+- No signup, no wallet creation needed
+- **Agent handles EVERYTHING:** creates wallet, understands Fiber integration, executes searches
+
+**Agent Architecture:** Handles all complexity
+- Agent creates crypto wallet silently
+- Agent understands Fiber API/MCP
+- Agent handles affiliate links, cashback distribution
+- **Crypto is required infrastructure** (only trustless way agents can receive payments globally)
+- Commission structure: **Agent gets 100% of affiliate commission, decides with user what to do** (cashback to wallet, spend, donate, etc.)
+
+### Market Positioning (NOT Conversion, Creating NEW Use Case)
+**Current State (2026):**
+- 750M+ people use LLMs (ChatGPT, Gemini, Claude)
+- **~0% shop via AI agents** (essentially zero — no published data, brand new behavior)
+- This is greenfield opportunity, NOT cannibalism
+
+**Growth Projection:**
+- Graph shows green line (LLM users 750M → 1B+) + orange line (shopping adoption ~0% → 5-30% by 2027)
+- If 5-10% adoption by late 2026, 25-30% by 2027 = 50M-225M+ shopping via AI
+- Sources: ChatGPT 200M+ MAU (Feb 2024), Gemini billions across Google, Claude growing
+- **No sourced data on current AI shopping** (it's too new to measure)
+
+### Tone & Framing (CRITICAL)
+- ❌ "Reach 750M LLM users" → ✅ "750M people use AI, almost none shop via it yet"
+- ❌ "No crypto, no wallets" → ✅ "No crypto/wallets for users; agents handle it"
+- ❌ "Instant settlement" → ✅ "After refund window (30-90 days), crypto enables trustless payment"
+- ❌ "Earn to enrich agents" → ✅ "Earn when user gets value (best deals)"
+- ✅ "Shopping in chat is brand new" (we're creating it, not converting existing demand)
+
+### UI/Design Decisions (This Session)
+1. **Removed "Compare" from navbar** → moved to link from Demo page
+2. **Unified dark theme** (#0a0a0a background) across all pages (Landing, Demo, Agent, Docs, OnePager, VisualDemo)
+3. **Green accent borders** (#00d084) on all major sections
+4. **Docs page completely redesigned** to match DemoPage styling (dark, glass cards, proper contrast)
+5. **CTA buttons fixed** at end of OnePager (proper green styling, hover effects)
+6. **Bullet points in "Why FiberAgent Wins"** — numbers sit NEXT TO text (not below), 2-column grid
+7. **Checkmarks removed duplicates** — no ::before pseudo-elements conflicting with HTML checkmarks
+8. **About page moved to right side of navbar** (using margin-left: auto)
+9. **Graph redesigned** — line chart with two series:
+   - Green: LLM user growth (historical + projected)
+   - Orange: Shopping adoption (now in 2026, projects to 2027)
+
+### What NOT to Say
+- ❌ Don't mention MON or Monad-specific language — use "crypto" (any blockchain works)
+- ❌ Don't claim instant earnings — commission comes after refund window
+- ❌ Don't cite "0.5-1% shopping today" — no source, we removed it
+- ❌ Don't say "integrate into OpenClaw" — it's an "optional skill FOR OpenClaw"
+- ❌ Don't use yellow accent colors (#E5FF00) — use green (#00d084) everywhere
+- ❌ Don't hide the fact crypto is required — it's the value prop, not a liability
+
+### Security Status
+- ⚠️ **Private key rotation URGENT** — exposed key in deleted commits
+  - Affected: `0xeC6E8DD2BE0053A4a47E6d551902dBADBd6c314b`, `0x790b405d466f7fddcee4be90d504eb56e3fedcae`
+  - Action: Move funds, create new wallets, update .env
+
+### Next Session Priorities
+1. **Wallet rotation** (critical security)
+2. **ERC-8004 description update** on 8004scan
+3. **ClawHub submission** (manual)
+4. **Community promotion** (Reddit → Discord → Dev.to)
+5. Monitor adoption metrics
+
+*Last updated: Feb 24, 2026 — Full messaging architecture + UI/design system finalized*

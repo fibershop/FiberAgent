@@ -36,9 +36,16 @@ export default function handler(req, res) {
     return res.status(result.statusCode || 409).json(result);
   }
 
+  // Generate Bearer token for the new agent
+  const auth_token = utils.generateAuthToken(agent_id);
+
   return res.status(200).json({
     success: true,
     message: 'Agent registered successfully',
-    agent: result.agent
+    agent: result.agent,
+    auth_token: auth_token,
+    token_type: 'Bearer',
+    created_at: new Date().toISOString(),
+    note: 'Use auth_token in Authorization header for subsequent API calls: "Authorization: Bearer <token>"'
   });
 }

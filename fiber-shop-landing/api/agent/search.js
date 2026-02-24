@@ -97,6 +97,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Session 1: Validate Bearer token (optional for backward compatibility)
+  // Will be REQUIRED in Session 2 after all clients are updated
+  const auth_token = utils.getAuthToken(req);
+  if (auth_token) {
+    const validated_agent_id = utils.validateAuthToken(auth_token);
+    if (!validated_agent_id) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Invalid or expired Bearer token',
+        required: 'Authorization: Bearer <token>'
+      });
+    }
+    // Optional: verify that the token's agent_id matches the requesting agent_id
+    // if (validated_agent_id !== agent_id) { return 403; }
+  }
+
   if (!keywords || !agent_id) {
     return res.status(400).json({
       error: 'Missing required fields',

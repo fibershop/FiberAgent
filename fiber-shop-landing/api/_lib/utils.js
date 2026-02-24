@@ -385,7 +385,7 @@ function getAgentStats(agentId) {
 function setCorsHeaders(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 function handleCors(req, res) {
@@ -394,6 +394,72 @@ function handleCors(req, res) {
     return true;
   }
   return false;
+}
+
+/**
+ * Authentication: Bearer Token Generation & Validation
+ * Session 1: In-memory tokens (reset on deploy)
+ * Session 2: Will migrate to persistent DB
+ */
+
+// In-memory token store (maps token → {agent_id, created_at})
+let tokenStore = {};
+
+// Secret for token signing (in production, use environment variable)
+const TOKEN_SECRET = process.env.AUTH_TOKEN_SECRET || 'fiberagent_dev_secret_change_in_production';
+
+// Generate a signed Bearer token for an agent
+function generateAuthToken(agentId) {
+  // Simple token format: base64(agent_id:timestamp:random):signature
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(7);
+  const tokenData = `${agentId}:${timestamp}:${random}`;
+  
+  // Create a simple signature (not cryptographic, just for demo)
+  // In production, use: crypto.createHmac('sha256', TOKEN_SECRET).update(tokenData).digest('hex')
+  const signature = Buffer.from(tokenData).toString('base64');
+  
+  const token = `sk_live_${signature}`;
+  
+  // Store token in memory (will reset on cold start — Session 2 fixes this)
+  tokenStore[token] = {
+    agent_id: agentId,
+    created_at: new Date().toISOString(),
+    valid: true
+  };
+  
+  return token;
+}
+
+// Validate a Bearer token
+function validateAuthToken(token) {
+  if (!token) return null;
+  
+  // Remove 'Bearer ' prefix if present
+  const cleanToken = token.replace(/^Bearer\s+/i, '');
+  
+  if (!tokenStore[cleanToken]) {
+    return null; // Token not found or invalid
+  }
+  
+  const tokenData = tokenStore[cleanToken];
+  if (!tokenData.valid) {
+    return null;
+  }
+  
+  return tokenData.agent_id; // Return agent_id if valid
+}
+
+// Get Bearer token from request (from Authorization header or query param)
+function getAuthToken(req) {
+  // Try Authorization header first
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    return authHeader.replace(/^Bearer\s+/i, '');
+  }
+  
+  // Fallback: try query parameter (less secure, for testing)
+  return req.query.auth_token || req.body?.auth_token || null;
 }
 
 export {
@@ -407,5 +473,8 @@ export {
   recordSearch,
   getAgentStats,
   setCorsHeaders,
-  handleCors
+  handleCors,
+  generateAuthToken,
+  validateAuthToken,
+  getAuthToken
 };

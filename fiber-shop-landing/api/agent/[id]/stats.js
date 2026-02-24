@@ -1,6 +1,7 @@
 /**
  * GET /api/agent/:id/stats
  * Get agent performance statistics
+ * Requires Bearer token authorization (Session 1)
  */
 
 import * as utils from '../../_lib/utils.js';
@@ -20,6 +21,29 @@ export default function handler(req, res) {
 
   if (!agentId) {
     return res.status(400).json({ error: 'agent_id is required' });
+  }
+
+  // Session 1: Validate Bearer token (optional for backward compatibility)
+  // Will be REQUIRED in Session 2 after all clients are updated
+  const auth_token = utils.getAuthToken(req);
+  if (auth_token) {
+    const validated_agent_id = utils.validateAuthToken(auth_token);
+    if (!validated_agent_id) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Invalid or expired Bearer token',
+        required: 'Authorization: Bearer <token>'
+      });
+    }
+    // Verify that the token's agent_id matches the requested agent
+    if (validated_agent_id !== agentId) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Token is for a different agent',
+        requested_agent: agentId,
+        token_agent: validated_agent_id
+      });
+    }
   }
 
   let stats = utils.getAgentStats(agentId);
@@ -44,7 +68,7 @@ export default function handler(req, res) {
       total_purchases_tracked: 0,
       fiber_points: Math.floor((stats.total_searches || 0) * 10),
       registered_at: utils.getAgent(agentId)?.registered_at || new Date().toISOString(),
-      note: 'Stats reset on cold start (serverless). Persistent stats coming with database integration.'
+      note: 'Stats reset on cold start (serverless). Persistent stats coming with database integration in Session 2.'
     }
   });
 }

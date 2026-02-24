@@ -136,18 +136,102 @@ export default function StatisticsPage() {
   const brandData = useMemo(() => generateData(), []);
   const cashbackData = useMemo(() => generateCashbackData(), []);
 
+  // Map Fiber token data to include logos
+  const enrichCashbackTokens = (tokens) => {
+    const logoMap = {
+      'BONK': bonkLogo,
+      'MON': monadLogo,
+      'SOL': solanaLogo,
+      'CHOG': chogLogo,
+      'MF': mfLogo,
+      'USDC': usd1Logo,
+      'PENGU': penguLogo,
+      'VALOR': valorLogo,
+      'AOL': aolLogo
+    };
+    
+    return tokens?.map(token => ({
+      ...token,
+      logo: logoMap[token.symbol] || null
+    })) || null;
+  };
+
   // Use real data if available, otherwise use demo data
-  const stats = platformStats || {
+  const enrichedTokens = platformStats?.dashboard?.cashback_token_ranking 
+    ? enrichCashbackTokens(platformStats.dashboard.cashback_token_ranking)
+    : null;
+
+  const stats = platformStats ? {
+    ...platformStats,
+    dashboard: {
+      ...platformStats.dashboard,
+      cashback_token_ranking: enrichedTokens || platformStats.dashboard?.cashback_token_ranking
+    }
+  } : {
     total_searches: 5,
     total_purchases_made: 3,
     total_purchase_value_usd: 715,
+    total_agents_registered: 75,
     dashboard: {
       kpis: {
         total_volume: { value_usd: 715, series: [0, 0, 0, 715, 0, 0] },
         total_searches: { value: 5, series: [0, 0, 0, 0, 0, 5] },
         active_agents: { value: 75, series: [0, 0, 0, 0, 0, 4] },
         cashback_sent: { value_usd: 0.08, purchases_paid: 3 }
-      }
+      },
+      // Demo cashback token ranking (shows with logos until real data arrives)
+      cashback_token_ranking: [
+        {
+          rank: 1,
+          symbol: 'BONK',
+          name: 'Bonk',
+          network: 'Solana',
+          selected_by: 749,
+          logo: bonkLogo
+        },
+        {
+          rank: 2,
+          symbol: 'MON',
+          name: 'Monad',
+          network: 'Monad',
+          selected_by: 53,
+          logo: monadLogo
+        },
+        {
+          rank: 3,
+          symbol: 'SOL',
+          name: 'Solana',
+          network: 'Solana',
+          selected_by: 4,
+          logo: solanaLogo
+        },
+        {
+          rank: 4,
+          symbol: 'USDC',
+          name: 'USD Coin',
+          network: 'Multiple',
+          selected_by: 2,
+          logo: usd1Logo
+        },
+        {
+          rank: 5,
+          symbol: 'AOL',
+          name: "America's Official Launchpad",
+          network: 'Solana',
+          selected_by: 1,
+          logo: aolLogo
+        }
+      ],
+      top_performing_brands: [
+        { merchant: 'Nike', sales_count: 37, purchase_value_usd: 5550 },
+        { merchant: 'Amazon', sales_count: 42, purchase_value_usd: 3150 },
+        { merchant: 'Best Buy', sales_count: 28, purchase_value_usd: 4200 }
+      ],
+      trending_verticals: [
+        { vertical: 'Electronics', sales_count: 94, purchase_value_usd: 14100 },
+        { vertical: 'Fashion', sales_count: 66, purchase_value_usd: 13200 },
+        { vertical: 'Home & Garden', sales_count: 38, purchase_value_usd: 7600 }
+      ]
     }
   };
 

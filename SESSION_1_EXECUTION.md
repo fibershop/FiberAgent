@@ -226,8 +226,8 @@
 
 ## Execution Checklist
 
-- [ ] Task 1: Bearer token auth (2-3h)
-- [ ] Task 2: MCP JSON-RPC handler (3-4h)
+- [x] Task 1: Bearer token auth (2-3h) ✅ COMPLETE (6cfe5cf)
+- [ ] Task 2: MCP JSON-RPC handler (3-4h) 🔄 IN PROGRESS
 - [ ] Task 3: Code examples in OpenAPI (1h)
 - [ ] Task 4: MCP quickstart guide (1-2h)
 - [ ] Task 5: QUICKSTART.md (2-3h)

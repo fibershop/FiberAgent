@@ -275,35 +275,45 @@
 
 ---
 
-## Oracle PM Audit Summary (Feb 24, 2026 — COMPLETE)
+## Oracle PM Audit Summary (Feb 24, 2026 — COMPLETE + FIBER API DIAGNOSTICS PENDING)
 
-### Status: ✅ AUDIT COMPLETE - Ready for Decision & Execution
+### Status: ✅ AUDIT COMPLETE | 🔧 ISSUE 1 DIAGNOSTIC IN PROGRESS
 
-**Key Documents:**
-- ✅ `ORACLE_AUDIT_SUMMARY.md` — Executive summary (1 page, all decision info)
-- ✅ `memory/2026-02-24-oracle-audit.md` — Detailed audit (1200+ lines, full technical specs)
-- ✅ `ORACLE_AUDIT_FIXES.md` — Fix roadmap (1100+ lines, phase-by-phase implementation)
-- ✅ All committed to git with detailed changelogs
+**Fiber API Status:** ✅ LIVE (confirmed by Laurent)
+- Root cause of 0 results: Configuration issue, not missing pipeline
+- Diagnostics: Awaiting Laurent's test results
+- Timeline: Fix likely <1 hour once credentials validated
 
-**What's Documented:**
-- ✅ 6 Critical Issues (2 blockers, 2 security, 1 UX, 1 MCP)
-- ✅ 5 Product Gaps (1 blocker, 3 features, 1 analytics)
-- ✅ 4 Developer Experience Issues (3 quick wins, 1 polish)
-- ✅ Risk assessment matrix (impact on Oracle, ClawHub, community)
-- ✅ 3-session roadmap: 24-30 hours total (8-10h, 10-12h, 6-8h)
-- ✅ Top 3 immediate fixes ranked by impact/effort
-- ✅ Top 5 features ranked by agent value
-- ✅ Implementation details + code examples for all fixes
-- ✅ File checklist for each session
-- ✅ DX quick wins integrated into Sessions 1-2
+**Key Documents (8 total, 7000+ lines):**
+- ✅ `ORACLE_AUDIT_SUMMARY.md` — Executive summary (decisions quick ref)
+- ✅ `ORACLE_SCORECARD.md` — Component breakdown + score trajectory
+- ✅ `ORACLE_DATA_REQUIREMENTS.md` — Minimum data Oracle needs
+- ✅ `ORACLE_STRATEGIC_INPUT.md` — Oracle's workflow constraints
+- ✅ `FIBER_API_INTEGRATION_RECOMMENDATIONS.md` — 7 recommendations for Fiber team
+- ✅ `ORACLE_AUDIT_FIXES.md` — Phase-by-phase fix roadmap
+- ✅ `TEST_FIBER_API.sh` — Bash diagnostic script
+- ✅ `memory/2026-02-24-oracle-audit.md` — Full technical audit
 
-**Awaiting from Laurent:**
-1. Fiber API status (test command provided)
-2. Database choice (Postgres/Redis/DynamoDB)
-3. Timeline preference (aggressive/flexible)
-4. DX priority (Session 1 or defer to Session 3)
+**Comprehensive Coverage:**
+- ✅ 6 Critical Issues + 5 Product Gaps + 4 DX Issues (15 total findings)
+- ✅ Production scorecard: 3.6/10 today → 6.0/10 (S1) → 8.5/10 (S2) → 9.2/10 (S3)
+- ✅ Data availability analysis: 20% coverage (catalog blocks 80%)
+- ✅ Critical dependencies: Catalog → Auth → Stats → Comparison (linear)
+- ✅ Quick wins: Code examples, MCP guide, QUICKSTART.md (5-6h total)
+- ✅ Risk matrix + impact analysis (Oracle, ClawHub, community)
+- ✅ Session breakdown: 8-10h, 10-12h, 6-8h = 24-30h total
 
-**Next Step:** Confirm above, then start Session 1 implementation immediately.
+**Immediately Awaiting from Laurent:**
+1. **Fiber API diagnostics** — Run TEST_FIBER_API.sh, share results
+2. **API credentials** — Confirm key is valid, when it last worked
+3. **Database choice** — Postgres (recommended), Redis, DynamoDB, or Firestore
+4. **Timeline** — Aggressive (end of week) or flexible (next week)
+5. **DX priority** — Include in S1 or defer to S3
+
+**Once diagnostics complete:**
+- Issue 1 fixed (1 hour)
+- Session 1 begins (8-10 hours)
+- v1.0.2 production-ready in 2-3 days
 
 ---
 

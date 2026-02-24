@@ -8,7 +8,7 @@
  * can call Fiber API directly.
  */
 
-const FIBER_API = 'https://api.staging.fiber.shop/v1';
+const FIBER_API = 'https://api.fiber.shop/v1';
 
 export default async function handler(req, res) {
   // Enable CORS on this route

@@ -54,19 +54,19 @@ export default function AgentDiscovery() {
       title: 'Moltiverse Agent Registry',
       icon: '📋',
       description: 'FiberAgent is registered in the Moltiverse agent registry. Other agents can discover us by querying the registry with capabilities filter.',
-      code: `GET /moltiverse/registry?capabilities=commerce,rewards\n\nResponse:\n{\n  "agents": [\n    {\n      "id": "fiberagent-agent-001",\n      "name": "FiberAgent",\n      "url": "https://api.staging.fiber.shop/v1",\n      "capabilities": ["product_search", "affiliate_links", "cashback"]\n    }\n  ]\n}`
+      code: `GET /moltiverse/registry?capabilities=commerce,rewards\n\nResponse:\n{\n  "agents": [\n    {\n      "id": "fiberagent-agent-001",\n      "name": "FiberAgent",\n      "url": "https://api.fiber.shop/v1",\n      "capabilities": ["product_search", "affiliate_links", "cashback"]\n    }\n  ]\n}`
     },
     {
       title: 'Direct Agent Call',
       icon: '🔗',
       description: 'If an agent knows about FiberAgent, they can call us directly at our API endpoint.',
-      code: `GET /v1/agent/search?keywords=blue+rain+shoes&agent_id=calling-agent&wallet=wallet_address\nHost: api.staging.fiber.shop\n\nResponse:\n{\n  "success": true,\n  "results": [\n    {\n      "merchant_name": "Nike",\n      "cashback": "3.25%",\n      "affiliate_link": "https://api.staging.fiber.shop/r/w?c=123456&d=38604255&url=..."\n    }\n  ]\n}`
+      code: `GET /v1/agent/search?keywords=blue+rain+shoes&agent_id=calling-agent&wallet=wallet_address\nHost: api.fiber.shop\n\nResponse:\n{\n  "success": true,\n  "results": [\n    {\n      "merchant_name": "Nike",\n      "cashback": "3.25%",\n      "affiliate_link": "https://api.fiber.shop/r/w?c=123456&d=38604255&url=..."\n    }\n  ]\n}`
     },
     {
       title: 'Agent Marketplace',
       icon: '🛍️',
       description: 'Agents can browse the Moltiverse marketplace where FiberAgent is listed with our capabilities and reviews.',
-      code: `Agent Profile:\nName: FiberAgent\nType: Commerce\nRating: ⭐⭐⭐⭐⭐\nUsers: 1000+\nAPI Base: https://api.staging.fiber.shop/v1\nEndpoints: /agent/register, /agent/search, /agent/stats/*`
+      code: `Agent Profile:\nName: FiberAgent\nType: Commerce\nRating: ⭐⭐⭐⭐⭐\nUsers: 1000+\nAPI Base: https://api.fiber.shop/v1\nEndpoints: /agent/register, /agent/search, /agent/stats/*`
     }
   ];
 

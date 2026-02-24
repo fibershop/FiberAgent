@@ -201,15 +201,15 @@ export default function StatisticsPage() {
     }
   } : null;
 
-  const totalVolume = stats.total_purchase_value_usd || 715;
-  const totalSearches = stats.total_searches || 5;
+  const totalVolume = stats?.total_purchase_value_usd || 715;
+  const totalSearches = stats?.total_searches || 5;
   
   const networkStats = {
-    total_agents: stats.total_agents_registered || 75,
-    total_searches: stats.total_searches || 5,
-    total_conversions: stats.total_purchases_made || 3,
-    total_network_revenue: stats.total_purchase_value_usd || 715,
-    total_commissions_paid: stats.total_cashback_sent_usd || 0.08
+    total_agents: stats?.total_agents_registered || 75,
+    total_searches: stats?.total_searches || 5,
+    total_conversions: stats?.total_purchases_made || 3,
+    total_network_revenue: stats?.total_purchase_value_usd || 715,
+    total_commissions_paid: stats?.total_cashback_sent_usd || 0.08
   };
 
   const containerVariants = {

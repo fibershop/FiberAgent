@@ -48,6 +48,7 @@ export default function StatisticsPage() {
         // Fetch platform stats
         const platformRes = await fetch(`${FIBER_API}/agent/stats/platform`);
         const platformData = await platformRes.json();
+        console.log('Fiber API response:', platformData); // Debug: check what Fiber returns
         setPlatformStats(platformData.stats || platformData);
 
         // Fetch leaderboard

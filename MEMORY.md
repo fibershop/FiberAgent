@@ -172,7 +172,7 @@ Fiber just released three stats endpoints:
 - ✅ Chart bars animate up on page load
 - ✅ Metric values scale up with Framer Motion
 - ✅ Merchant cards slide in sequentially
-- ✅ 100% graceful fallback to demo data
+- ✅ ZERO fake data - loading spinner or error, NEVER demo data
 - ✅ Auto-refresh mechanism working (5 min cycle)
 
 **Delivered (Not Deferred):**
@@ -191,7 +191,7 @@ Fiber just released three stats endpoints:
 - 🟢 Rate limiting on all endpoints (API protection ✅)
 - 🟢 Animated dashboard (professional UX ✅)
 - 🟢 Real production data (live now)
-- 🟢 Graceful degradation (demo data always works)
+- 🟢 Zero fake data (loading state only, trust-first approach)
 - 🟢 Error handling framework (standardized responses)
 - 🟢 Analytics layer (trending + growth metrics)
 - 🟢 Smart deferrals (comparison strategy documented)

@@ -124,6 +124,10 @@ export default function StatisticsPage() {
     };
 
     fetchStats();
+    
+    // Auto-refresh every 5 minutes
+    const interval = setInterval(fetchStats, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // Fallback to demo data if API not available

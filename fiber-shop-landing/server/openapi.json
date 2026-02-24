@@ -79,6 +79,20 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "curl",
+            "source": "curl -X POST https://fiberagent.shop/api/agent/register \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"agent_id\": \"claude-shopping-001\",\n    \"agent_name\": \"Claude Shopping Helper\",\n    \"wallet_address\": \"0x790b405d466f7fddcee4be90d504eb56e3fedcae\",\n    \"crypto_preference\": \"MON\"\n  }'"
+          },
+          {
+            "lang": "python",
+            "source": "import requests\n\nresponse = requests.post(\n    'https://fiberagent.shop/api/agent/register',\n    json={\n        'agent_id': 'claude-shopping-001',\n        'agent_name': 'Claude Shopping Helper',\n        'wallet_address': '0x790b405d466f7fddcee4be90d504eb56e3fedcae',\n        'crypto_preference': 'MON'\n    }\n)\n\nprint(response.json())"
+          },
+          {
+            "lang": "javascript",
+            "source": "const response = await fetch('https://fiberagent.shop/api/agent/register', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({\n    agent_id: 'claude-shopping-001',\n    agent_name: 'Claude Shopping Helper',\n    wallet_address: '0x790b405d466f7fddcee4be90d504eb56e3fedcae',\n    crypto_preference: 'MON'\n  })\n});\n\nconst data = await response.json();\nconsole.log(data);"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Agent registered successfully",
@@ -137,6 +151,20 @@
             "required": false,
             "schema": { "type": "integer", "default": 10 },
             "description": "Number of results to return (max 50)"
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "curl",
+            "source": "curl \"https://fiberagent.shop/api/agent/search?keywords=nike%20shoes&agent_id=agent-001&size=5\""
+          },
+          {
+            "lang": "python",
+            "source": "import requests\n\nresponse = requests.get(\n    'https://fiberagent.shop/api/agent/search',\n    params={\n        'keywords': 'nike shoes',\n        'agent_id': 'agent-001',\n        'size': 5\n    }\n)\n\nfor product in response.json()['results']:\n    print(f\"{product['title']} - ${product['price']}\")\n    print(f\"  Cashback: {product['cashback']['rate']}\")"
+          },
+          {
+            "lang": "javascript",
+            "source": "const params = new URLSearchParams({\n  keywords: 'nike shoes',\n  agent_id: 'agent-001',\n  size: 5\n});\n\nconst response = await fetch(\n  `https://fiberagent.shop/api/agent/search?${params}`\n);\n\nconst data = await response.json();\ndata.results.forEach(product => {\n  console.log(`${product.title} - $${product.price}`);\n  console.log(`  Cashback: ${product.cashback.rate}`);\n});"
           }
         ],
         "responses": {
@@ -309,6 +337,20 @@
             "required": true,
             "schema": { "type": "string" },
             "example": "agent_ai_001"
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "curl",
+            "source": "curl \"https://fiberagent.shop/api/agent/agent-001/stats\" \\\n  -H \"Authorization: Bearer sk_live_...\""
+          },
+          {
+            "lang": "python",
+            "source": "import requests\n\nheaders = {\n    'Authorization': 'Bearer sk_live_...'\n}\n\nresponse = requests.get(\n    'https://fiberagent.shop/api/agent/agent-001/stats',\n    headers=headers\n)\n\nstats = response.json()\nprint(f\"Total searches: {stats['total_searches']}\")\nprint(f\"Total earnings: ${stats['total_earnings']}\")\nprint(f\"API calls: {stats['api_calls_made']}\")"
+          },
+          {
+            "lang": "javascript",
+            "source": "const response = await fetch(\n  'https://fiberagent.shop/api/agent/agent-001/stats',\n  {\n    headers: {\n      'Authorization': 'Bearer sk_live_...'\n    }\n  }\n);\n\nconst stats = await response.json();\nconsole.log(`Total searches: ${stats.total_searches}`);\nconsole.log(`Total earnings: $${stats.total_earnings}`);\nconsole.log(`API calls: ${stats.api_calls_made}`);"
           }
         ],
         "responses": {

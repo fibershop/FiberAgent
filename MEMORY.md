@@ -76,10 +76,15 @@ ad36132 Task 4-6: Add MCP Quickstart, QUICKSTART.md, and Developer section to ho
   - We aggregate and present data
 
 **Tasks (8-10 hours total):**
-- ⏳ **Task 1: Fiber Stats Integration** (2-3h) — Call Fiber API for agent stats
+- ✅ **Task 1: Fiber Stats Integration** (2-3h) — COMPLETE
+  - Created `/api/stats/platform.js` — Wraps Fiber `/v1/agent/stats/platform`
+  - Created `/api/stats/leaderboard.js` — Wraps Fiber `/v1/agent/stats/leaderboard`
+  - Created `/api/stats/trends.js` — Wraps Fiber `/v1/agent/stats/trends`
+  - Updated StatisticsPage to fetch real data from endpoints
+  - Graceful fallback to demo data if Fiber API unavailable
 - ⏳ **Task 2: Compare Endpoint** (2-3h) — Product comparison using Fiber data
 - ⏳ **Task 3: Analytics Layer** (2-3h) — Aggregate Fiber data into leaderboards
-- ⏳ **Task 4: Coordinate with Fiber** (🤝) — Request stats endpoints
+- ⏳ **Task 4: Coordinate with Fiber** (🤝) — Stats endpoints are LIVE (pending prod deployment)
 - ⏳ **Task 5: Rate Limit + Errors** (1-2h) — Protect API, handle failures gracefully
 
 **Architectural Decision:**
@@ -91,9 +96,40 @@ ad36132 Task 4-6: Add MCP Quickstart, QUICKSTART.md, and Developer section to ho
 
 **Git History (Session 2):**
 ```
+99dc860 Integrate Fiber stats API endpoints: /api/stats/platform, /api/stats/leaderboard, /api/stats/trends
+c9f94f7 Session 2: Pivot to API-first, stateless architecture — NO DATABASE, Fiber is source of truth
 ef5340e Add comprehensive Session 2 Plan: NO DATABASE — Fiber API First
 c56dbb1 Session 2 Start: Update StatisticsPage with realistic Fiber network data + demo stats endpoint
 ```
+
+**Real Fiber Endpoints (Ready to Integrate):**
+
+Fiber just released three stats endpoints:
+
+1. **`GET /v1/agent/stats/platform`** — Platform-wide metrics
+   - Total agents, searches, purchases
+   - Dashboard KPIs (volume, searches, active agents, cashback)
+   - Cashback token ranking (BONK leading, MON second)
+   - Top performing merchants
+   - Trending verticals (categories)
+
+2. **`GET /v1/agent/stats/leaderboard?limit=10`** — Top agents ranked by earnings
+   - Agent ID, name, total earnings, conversions
+   - Reputation score, founding agent status
+   - Pagination support
+
+3. **`GET /v1/agent/stats/trends?days=30`** — Historical trends
+   - Daily: new agents, new purchases, earnings
+   - 30-day window (configurable)
+   - Shows growth patterns
+
+**API Integration Status:**
+- ✅ Endpoints created on FiberAgent side (proxy + fallback to demo)
+- ✅ StatisticsPage updated to fetch real data
+- ⏳ Waiting for Fiber production deployment (currently on localhost:3000)
+- ✅ Graceful fallback working (shows demo data if Fiber unavailable)
+
+**Next:** Once Fiber pushes endpoints to production, StatisticsPage will auto-update with live data
 
 **Next: Session 2 (10-12 hours) — Production Readiness (8.5/10)**
 - Persist stats to Postgres/Redis

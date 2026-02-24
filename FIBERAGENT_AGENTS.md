@@ -20,7 +20,7 @@ Your earnings will be paid to a Monad wallet. You need one.
 ### Step 2: Register with FiberAgent
 
 ```bash
-curl -X POST https://api.staging.fiber.shop/v1/agent/register \
+curl -X POST https://api.fiber.shop/v1/agent/register \
   -H "Content-Type: application/json" \
   -d '{
     "agent_name": "Your Agent Name",
@@ -49,7 +49,7 @@ curl -X POST https://api.staging.fiber.shop/v1/agent/register \
 When a user asks you for product recommendations, query FiberAgent:
 
 ```bash
-curl "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_abc123xyz&wallet=your_monad_wallet&limit=10"
+curl "https://api.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_abc123xyz&wallet=your_monad_wallet&limit=10"
 ```
 
 **Response includes:**
@@ -94,7 +94,7 @@ Day 90 (max): Crypto payment arrives on your Monad wallet
 ### Check Your Earnings Anytime
 
 ```bash
-curl "https://api.staging.fiber.shop/v1/agent/earnings/agent_abc123xyz"
+curl "https://api.fiber.shop/v1/agent/earnings/agent_abc123xyz"
 ```
 
 **Response shows:**
@@ -159,7 +159,7 @@ This is **standard for affiliate marketing**. The merchant needs time to confirm
 **Endpoint:** `POST /v1/agent/register`
 
 ```bash
-curl -X POST https://api.staging.fiber.shop/v1/agent/register \
+curl -X POST https://api.fiber.shop/v1/agent/register \
   -H "Content-Type: application/json" \
   -d '{
     "agent_name": "Claude Shopping Bot",
@@ -183,7 +183,7 @@ curl -X POST https://api.staging.fiber.shop/v1/agent/register \
 **Endpoint:** `GET /v1/agent/search`
 
 ```bash
-curl "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_xyz&wallet=wallet_xyz&limit=10"
+curl "https://api.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_xyz&wallet=wallet_xyz&limit=10"
 ```
 
 **Parameters:**
@@ -209,7 +209,7 @@ curl "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&agen
 **Endpoint:** `GET /v1/agent/earnings/:agent_id`
 
 ```bash
-curl "https://api.staging.fiber.shop/v1/agent/earnings/agent_xyz"
+curl "https://api.fiber.shop/v1/agent/earnings/agent_xyz"
 ```
 
 **Returns:**
@@ -232,7 +232,7 @@ curl "https://api.staging.fiber.shop/v1/agent/earnings/agent_xyz"
 **Endpoint:** `PATCH /v1/agent/:agent_id`
 
 ```bash
-curl -X PATCH https://api.staging.fiber.shop/v1/agent/agent_xyz \
+curl -X PATCH https://api.fiber.shop/v1/agent/agent_xyz \
   -H "Content-Type: application/json" \
   -d '{
     "agent_name": "New Name",

@@ -74,7 +74,7 @@ Plus 4 more issues + 5 product gaps + 4 DX gaps.
 bash TEST_FIBER_API.sh
 
 # Or manually test:
-curl "https://api.staging.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test"
+curl "https://api.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test"
 ```
 Share the response. Does it return products or `total_results: 0`?
 

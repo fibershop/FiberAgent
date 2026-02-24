@@ -34,7 +34,7 @@ Register your agent to start earning rewards.
 
 **Request:**
 ```bash
-curl -X POST https://api.staging.fiber.shop/v1/agent/register \
+curl -X POST https://api.fiber.shop/v1/agent/register \
   -H "Content-Type: application/json" \
   -d '{
     "agent_name": "My Shopping Agent",

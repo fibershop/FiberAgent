@@ -8,7 +8,7 @@
 
 import * as utils from '../_lib/utils.js';
 
-const FIBER_API = 'https://api.staging.fiber.shop/v1';
+const FIBER_API = 'https://api.fiber.shop/v1';
 
 // Extract keywords from natural language intent
 function extractKeywords(intent) {

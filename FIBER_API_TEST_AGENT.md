@@ -40,7 +40,7 @@ agent_51ab9e782a306e789309d5be
 
 **Test Command (Staging):**
 ```bash
-curl -s "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_51ab9e782a306e789309d5be&limit=5" | jq
+curl -s "https://api.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_51ab9e782a306e789309d5be&limit=5" | jq
 ```
 
 **Note:** Staging endpoint still works but production is now the primary.
@@ -100,7 +100,7 @@ curl -s "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&a
   "fiber_api": {
     "test_agent_id": "agent_51ab9e782a306e789309d5be",
     "test_wallet": "0x0699bE7e51c21F27e70164c2a1aA76E85B2e5343",
-    "endpoint": "https://api.staging.fiber.shop/v1",
+    "endpoint": "https://api.fiber.shop/v1",
     "verified": "2026-02-24"
   }
 }

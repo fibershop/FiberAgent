@@ -145,16 +145,8 @@ export default function StatisticsPage() {
     }
   } : null;
 
-  const totalVolume = stats?.total_purchase_value_usd ?? 0;
-  const totalSearches = stats?.total_searches ?? 0;
-  
-  const networkStats = {
-    total_agents: stats?.total_agents_registered ?? 0,
-    total_searches: stats?.total_searches ?? 0,
-    total_conversions: stats?.total_purchases_made ?? 0,
-    total_network_revenue: stats?.total_purchase_value_usd ?? 0,
-    total_commissions_paid: stats?.total_cashback_sent_usd ?? 0
-  };
+  // Only show meaningful metrics that have actual data
+  // Removed fake "conversions" and "volume" metrics that don't have context
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -231,34 +223,31 @@ export default function StatisticsPage() {
           initial="hidden"
           animate="visible"
         >
-          {/* Row 1: Key Metrics */}
+          {/* Row 1: Network Overview */}
           <motion.div className={styles.metricCard} variants={itemVariants}>
-            <div className={styles.cardHeader}>Total Volume</div>
+            <div className={styles.cardHeader}>Available Merchants</div>
             <motion.div 
               className={styles.metricValue}
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              ${(totalVolume / 1000000).toFixed(1)}M
+              {(stats?.total_merchants_catalog || 0).toLocaleString()}
             </motion.div>
-            {stats?.dashboard?.kpis?.total_volume?.change_pct_vs_last_week !== undefined && (
-              <div className={styles.metricTrend}>
-                {stats.dashboard.kpis.total_volume.change_pct_vs_last_week > 0 ? '+' : ''}
-                {stats.dashboard.kpis.total_volume.change_pct_vs_last_week}% <span className={styles.trendLabel}>vs last week</span>
-              </div>
-            )}
-            <div className={styles.miniChart}>
-              {(stats?.dashboard?.kpis?.total_volume?.series || []).map((height, idx) => (
-                <motion.div 
-                  key={idx}
-                  className={styles.chartBar} 
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${Math.min(height, 100)}%` }}
-                  transition={{ duration: 0.8, delay: idx * 0.1 }}
-                />
-              ))}
-            </div>
+            <div className={styles.metricTrend}>Across the Fiber network</div>
+          </motion.div>
+
+          <motion.div className={styles.metricCard} variants={itemVariants}>
+            <div className={styles.cardHeader}>Registered Agents</div>
+            <motion.div 
+              className={styles.metricValue}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              {stats?.total_agents_registered || 0}
+            </motion.div>
+            <div className={styles.metricTrend}>{stats?.active_agents || 0} currently active</div>
           </motion.div>
 
           <motion.div className={styles.metricCard} variants={itemVariants}>
@@ -267,55 +256,12 @@ export default function StatisticsPage() {
               className={styles.metricValue}
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              {(totalSearches / 1000).toFixed(1)}k
-            </motion.div>
-            {stats?.dashboard?.kpis?.total_searches?.change_pct_vs_last_week !== undefined && (
-              <div className={styles.metricTrend}>
-                {stats.dashboard.kpis.total_searches.change_pct_vs_last_week > 0 ? '+' : ''}
-                {stats.dashboard.kpis.total_searches.change_pct_vs_last_week}% <span className={styles.trendLabel}>vs last week</span>
-              </div>
-            )}
-            <div className={styles.miniChart}>
-              {(stats?.dashboard?.kpis?.total_searches?.series || []).map((height, idx) => (
-                <motion.div 
-                  key={idx}
-                  className={styles.chartBar} 
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${Math.min(height, 100)}%` }}
-                  transition={{ duration: 0.8, delay: idx * 0.1 }}
-                />
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div className={styles.metricCard} variants={itemVariants}>
-            <div className={styles.cardHeader}>Network Conversions</div>
-            <motion.div 
-              className={styles.metricValue}
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              {networkStats.total_conversions}
+              {stats?.total_searches || 0}
             </motion.div>
-            {stats?.dashboard?.kpis?.active_agents?.change_pct_vs_last_week !== undefined && (
-              <div className={styles.metricTrend}>
-                {stats.dashboard.kpis.active_agents.change_pct_vs_last_week > 0 ? '+' : ''}
-                {stats.dashboard.kpis.active_agents.change_pct_vs_last_week}% <span className={styles.trendLabel}>vs last week</span>
-              </div>
-            )}
-            <div className={styles.miniChart}>
-              {(stats?.dashboard?.kpis?.active_agents?.series || []).map((height, idx) => (
-                <motion.div 
-                  key={idx}
-                  className={styles.chartBar} 
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${Math.min(height, 100)}%` }}
-                  transition={{ duration: 0.8, delay: idx * 0.1 }}
-                />
-              ))}
+            <div className={styles.metricTrend}>
+              {stats?.searches_today || 0} today · {stats?.searches_this_week || 0} this week
             </div>
           </motion.div>
 

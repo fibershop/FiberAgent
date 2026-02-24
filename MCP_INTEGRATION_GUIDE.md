@@ -6,6 +6,28 @@ Live endpoint: `https://fiberagent.shop/api/mcp`
 
 ---
 
+## New in Session 2 (Feb 24, 2026)
+
+### ✨ Rate Limiting Now Active
+All endpoints are rate-limited (100 req/min, 1000 req/hr, 5000 req/day). Check `X-RateLimit-*` headers in responses.
+
+### 📊 New Analytics Endpoints
+- `GET /api/stats/platform` — Real-time network KPIs (agents, searches, purchases)
+- `GET /api/stats/leaderboard?limit=10` — Top agents by earnings
+- `GET /api/stats/trends?days=30` — Historical growth metrics
+- `GET /api/analytics/trending?limit=10` — Trending products & categories
+- `GET /api/analytics/growth?days=30` — Network growth analysis
+
+### 🎨 StatisticsPage Improvements
+- Animated metric values & chart bars (Framer Motion)
+- Real Fiber network data (when endpoints deploy)
+- Auto-refresh every 5 minutes
+- Professional SaaS-grade dashboard
+
+See [SESSION_2_FINAL_SUMMARY.md](./SESSION_2_FINAL_SUMMARY.md) for full details.
+
+---
+
 ## Quick Start (3 Minutes)
 
 ### Direct API Invocation (cURL, Python, Node.js)

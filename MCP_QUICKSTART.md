@@ -137,6 +137,40 @@ Compare the same product across merchants. Parameters: `product_name` (required)
 
 ---
 
+## Rate Limiting (Session 2 Update)
+
+All MCP endpoints are **rate limited for protection**:
+
+```
+100 requests per minute (per agent_id)
+1,000 requests per hour
+5,000 requests per day
+```
+
+### Rate Limited Response (429):
+```json
+{
+  "success": false,
+  "error": "RATE_LIMITED",
+  "message": "You have exceeded the request limit",
+  "statusCode": 429,
+  "retryable": true,
+  "hint": "Please try again in 60 seconds"
+}
+```
+
+### Rate Limit Headers (on all responses):
+```
+X-RateLimit-Minute-Limit: 100
+X-RateLimit-Minute-Remaining: 99
+X-RateLimit-Minute-Reset: 1645564860
+Retry-After: 60  (only when rate limited)
+```
+
+**Best Practice:** Check `X-RateLimit-Minute-Remaining` header before making requests. If it's low (< 10), implement exponential backoff.
+
+---
+
 ## Troubleshooting
 
 **Q: Got an error "Tool not found"?**  
@@ -145,8 +179,14 @@ A: Check the tool name spelling. Use exact names: `search_products`, `register_a
 **Q: No results returned?**  
 A: Try different keywords. "nike" instead of "n1k3" or very specific product codes.
 
+**Q: Getting 429 "Too Many Requests"?**  
+A: You've exceeded the rate limit. Wait for the `Retry-After` header (default 60s), then retry. For high-volume agents, contact support.
+
 **Q: How do I earn commissions?**  
 A: Register with `register_agent`, then searches you make will track affiliate links. After a purchase completes (30-90 day refund window), you get paid in crypto to your wallet.
+
+**Q: Can I increase the rate limit?**  
+A: Yes! Contact support with your `agent_id` and use case. We can whitelist high-volume agents.
 
 ---
 

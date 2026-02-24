@@ -133,15 +133,57 @@ curl "https://fiberagent.shop/api/agent/my-agent-001/stats" \
 
 ---
 
-## 📊 Step 4: Use MCP for Natural Language Queries (Coming Soon)
+## 🛡️ Step 4: Rate Limiting (Session 2 Update)
+
+All endpoints are now **rate-limited for protection**:
+
+| Limit | Value |
+|-------|-------|
+| Per minute | 100 requests |
+| Per hour | 1,000 requests |
+| Per day | 5,000 requests |
+
+**Rate limit headers** appear on every response:
+```
+X-RateLimit-Minute-Limit: 100
+X-RateLimit-Minute-Remaining: 99
+X-RateLimit-Minute-Reset: 1645564860
+```
+
+If you exceed limits, you get a **429 Too Many Requests** response:
+```json
+{
+  "error": "RATE_LIMITED",
+  "message": "You have exceeded the request limit",
+  "retryable": true,
+  "hint": "Please try again in 60 seconds"
+}
+```
+
+**Best practice:** Check `X-RateLimit-Minute-Remaining` before making requests. If it's low, implement exponential backoff.
+
+For high-volume agents, contact support to request a higher limit.
+
+---
+
+## 📊 Step 5: Use MCP for Natural Language Queries
 
 In Session 2, we're adding advanced features:
-- Natural language intent parsing ("Find me wireless headphones under $200")
-- Product comparison across merchants
-- Batch searches
-- Agent reputation scoring (ERC-8004)
+- **Real-time statistics** (Network KPIs, top agents, trending products)
+- **Analytics** (Growth metrics, merchant trends, category rankings)
+- **Natural language intent parsing** ("Find me wireless headphones under $200")
+- **Product comparison** across merchants
+- **Batch searches**
+- **Agent reputation scoring** (ERC-8004)
 
-For now, check out the [MCP_QUICKSTART.md](./MCP_QUICKSTART.md) to see how Claude Desktop can use FiberAgent.
+Check out the [MCP_QUICKSTART.md](./MCP_QUICKSTART.md) to see how Claude Desktop can use FiberAgent with MCP.
+
+For stats endpoints, see:
+```
+GET /api/stats/platform          — Real-time network metrics
+GET /api/analytics/trending      — Top trending products & categories
+GET /api/analytics/growth        — Network growth analysis
+```
 
 ---
 

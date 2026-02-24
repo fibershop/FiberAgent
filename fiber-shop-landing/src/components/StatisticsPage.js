@@ -242,14 +242,19 @@ export default function StatisticsPage() {
             >
               ${(totalVolume / 1000000).toFixed(1)}M
             </motion.div>
-            <div className={styles.metricTrend}>+12.5% <span className={styles.trendLabel}>vs last week</span></div>
+            {stats?.dashboard?.kpis?.total_volume?.change_pct_vs_last_week !== undefined && (
+              <div className={styles.metricTrend}>
+                {stats.dashboard.kpis.total_volume.change_pct_vs_last_week > 0 ? '+' : ''}
+                {stats.dashboard.kpis.total_volume.change_pct_vs_last_week}% <span className={styles.trendLabel}>vs last week</span>
+              </div>
+            )}
             <div className={styles.miniChart}>
-              {[40, 60, 30, 80, 50, 100].map((height, idx) => (
+              {(stats?.dashboard?.kpis?.total_volume?.series || []).map((height, idx) => (
                 <motion.div 
                   key={idx}
                   className={styles.chartBar} 
                   initial={{ height: 0 }}
-                  whileInView={{ height: `${height}%` }}
+                  whileInView={{ height: `${Math.min(height, 100)}%` }}
                   transition={{ duration: 0.8, delay: idx * 0.1 }}
                 />
               ))}
@@ -266,14 +271,19 @@ export default function StatisticsPage() {
             >
               {(totalSearches / 1000).toFixed(1)}k
             </motion.div>
-            <div className={styles.metricTrend}>+8.2% <span className={styles.trendLabel}>vs last week</span></div>
+            {stats?.dashboard?.kpis?.total_searches?.change_pct_vs_last_week !== undefined && (
+              <div className={styles.metricTrend}>
+                {stats.dashboard.kpis.total_searches.change_pct_vs_last_week > 0 ? '+' : ''}
+                {stats.dashboard.kpis.total_searches.change_pct_vs_last_week}% <span className={styles.trendLabel}>vs last week</span>
+              </div>
+            )}
             <div className={styles.miniChart}>
-              {[30, 40, 60, 50, 70, 90].map((height, idx) => (
+              {(stats?.dashboard?.kpis?.total_searches?.series || []).map((height, idx) => (
                 <motion.div 
                   key={idx}
                   className={styles.chartBar} 
                   initial={{ height: 0 }}
-                  whileInView={{ height: `${height}%` }}
+                  whileInView={{ height: `${Math.min(height, 100)}%` }}
                   transition={{ duration: 0.8, delay: idx * 0.1 }}
                 />
               ))}
@@ -290,14 +300,19 @@ export default function StatisticsPage() {
             >
               {networkStats.total_conversions}
             </motion.div>
-            <div className={styles.metricTrend}>${(networkStats.total_network_revenue / 1000).toFixed(1)}k <span className={styles.trendLabel}>total revenue</span></div>
+            {stats?.dashboard?.kpis?.active_agents?.change_pct_vs_last_week !== undefined && (
+              <div className={styles.metricTrend}>
+                {stats.dashboard.kpis.active_agents.change_pct_vs_last_week > 0 ? '+' : ''}
+                {stats.dashboard.kpis.active_agents.change_pct_vs_last_week}% <span className={styles.trendLabel}>vs last week</span>
+              </div>
+            )}
             <div className={styles.miniChart}>
-              {[20, 35, 50, 60, 80, 95].map((height, idx) => (
+              {(stats?.dashboard?.kpis?.active_agents?.series || []).map((height, idx) => (
                 <motion.div 
                   key={idx}
                   className={styles.chartBar} 
                   initial={{ height: 0 }}
-                  whileInView={{ height: `${height}%` }}
+                  whileInView={{ height: `${Math.min(height, 100)}%` }}
                   transition={{ duration: 0.8, delay: idx * 0.1 }}
                 />
               ))}
@@ -332,6 +347,7 @@ export default function StatisticsPage() {
           </motion.div>
 
           {/* Row 2: Trending Verticals (Vertical Bar Chart) & Top Brands */}
+          {stats?.dashboard?.trending_verticals?.length > 0 && (
           <motion.div className={`${styles.dashboardCard} ${styles.colSpan1}`} variants={itemVariants}>
             <h3 className={styles.cardTitle}>Trending Verticals</h3>
             <div className={styles.verticalChart}>
@@ -355,7 +371,9 @@ export default function StatisticsPage() {
               })}
             </div>
           </motion.div>
+          )}
 
+          {stats?.dashboard?.top_performing_brands?.length > 0 && (
           <motion.div className={`${styles.dashboardCard} ${styles.colSpan2}`} variants={itemVariants}>
             <h3 className={styles.cardTitle}>Top Performing Merchants</h3>
             <div className={styles.brandsGrid}>
@@ -401,6 +419,7 @@ export default function StatisticsPage() {
               })}
             </div>
           </motion.div>
+          )}
         </motion.div>
         )}
       </div>

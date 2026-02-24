@@ -30,9 +30,9 @@ async function searchFiberAPI(keywords, agentId, size = 10) {
 
     const data = await response.json();
     
-    // Normalize Fiber API response to our format
-    if (data.products && Array.isArray(data.products)) {
-      return data.products.map((p, i) => ({
+    // Normalize Fiber API v1 response (production format)
+    if (data.results && Array.isArray(data.results)) {
+      return data.results.map((p, i) => ({
         productId: p.id || p.product_id || `fiber_${i}`,
         title: p.title || p.name || 'Unknown Product',
         brand: p.brand || extractBrand(p.merchant_name || ''),
@@ -41,7 +41,7 @@ async function searchFiberAPI(keywords, agentId, size = 10) {
         inStock: p.in_stock !== false,
         image: p.image_url || p.image || p.thumbnail || null,
         url: p.url || p.product_url || null,
-        affiliateUrl: p.affiliate_url || null,
+        affiliateUrl: p.affiliate_link || p.affiliate_url || null,
         shop: {
           merchantId: p.merchant_id || 0,
           name: p.merchant_name || p.merchant || 'Unknown',
@@ -49,16 +49,16 @@ async function searchFiberAPI(keywords, agentId, size = 10) {
           score: p.merchant_score || null
         },
         cashback: {
-          rate: p.cashback_rate ? `${p.cashback_rate}%` : (p.commission_rate ? `${p.commission_rate}%` : '0%'),
-          amount: p.cashback_amount || (p.price && p.cashback_rate ? +(p.price * p.cashback_rate / 100).toFixed(2) : 0),
+          rate: p.cashback?.display || (p.cashback_rate ? `${p.cashback_rate}%` : (p.commission_rate ? `${p.commission_rate}%` : '0%')),
+          amount: p.cashback?.amount_usd || p.cashback_amount || (p.price && p.cashback_rate ? +(p.price * p.cashback_rate / 100).toFixed(2) : 0),
           type: 'percentage'
         }
       }));
     }
 
-    // Alternative response format
-    if (data.results && Array.isArray(data.results)) {
-      return data.results;
+    // Legacy fallback for older API format
+    if (data.products && Array.isArray(data.products)) {
+      return data.products;
     }
 
     return null;

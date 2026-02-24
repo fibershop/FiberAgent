@@ -93,26 +93,28 @@ export default function StatisticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch real data from Fiber API (via our proxy endpoints)
+  // Fetch real data directly from Fiber API (CORS now enabled)
   useEffect(() => {
     const fetchStats = async () => {
       try {
         setLoading(true);
         
+        const FIBER_API = 'https://api.fiber.shop/v1';
+
         // Fetch platform stats
-        const platformRes = await fetch('/api/stats/platform');
+        const platformRes = await fetch(`${FIBER_API}/agent/stats/platform`);
         const platformData = await platformRes.json();
-        setPlatformStats(platformData.stats);
+        setPlatformStats(platformData.stats || platformData);
 
         // Fetch leaderboard
-        const leaderboardRes = await fetch('/api/stats/leaderboard?limit=10');
+        const leaderboardRes = await fetch(`${FIBER_API}/agent/stats/leaderboard?limit=10`);
         const leaderboardData = await leaderboardRes.json();
         setLeaderboard(leaderboardData.leaderboard || []);
 
         // Fetch trends
-        const trendsRes = await fetch('/api/stats/trends?days=30');
+        const trendsRes = await fetch(`${FIBER_API}/agent/stats/trends?days=30`);
         const trendsData = await trendsRes.json();
-        setTrends(trendsData.data || []);
+        setTrends(trendsData.daily_data || trendsData.data || []);
 
         setError(null);
       } catch (err) {

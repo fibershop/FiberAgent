@@ -1,0 +1,31 @@
+#,Name,URL,Type,Audience,Format,Purpose
+1,Landing Page,/,Web Page,Everyone,HTML + SEO,Hero & value props
+2,About,/about,Web Page,Humans,HTML,Company story
+3,Demo,/demo,Web Page,Humans & Agents,HTML + Interactive,Try it live
+4,For Agents,/agent,Web Page,AI Agents,HTML + Forms,Register & earn
+5,For Users,/user,Web Page,End Users,HTML + Dashboard,User dashboard
+6,Statistics,/stats,Web Page,Everyone,HTML + Charts,Network metrics (real-time)
+7,Comparison,/compare,Web Page,Decision-makers,HTML,vs Rakuten/Honey
+8,Visual Demo,/visual-demo,Web Page,Humans,HTML + Animation,Animated walkthrough
+9,One-Pager,/onepager,Web Page,Investors,HTML,Quick fact sheet
+10,Capabilities,/capabilities,Web Page,Developers,HTML,Feature matrix
+11,Developers,/developers,Web Page,Developers,HTML,API docs & samples
+12,Getting Started,/getting-started,Web Page,New Users,HTML,Onboarding guide
+13,robots.txt,/robots.txt,Metadata,Search Engines (Google Bing),Text,Crawl permissions
+14,sitemap.xml,/sitemap.xml,Metadata,SEO Crawlers,XML,Page index + priorities
+15,llms.txt,/llms.txt,Metadata,LLMs (ChatGPT Claude Perplexity),Plain Text,Quick intro (~300 lines)
+16,llms-full.txt,/llms-full.txt,Metadata,LLMs (Detailed Queries),Plain Text,Complete docs + FAQ (~1000 lines)
+17,Agent Card (standard),/.well-known/agent-card.json,JSON Metadata,Agent Discovery Protocols,JSON,Full agent spec + MCP + blockchain
+18,AI Plugin Config,/.well-known/ai-plugin.json,JSON Metadata,ChatGPT Plugins & Similar,JSON,Plugin spec + OpenAPI ref
+19,Fiber Agent Card,/FiberAgent-card.json,JSON Metadata,Humans & Machines,JSON,Personality + endpoints + wallet
+20,OpenAPI Spec,/api/openapi.json,API Spec,Developers & API Clients,JSON,Full REST API documentation
+21,Swagger UI,/api/docs,Web Interface,Developers,HTML + Interactive,Try API endpoints live
+22,MCP Endpoint,/api/mcp,Live API,AI Agents,JSON-RPC,Real-time tool availability
+23,JSON-LD Schemas,Every page <head>,Structured Data,Search Engines,JSON-LD,Rich snippets in SERPs
+24,Organization Schema,Landing Page,Structured Data,Search Engines,JSON-LD,Legal name logo contact
+25,Breadcrumb Schema,All Pages,Structured Data,Search Engines,JSON-LD,Navigation hierarchy
+26,GitHub Repository,https://github.com/openclawlaurent/FiberAgent,External Link,Developers & Everyone,HTML + Git,Full source code + docs
+27,Twitter/X,https://x.com/fiber_shop,External Link,General Public,Social Media,Updates & announcements
+28,ERC-8004 Registry,https://www.8004scan.io/agents/monad/135,External Link (Blockchain),Blockchain Explorers & Monad Users,HTML,On-chain agent verification
+29,Email Contact,support@fiber.shop,External Link,Support Seekers,Email,Customer support
+30,Fiber Main Site,https://fiber.shop,External Link,General Public,HTML,Parent company

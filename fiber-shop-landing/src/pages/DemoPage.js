@@ -15,13 +15,6 @@ export default function DemoPage() {
     return addr;
   };
 
-  // Fix localhost URLs from Fiber API (production fallback)
-  const fixAffiliateLink = (link) => {
-    if (!link) return link;
-    // Replace localhost:8080 with production domain
-    return link.replace(/http:\/\/localhost:8080/g, 'https://api.fiber.shop').replace(/http:\/\/localhost/g, 'https://api.fiber.shop');
-  };
-
   const [agentId, setAgentId] = useState(null);
   const [agentName, setAgentName] = useState('My Shopping Agent');
   const [walletAddress, setWalletAddress] = useState(() => generateTestWallet());
@@ -204,7 +197,7 @@ export default function DemoPage() {
             <p className={styles.resultsCount}>{searchResults.results_count} merchants found for "{searchResults.query}"</p>
             <div className={styles.resultsGrid}>
               {searchResults.results.map((m) => (
-                <a key={m.merchant_id} href={fixAffiliateLink(m.affiliate_link)} target="_blank" rel="noopener noreferrer" className={styles.merchantCard}>
+                <a key={m.merchant_id} href={m.affiliate_link} target="_blank" rel="noopener noreferrer" className={styles.merchantCard}>
                   <div className={styles.mcImage}>
                     {m.image_url ? <img src={m.image_url} alt={m.merchant_name} /> : <span className={styles.mcPlaceholder}>{m.merchant_name[0]}</span>}
                   </div>

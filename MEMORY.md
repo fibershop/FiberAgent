@@ -305,17 +305,27 @@
 - ✅ Risk matrix + impact analysis (Oracle, ClawHub, community)
 - ✅ Session breakdown: 8-10h, 10-12h, 6-8h = 24-30h total
 
-**Immediately Awaiting from Laurent:**
-1. **Fiber API diagnostics** — Run TEST_FIBER_API.sh, share results
-2. **API credentials** — Confirm key is valid, when it last worked
-3. **Database choice** — Postgres (recommended), Redis, DynamoDB, or Firestore
-4. **Timeline** — Aggressive (end of week) or flexible (next week)
-5. **DX priority** — Include in S1 or defer to S3
+**Status Update (Feb 24, 2026 Evening):**
+- ✅ Fiber API test credentials confirmed working
+- ✅ Bearer token auth implemented (Task 1 complete)
+- ✅ Fiber API recommendations document created (living doc)
+- 🔄 Session 1 in progress (Task 2: MCP tools in progress)
 
-**Once diagnostics complete:**
-- Issue 1 fixed (1 hour)
-- Session 1 begins (8-10 hours)
-- v1.0.2 production-ready in 2-3 days
+**Created:** FIBER_API_RECOMMENDATIONS.md
+- P1 (Critical): Error handling for invalid agent_id (was Oracle's issue)
+- P2 (High): Integration guide, rate limits, headers
+- P3-4 (Medium-Low): Features, analytics
+- Living document — update as issues discovered
+
+**Session 1 Progress:**
+- [x] Task 1: Bearer token auth (2-3h) ✅ COMPLETE
+- [ ] Task 2: MCP JSON-RPC handler (3-4h) 🔄 IN PROGRESS
+- [ ] Task 3: Code examples in OpenAPI (1h)
+- [ ] Task 4: MCP quickstart (1-2h)
+- [ ] Task 5: QUICKSTART.md (2-3h)
+- [ ] Task 6: Homepage dev link (1h)
+
+**Next:** Continue with Tasks 2-6 to reach 6.0/10 (alpha status)
 
 ---
 

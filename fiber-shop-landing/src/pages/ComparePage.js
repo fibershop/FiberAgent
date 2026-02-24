@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
 const styles = {
-  page: { background: '#0a0a0a', color: '#e0e0e0', minHeight: '100vh', padding: '30px 20px', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
+  page: { background: '#0a0a0a', color: '#e0e0e0', minHeight: '100vh', paddingTop: '64px', paddingLeft: '20px', paddingRight: '20px', paddingBottom: '30px', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
   header: { textAlign: 'center', marginBottom: 28 },
   h1: { fontSize: 28, color: '#fff', marginBottom: 6 },
   subtitle: { fontSize: 16, color: '#888' },

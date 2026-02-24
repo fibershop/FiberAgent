@@ -70,8 +70,9 @@ export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, mcp-session-id');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, mcp-session-id, Authorization');
   res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -265,6 +266,148 @@ export default async function handler(req, res) {
         status: 'Only commerce agent on Monad'
       }
     });
+  }
+
+  // ─── JSON-RPC 2.0 Direct Handler (for simple tool invocation) ───
+  if (req.method === 'POST' && req.body && typeof req.body === 'object') {
+    const { jsonrpc, method, params, id } = req.body;
+    
+    // Simple JSON-RPC 2.0 dispatcher for direct tool calls
+    if (jsonrpc === '2.0' && method === 'tools/call' && params?.name) {
+      const { name, arguments: args } = params;
+      
+      try {
+        let result;
+        switch (name) {
+          case 'search_products': {
+            const keywords = args?.keywords || '';
+            const max_results = args?.max_results || 5;
+            result = search(keywords, max_results);
+            return res.status(200).json({
+              jsonrpc: '2.0',
+              result: {
+                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(result)}\n\n---\n*${result.length} products from Fiber's 50K+ merchant network.*` }]
+              },
+              id
+            });
+          }
+          case 'search_by_intent': {
+            const intent = args?.intent || '';
+            const keywords = extractKeywords(intent);
+            const maxPrice = extractMaxPrice(intent);
+            const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
+            
+            if (!keywords) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150"' }] },
+                id
+              });
+            }
+            
+            let results = search(keywords, 20);
+            if (maxPrice) results = results.filter(p => p.price <= maxPrice);
+            if (wantsCashback) results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
+            results = results.slice(0, args?.max_results || 5);
+            
+            return res.status(200).json({
+              jsonrpc: '2.0',
+              result: {
+                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}` }]
+              },
+              id
+            });
+          }
+          case 'register_agent': {
+            const agent_id = args?.agent_id;
+            const wallet = args?.wallet_address || args?.wallet;
+            
+            if (!agent_id || !wallet) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                error: { code: -32602, message: 'Missing required parameters: agent_id, wallet_address' },
+                id
+              });
+            }
+            
+            if (agents[agent_id]) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: { content: [{ type: 'text', text: `Agent "${agent_id}" already registered. Wallet: ${agents[agent_id].wallet}` }] },
+                id
+              });
+            }
+            
+            agents[agent_id] = {
+              name: args?.agent_name || agent_id,
+              wallet: wallet,
+              token: args?.crypto_preference || 'MON',
+              searches: 0,
+              at: new Date().toISOString()
+            };
+            
+            return res.status(200).json({
+              jsonrpc: '2.0',
+              result: {
+                content: [{
+                  type: 'text',
+                  text: `✅ Registered!\n\n**ID:** ${agent_id}\n**Wallet:** ${wallet}\n**Token:** ${agents[agent_id].token}\n**ERC-8004:** https://www.8004scan.io/agents/monad/135\n\nYou earn cashback on every purchase via FiberAgent.`
+                }]
+              },
+              id
+            });
+          }
+          case 'get_agent_stats': {
+            const agent_id = args?.agent_id;
+            const a = agents[agent_id];
+            const stats = a
+              ? { agent_id, name: a.name, wallet: a.wallet, searches: a.searches, earnings_mon: 0, fiber_points: a.searches * 10, registered: a.at }
+              : { agent_id, searches: 0, earnings_mon: 0, fiber_points: 0, note: 'Not registered in this session' };
+            
+            return res.status(200).json({
+              jsonrpc: '2.0',
+              result: { content: [{ type: 'text', text: JSON.stringify(stats, null, 2) }] },
+              id
+            });
+          }
+          case 'compare_cashback': {
+            const product_query = args?.product_name || args?.product_query || '';
+            const results = search(product_query, 20).sort((a, b) => b.cashbackRate - a.cashbackRate);
+            
+            if (!results.length) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: { content: [{ type: 'text', text: `No products found for "${product_query}".` }] },
+                id
+              });
+            }
+            
+            const best = results[0];
+            const table = results.map((p, i) => `${i+1}. **${p.merchant}** — ${p.cashbackRate}% → $${p.cashbackAmount.toFixed(2)} | ${p.title} $${p.price.toFixed(2)}`).join('\n');
+            
+            return res.status(200).json({
+              jsonrpc: '2.0',
+              result: {
+                content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 Best: ${best.merchant} at ${best.cashbackRate}%` }]
+              },
+              id
+            });
+          }
+          default:
+            return res.status(200).json({
+              jsonrpc: '2.0',
+              error: { code: -32601, message: `Tool not found: ${name}` },
+              id
+            });
+        }
+      } catch (err) {
+        return res.status(200).json({
+          jsonrpc: '2.0',
+          error: { code: -32603, message: err.message },
+          id
+        });
+      }
+    }
   }
 
   try {

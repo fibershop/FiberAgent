@@ -8,6 +8,93 @@ Live endpoint: `https://fiberagent.shop/api/mcp`
 
 ## Quick Start (3 Minutes)
 
+### Direct API Invocation (cURL, Python, Node.js)
+
+**Option 1: Simple JSON-RPC POST** (no SDK required)
+
+```bash
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "search_products",
+      "arguments": {
+        "keywords": "running shoes",
+        "max_results": 5
+      }
+    }
+  }'
+```
+
+**Response:**
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "## Search: \"running shoes\"\n\n1. **Nike Pegasus 41 — Men's Road Running Shoes**\n   $145.00 at NIKE | 0.65% cashback → $0.94 back..."
+      }
+    ]
+  },
+  "id": 1
+}
+```
+
+**Python Example:**
+```python
+import requests
+import json
+
+response = requests.post(
+    'https://fiberagent.shop/api/mcp',
+    headers={'Content-Type': 'application/json'},
+    json={
+        'jsonrpc': '2.0',
+        'id': 1,
+        'method': 'tools/call',
+        'params': {
+            'name': 'search_products',
+            'arguments': {
+                'keywords': 'running shoes',
+                'max_results': 5
+            }
+        }
+    }
+)
+
+print(json.dumps(response.json(), indent=2))
+```
+
+**Node.js Example:**
+```javascript
+const result = await fetch('https://fiberagent.shop/api/mcp', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'tools/call',
+    params: {
+      name: 'search_products',
+      arguments: {
+        keywords: 'running shoes',
+        max_results: 5
+      }
+    }
+  })
+});
+
+const data = await result.json();
+console.log(data);
+```
+
+---
+
 ### Claude Desktop Configuration
 
 Add this to your Claude Desktop config:
@@ -510,6 +597,76 @@ Claude highlights: "Best deal is Finish Line at 3.25% cashback"
 
 ---
 
+## Authentication (Bearer Tokens)
+
+FiberAgent uses optional Bearer token authentication for secure agent identification and session tracking.
+
+### Getting Your Token
+
+**Step 1: Register Your Agent**
+```bash
+curl -X POST https://fiberagent.shop/api/agent/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": "my-agent-001",
+    "agent_name": "My Shopping Assistant",
+    "wallet_address": "0x790b405d466f7fddcee4be90d504eb56e3fedcae"
+  }'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "agent_id": "my-agent-001",
+  "auth_token": "sk_live_...",
+  "token_type": "Bearer",
+  "created_at": "2026-02-24T10:00:00.000Z"
+}
+```
+
+### Using Your Token
+
+**In cURL:**
+```bash
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk_live_..." \
+  -d '{ "jsonrpc": "2.0", "method": "tools/call", ... }'
+```
+
+**In Python:**
+```python
+import requests
+
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer sk_live_...'
+}
+
+response = requests.post(
+    'https://fiberagent.shop/api/mcp',
+    headers=headers,
+    json={...}
+)
+```
+
+**In Node.js:**
+```javascript
+const response = await fetch('https://fiberagent.shop/api/mcp', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer sk_live_...'
+  },
+  body: JSON.stringify({...})
+});
+```
+
+**Note:** Bearer token is optional for `search_products` and `compare_cashback` (public tools), but required for `register_agent`, `get_agent_stats`, and commission tracking. Session-less operation is supported for one-off searches.
+
+---
+
 ## Performance & Limits
 
 - **Response Time:** < 500ms (p95)
@@ -534,7 +691,7 @@ Claude highlights: "Best deal is Finish Line at 3.25% cashback"
 ## FAQ
 
 **Q: Do I need an API key?**  
-A: No. FiberAgent MCP is completely open and requires no authentication.
+A: Bearer tokens are optional for search/comparison. Only required if you want to track earnings. Register once, get a token, use it for commission tracking.
 
 **Q: How are commissions paid?**  
 A: To your registered Monad wallet, after a 30-90 day refund window (varies by merchant). All in crypto.

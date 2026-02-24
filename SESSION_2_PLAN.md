@@ -1,7 +1,9 @@
 # Session 2 Plan — Production Readiness (8.5/10)
+## **NO DATABASE — Fiber API First**
 
-**Timeline:** 10-12 hours  
+**Timeline:** 8-10 hours  
 **Target Score:** 8.5/10 (production-ready for ClawHub + community)  
+**Architecture:** Stateless, API-driven (Fiber is source of truth)  
 **Status:** 🚀 STARTING NOW
 
 ---
@@ -9,105 +11,91 @@
 ## Overview
 
 Session 1 delivered a working MVP with all core features (auth, MCP, docs). Session 2 focuses on:
-1. **Persistent stats** — Database integration for real analytics
-2. **Smart comparison** — Compare cashback across merchants
-3. **Rich analytics** — Leaderboards, trends, agent profiling
-4. **Reliability** — Rate limiting, error handling, monitoring
+1. **Fiber stats integration** — Call Fiber API for agent analytics
+2. **Smart comparison** — Compare cashback across merchants (Fiber data)
+3. **Rich analytics** — Aggregate Fiber searches + conversions into leaderboards
+4. **Reliability** — Rate limiting, caching, error handling
+
+**KEY DECISION:** No local database. Fiber API is the source of truth. We aggregate and present.
 
 ---
 
-## Task 1: Persist Stats to Database (3-4 hours)
+## Architecture Decision: API-First, Stateless
+
+### Why No Database?
+- ✅ Fiber is already tracking stats (their source)
+- ✅ Serverless deployment (no DB management)
+- ✅ Fewer moving parts (easier to scale)
+- ✅ Always in sync with Fiber data
+- ✅ No duplication of truth
+
+### How It Works:
+```
+User Agent → FiberAgent API → Fiber API (stats)
+                           ↓
+                        Cache (Redis, optional)
+                           ↓
+                     Return to User
+```
+
+**All data flows from Fiber. We aggregate and present.**
+
+---
+
+## Task 1: Integrate Fiber Stats API (2-3 hours)
 
 ### What to do:
-1. **Choose DB:** Postgres (production) or Redis (fast session cache)
-   - **Recommended:** Postgres for durability + easy queries
-   - **Alternative:** Redis + Postgres hybrid (cache + persistence)
+1. **Discover Fiber's stats endpoints:**
+   - Does Fiber expose `/v1/agent/{agent_id}/stats`?
+   - Does Fiber expose `/v1/agent/{agent_id}/conversions`?
+   - Does Fiber expose `/v1/agent/{agent_id}/history`?
+   - What data is available?
 
-2. **Create schema:**
-   ```sql
-   -- agents table
-   CREATE TABLE agents (
-     id SERIAL PRIMARY KEY,
-     agent_id VARCHAR(255) UNIQUE NOT NULL,
-     agent_name VARCHAR(255),
-     wallet_address VARCHAR(255),
-     crypto_preference VARCHAR(10),
-     auth_token_hash VARCHAR(255),
-     created_at TIMESTAMP DEFAULT NOW(),
-     updated_at TIMESTAMP DEFAULT NOW()
-   );
-   
-   -- searches table (one row per search)
-   CREATE TABLE searches (
-     id SERIAL PRIMARY KEY,
-     agent_id VARCHAR(255) NOT NULL REFERENCES agents(agent_id),
-     keywords VARCHAR(255) NOT NULL,
-     results_count INT,
-     timestamp TIMESTAMP DEFAULT NOW(),
-     FOREIGN KEY(agent_id) REFERENCES agents(agent_id)
-   );
-   
-   -- conversions table (track purchases)
-   CREATE TABLE conversions (
-     id SERIAL PRIMARY KEY,
-     agent_id VARCHAR(255) NOT NULL,
-     product_title VARCHAR(255),
-     merchant_name VARCHAR(255),
-     price DECIMAL(10, 2),
-     cashback_rate DECIMAL(5, 2),
-     commission_amount DECIMAL(10, 2),
-     status VARCHAR(50), -- 'pending', 'confirmed', 'refunded'
-     created_at TIMESTAMP DEFAULT NOW(),
-     FOREIGN KEY(agent_id) REFERENCES agents(agent_id)
-   );
-   ```
+2. **Create wrapper endpoint** (`/api/agent/{id}/stats`):
+   - Call Fiber API: `GET https://api.fiber.shop/v1/agent/{id}/stats`
+   - If Fiber returns stats, format and return
+   - If Fiber doesn't have stats yet, return mock/demo data with note
+   - Include: searches, conversions, revenue, trends
 
-3. **Update `/api/agent/register.js`:**
-   - Save agent to DB instead of in-memory
-   - Generate + hash auth token in DB
-   - Return token once (can't retrieve later)
+3. **Update demo data to show Fiber format:**
+   - When Fiber releases stats endpoint, live data will auto-flow
+   - Until then, show realistic demo structure
 
-4. **Update `/api/agent/[id]/stats.js`:**
-   - Query DB for real stats
-   - Calculate: total_searches, avg per search, conversions, revenue
-   - Return: formatted response with trends
+4. **Add response caching** (optional, for speed):
+   - Cache Fiber API response for 5 minutes (Redis or in-memory)
+   - Prevents hammering Fiber API on every request
+   - Still fresh enough for real-time use
 
-5. **Update `/api/agent/search.js`:**
-   - Log search to DB (after Fiber API response)
-   - Record results_count, timestamp
-   - Update agent's last_activity timestamp
-
-**Files to modify:**
-- `api/agent/register.js` — Save to DB
-- `api/agent/search.js` — Log searches
-- `api/agent/[id]/stats.js` — Query DB
-- `api/_lib/db.js` — New: Database utilities (connection, query helpers)
+**Files to create/modify:**
+- `api/agent/[id]/stats.js` — Call Fiber API, format response
+- `api/_lib/fiber-client.js` — HTTP wrapper for Fiber API calls
+- `.env` — Add Fiber API base URL (if not already there)
 
 **Success criteria:**
-- Agent registration saves to DB
-- Searches logged to DB in real-time
-- Stats endpoint queries real DB data
-- No in-memory resets on cold start
-- Token storage is secure (hashed, not plaintext)
+- Endpoint calls Fiber API (or returns demo if not available)
+- Response includes: searches, conversions, revenue
+- Data is fresh (not cached older than 5 min)
+- Graceful fallback if Fiber API is down
 
-**Estimated effort:** 3-4 hours
+**Estimated effort:** 2-3 hours
 
 ---
 
-## Task 2: Add `/api/agent/compare` Endpoint (2-3 hours)
+## Task 2: Product Comparison Endpoint (2-3 hours)
 
 ### What to do:
 1. **Create `/api/agent/compare.js`:**
-   - Input: `product_name` (required), `agent_id` (optional), `max_merchants` (optional, default 5)
-   - Query Fiber API with product name
-   - Return products from same category sorted by cashback rate
-   - Show merchant comparison table
+   - Input: `product_name` (required), `agent_id` (optional)
+   - Call Fiber API multiple times with same product name
+   - Collect results from different merchants
+   - Sort by cashback rate (highest first)
+   - Calculate savings vs. best deal
 
 2. **Response format:**
    ```json
    {
      "success": true,
-     "product_query": "running shoes",
+     "product_query": "nike running shoes",
      "agent_id": "agent_001",
      "results": [
        {
@@ -117,7 +105,7 @@ Session 1 delivered a working MVP with all core features (auth, MCP, docs). Sess
          "price": 145,
          "cashback_rate": 3.25,
          "cashback_amount": 4.71,
-         "savings_vs_1st": 0,
+         "savings_vs_best": 0,
          "affiliate_link": "https://fiberagent.shop/r/..."
        },
        {
@@ -127,69 +115,85 @@ Session 1 delivered a working MVP with all core features (auth, MCP, docs). Sess
          "price": 145,
          "cashback_rate": 0.65,
          "cashback_amount": 0.94,
-         "savings_vs_1st": -3.77,
+         "savings_vs_best": -3.77,
          "affiliate_link": "https://fiberagent.shop/r/..."
        }
      ],
      "summary": {
        "best_merchant": "Finish Line",
        "best_cashback_rate": "3.25%",
-       "price_range": { "min": 145, "max": 165 },
-       "merchant_count": 3
+       "total_merchant_count": 3,
+       "total_savings_available": 4.71
      }
    }
    ```
 
 3. **Add to OpenAPI spec:**
-   - Document the endpoint
+   - Document `/api/agent/compare`
    - Add code examples (curl, Python, JS)
 
 4. **Add to MCP tools:**
-   - Register `compare_cashback` tool with new endpoint
-   - Update MCP_INTEGRATION_GUIDE.md with example
+   - `compare_cashback` tool now calls real endpoint
+   - Update MCP_INTEGRATION_GUIDE.md with working example
+
+**How it works:**
+1. Agent calls: `GET /api/agent/compare?product_name=nike shoes&agent_id=agent_001`
+2. We call Fiber API: `GET /v1/agent/search?keywords=nike shoes&agent_id=agent_001&limit=50`
+3. Parse results, deduplicate by product, group by merchant
+4. Sort by cashback rate (descending)
+5. Return comparison table
 
 **Files to modify:**
 - `api/agent/compare.js` — New endpoint
-- `api/mcp.js` — Update compare_cashback tool to use real endpoint
+- `api/_lib/fiber-client.js` — Reuse Fiber API wrapper
 - `server/openapi.json` — Add spec
-- `MCP_INTEGRATION_GUIDE.md` — Document
+- `api/mcp.js` — Update compare_cashback tool
+- `MCP_INTEGRATION_GUIDE.md` — Document with examples
 
 **Success criteria:**
 - Endpoint returns comparable products
-- Cashback properly sorted (highest first)
+- Sorted by cashback (highest first)
+- Shows savings vs. best deal
 - Works for any product name
-- MCP tool calls endpoint instead of static data
+- MCP tool calls endpoint (not static data)
 
 **Estimated effort:** 2-3 hours
 
 ---
 
 ## Task 3: Analytics Layer (2-3 hours)
+## **Aggregated View of Fiber Data**
 
 ### What to do:
-1. **Agent Leaderboard Endpoint** (`/api/analytics/leaderboard`):
-   - Top 10 agents by conversions
-   - Top 10 agents by revenue
-   - Top 10 agents by searches
-   - Include: agent_id, conversions, revenue, growth_rate
+1. **Agent Leaderboard** (`/api/analytics/leaderboard`):
+   - Call Fiber API for top agents (if available)
+   - If not, use demo data showing realistic rankings
+   - Include: agent_id, total_conversions, total_revenue, growth
+   - Show top 10 agents across FiberAgent network
 
-2. **Trending Products Endpoint** (`/api/analytics/trending`):
-   - Most searched products in last 7 days
-   - Conversion rate per product
-   - Revenue per product
-   - Top merchants by volume
+2. **Trending Products** (`/api/analytics/trending`):
+   - Query Fiber API for most-searched products (last 7 days)
+   - Get conversion rates per product
+   - Get revenue per product
+   - Show top 10 trending
 
 3. **Agent Profile Analytics** (`/api/agent/{id}/analytics`):
+   - Call Fiber stats API for agent's detailed metrics
    - Search history (last 30 searches)
-   - Conversion rate timeline (daily)
-   - Top 5 searched brands
+   - Conversion rate timeline
+   - Top 5 searched brands (from Fiber)
    - Top 5 performed merchants
-   - Revenue trend (last 30 days)
+   - Revenue trend (if Fiber provides)
 
 4. **Dashboard Updates:**
-   - Update StatisticsPage to fetch real leaderboard data
-   - Show trending products
-   - Display agent performance over time
+   - StatisticsPage fetches from `/api/analytics/` endpoints
+   - Shows real Fiber network data (not mock)
+   - Updates via API calls, not hardcoded data
+
+**Implementation:**
+- **If Fiber has these endpoints:** Call them directly
+- **If Fiber doesn't have them yet:** Use demo data with note: "Coming with Fiber API v2"
+- **Cache aggregations:** 15-30 min cache for expensive queries
 
 **Files to create:**
 - `api/analytics/leaderboard.js` — Top agents
@@ -198,185 +202,247 @@ Session 1 delivered a working MVP with all core features (auth, MCP, docs). Sess
 
 **Files to update:**
 - `src/components/StatisticsPage.js` — Fetch real data from API
-- `src/pages/DemoPage.js` — Show leaderboard integration
+- `src/pages/DemoPage.js` — Show leaderboard
 
 **Success criteria:**
-- Leaderboard fetches top agents from DB
-- Trending products show real search + conversion data
-- Agent analytics show historical performance
-- Dashboard displays actual network metrics (not mock)
+- Leaderboard shows realistic agent rankings
+- Trending shows real Fiber data
+- Agent analytics show performance metrics
+- Dashboard displays fresh network data
+- Graceful fallback to demo data if Fiber endpoints not ready
 
 **Estimated effort:** 2-3 hours
 
 ---
 
-## Task 4: Rate Limiting & Quotas (1-2 hours)
+## Task 4: Request to Fiber API Team (TODO)
+
+### What we need from Fiber:
+**For production stats integration, please expose:**
+
+1. **Agent Stats Endpoint:**
+   ```
+   GET /v1/agent/{agent_id}/stats
+   
+   Response:
+   {
+     "success": true,
+     "agent_id": "agent_001",
+     "total_searches": 1234,
+     "total_conversions": 87,
+     "total_revenue": 13050,
+     "total_commissions": 652.50,
+     "avg_conversion_rate": 7.0,
+     "registered_at": "2026-02-15T08:00:00.000Z",
+     "updated_at": "2026-02-24T14:30:00.000Z"
+   }
+   ```
+
+2. **Agent Conversions History:**
+   ```
+   GET /v1/agent/{agent_id}/conversions?limit=50&offset=0
+   
+   Response:
+   {
+     "success": true,
+     "conversions": [
+       {
+         "id": "conv_123",
+         "product_title": "Nike Pegasus 41",
+         "merchant": "NIKE",
+         "price": 145,
+         "cashback_rate": 0.65,
+         "commission_amount": 0.94,
+         "status": "completed",
+         "completed_at": "2026-02-20T12:00:00.000Z"
+       }
+     ],
+     "total": 87,
+     "page": 0,
+     "limit": 50
+   }
+   ```
+
+3. **Top Agents Leaderboard:**
+   ```
+   GET /v1/analytics/agents/top?limit=10&sort_by=conversions
+   
+   Response:
+   {
+     "success": true,
+     "agents": [
+       {
+         "agent_id": "agent_001",
+         "total_conversions": 87,
+         "total_revenue": 13050,
+         "rank": 1
+       }
+     ]
+   }
+   ```
+
+4. **Trending Products:**
+   ```
+   GET /v1/analytics/trending?limit=10&days=7
+   
+   Response:
+   {
+     "success": true,
+     "products": [
+       {
+         "title": "Nike Pegasus 41",
+         "searches": 450,
+         "conversions": 32,
+         "conversion_rate": 7.1,
+         "revenue": 4640
+       }
+     ]
+   }
+   ```
+
+**Timeline:** Ask Fiber about availability. Until then, use demo data + mock responses.
+
+---
+
+## Task 5: Rate Limiting & Error Handling (1-2 hours)
 
 ### What to do:
-1. **Implement token bucket rate limiting:**
-   - 100 requests/minute per agent (configurable)
+1. **Implement rate limiting:**
+   - 100 requests/minute per agent
    - 1000 requests/hour per agent
    - Return `429 Too Many Requests` when exceeded
    - Include `Retry-After` header
 
-2. **Add headers to all responses:**
+2. **Add response headers:**
    ```
    X-RateLimit-Limit: 100
    X-RateLimit-Remaining: 87
    X-RateLimit-Reset: 1645564800
+   X-API-Version: 1.0.0
    ```
 
-3. **Create rate limit utilities** (`api/_lib/ratelimit.js`):
-   - Check if agent exceeded quota
-   - Record request count in Redis (fast)
-   - Return remaining quota
+3. **Graceful error handling:**
+   - Fiber API returns error → Return 502 with retry hint
+   - Timeout from Fiber → Return 504 Gateway Timeout
+   - Invalid product name → Return 400 with helpful message
+   - Missing auth token → Return 401 Unauthorized
 
-4. **Update all agent endpoints:**
-   - `/api/agent/search`
-   - `/api/agent/register`
-   - `/api/agent/compare`
-   - `/api/agent/[id]/stats`
+4. **Create utilities:**
+   - `api/_lib/ratelimit.js` — Rate limiting (in-memory, optional Redis)
+   - `api/_lib/errors.js` — Error handling + formatting
 
 **Files to create:**
-- `api/_lib/ratelimit.js` — Rate limiting logic
+- `api/_lib/ratelimit.js` — Rate limit logic
+- `api/_lib/errors.js` — Error responses
 
 **Files to update:**
-- `api/agent/search.js` — Add rate limit check
-- `api/agent/register.js` — Add quota check
-- `api/agent/compare.js` — Add quota check
-- `api/agent/[id]/stats.js` — Add quota check
-- `MCP_INTEGRATION_GUIDE.md` — Document rate limits
+- All endpoints — Add rate limit check + error handling
+- `MCP_INTEGRATION_GUIDE.md` — Document rate limits + error codes
 
 **Success criteria:**
-- Requests are counted per agent
-- 429 returned when limit exceeded
-- Retry-After header present
-- Rate limits don't block legitimate usage
+- Rate limiting blocks excessive requests
+- 429 returned with Retry-After header
+- All errors include helpful messages
+- Fiber API errors don't crash our API
 
 **Estimated effort:** 1-2 hours
 
 ---
 
-## Task 5: DX Docs & Troubleshooting (1-2 hours)
+## Testing Checklist
 
-### What to do:
-1. **Create `TROUBLESHOOTING.md`:**
-   - Common errors and solutions
-   - Bearer token issues
-   - Rate limiting exceeded
-   - Fiber API errors (no results, invalid agent)
-   - Database connection errors
-
-2. **Create `FAQ.md`:**
-   - "How do I earn commissions?"
-   - "How long does it take to get paid?"
-   - "Can I change my wallet?"
-   - "What happens if a user refunds?"
-   - "Do you support other tokens?"
-   - "How do I verify my agent on-chain?"
-
-3. **Create `SLA.md`:**
-   - Uptime commitment (99.9%)
-   - Response time SLA
-   - Support response time
-   - Incident communication
-
-4. **Update existing docs:**
-   - QUICKSTART.md — Add error handling section
-   - MCP_INTEGRATION_GUIDE.md — Add error codes table
-   - CAPABILITIES.md — Clarify rate limits
-
-**Files to create:**
-- `TROUBLESHOOTING.md` — Error solutions
-- `FAQ.md` — Common questions
-- `SLA.md` — Service level agreement
-
-**Files to update:**
-- `QUICKSTART.md` — Add troubleshooting tips
-- `MCP_INTEGRATION_GUIDE.md` — Add error codes
-
-**Success criteria:**
-- All common errors documented
-- FAQ covers user questions
-- SLA is clear and realistic
-- Developers know how to debug issues
-
-**Estimated effort:** 1-2 hours
-
----
-
-## Testing Checklist (After All Tasks)
-
-- [ ] Register agent, verify saved to DB (not in-memory)
-- [ ] Cold start → stats still visible (proving DB persistence)
-- [ ] Search for products, verify logged to DB
-- [ ] Check `/api/agent/{id}/stats` returns real data
-- [ ] Call `/api/agent/compare` with product name
-- [ ] Verify compare results sorted by cashback
-- [ ] Check `/api/analytics/leaderboard` shows top agents
-- [ ] Test rate limiting (make 101 requests, verify 429)
-- [ ] Verify Retry-After header on 429
-- [ ] Fetch agent analytics, verify trends
-- [ ] StatisticsPage loads real data from API
-- [ ] MCP compare_cashback tool calls real endpoint
-- [ ] All docs updated and accurate
+- [ ] Call Fiber API from stats endpoint (live or demo)
+- [ ] Compare endpoint returns products sorted by cashback
+- [ ] Analytics endpoints show realistic data
+- [ ] Rate limiting blocks 101st request with 429
+- [ ] Retry-After header present on 429
+- [ ] Fiber API timeout handled gracefully (504)
+- [ ] Invalid product name returns 400 with message
+- [ ] Missing auth token returns 401
+- [ ] StatisticsPage loads real/demo data
+- [ ] MCP tools call real endpoints
+- [ ] All docs updated with error codes
 
 ---
 
 ## Deployment Checklist
 
 - [ ] All code committed to Git
-- [ ] Environment variables set (DB_URL, REDIS_URL, etc.)
-- [ ] Database migrations run
-- [ ] API tested in production environment
-- [ ] StatisticsPage reloads with real data
-- [ ] Monitor error logs for 24 hours
+- [ ] Test against Fiber production API
+- [ ] Error handling tested (timeout, invalid input)
+- [ ] Rate limiting working
+- [ ] StatisticsPage reloads with live/demo data
+- [ ] Monitor logs for Fiber API errors
 - [ ] Update GitHub releases with Session 2 changes
-- [ ] Announce on Discord/Reddit: "Session 2 Complete"
+- [ ] Announce: "Session 2 Complete — Stats Live"
 
 ---
 
 ## Success Criteria for 8.5/10 (Production-Ready)
 
 ✅ **All requirements met:**
-- Persistent stats (not reset on cold start)
-- Comparison endpoint working
-- Analytics showing real network data
+- Stats pulled from Fiber API (or realistic demo)
+- Comparison endpoint working with real data
+- Analytics showing Fiber network data
 - Rate limiting protecting API
+- Comprehensive error handling
 - Comprehensive documentation
-- Error handling + monitoring
-- Ready for external developers
+- **Zero local persistence needed**
 
 ✅ **Remaining for 9.2/10 (Session 3):**
 - Batch search endpoint
 - Agent reputation scoring UI
 - Python/TypeScript SDK auto-generation
-- Advanced filtering (by price, rating, category)
-- Webhook support for purchase tracking
+- Advanced filtering
+- Webhook support (if Fiber adds it)
 
 ---
 
 ## Estimated Total Time
 
-- Task 1 (DB): 3-4h
-- Task 2 (Compare): 2-3h
-- Task 3 (Analytics): 2-3h
-- Task 4 (Rate Limit): 1-2h
-- Task 5 (Docs): 1-2h
+- Task 1 (Fiber stats integration): 2-3h
+- Task 2 (Compare endpoint): 2-3h
+- Task 3 (Analytics aggregation): 2-3h
+- Task 4 (Request to Fiber): 🤝 Coordination
+- Task 5 (Rate limit + errors): 1-2h
 - **Testing & Deployment:** 1-2h
 
-**Total: 10-16 hours** (targeting 10-12 with parallel work)
+**Total: 8-10 hours**
 
 ---
 
-## Success = 🚀 Production-Ready
+## Key Principle: Fiber is Source of Truth
+
+Everything we build is a **view layer** on top of Fiber's API:
+- ✅ Stats? → Call Fiber
+- ✅ Conversions? → Call Fiber
+- ✅ Analytics? → Aggregate Fiber data
+- ✅ Leaderboards? → Sort Fiber agents
+- ✅ Comparison? → Query Fiber, format results
+
+**We don't own the data. We present it beautifully.** 🎯
+
+---
+
+## Success = 🚀 Production-Ready (8.5/10)
 
 When Session 2 is complete:
-- Developers can build agents that earn real money
-- Stats are persistent and accurate
-- API is protected from abuse
-- Documentation is comprehensive
-- Ready for ClawHub submission
-- Ready for community announcement
+- ✅ Live stats from Fiber (or realistic demo while they build)
+- ✅ Product comparison endpoint working
+- ✅ Analytics aggregating Fiber data
+- ✅ Rate limiting + error handling
+- ✅ Comprehensive documentation
+- ✅ **Zero database overhead**
+- ✅ Ready for ClawHub + community
 
-Go! 🎯
+---
+
+## Next Action: Start Task 1
+
+Ready to integrate Fiber stats? I'll:
+1. Check what Fiber stats endpoints are available
+2. Create `/api/agent/{id}/stats.js` wrapper
+3. Add response formatting + error handling
+4. Test with production Fiber API ✅
+
+Let's go! 🚀

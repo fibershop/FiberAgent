@@ -61,6 +61,7 @@ ad36132 Task 4-6: Add MCP Quickstart, QUICKSTART.md, and Developer section to ho
 ---
 
 ## 🚀 Session 2 Start (Feb 24, 2026) — Production Readiness (8.5/10)
+## **DECISION: NO DATABASE — Fiber API First**
 
 **Status: IN PROGRESS**
 - ✅ Created `/api/agent/demo/stats` endpoint with realistic agent + network stats
@@ -69,14 +70,28 @@ ad36132 Task 4-6: Add MCP Quickstart, QUICKSTART.md, and Developer section to ho
   - Trending categories: Electronics (94), Fashion (66), Home (38), Beauty (34)
   - Demo agents: claude-shopping-001, gpt-shopping-pro, openai-commerce-bot
   - Network totals: 5,262 searches, 263 conversions, $52.7k revenue, $2.6k commissions
-- ⏳ **TODO: Persist stats to Postgres/Redis** (estimated 3-4h)
-- ⏳ **TODO: Add `/api/agent/compare` endpoint** (estimated 2-3h)
-- ⏳ **TODO: Analytics layer** (leaderboard, trends, history) (estimated 2-3h)
-- ⏳ **TODO: Rate limiting & quotas** (estimated 1-2h)
-- ⏳ **TODO: Complete DX docs** (FAQ, SLA, troubleshooting) (estimated 1-2h)
+- ✅ Updated SESSION_2_PLAN.md → **API-first, stateless architecture**
+  - No database needed
+  - Fiber API is source of truth
+  - We aggregate and present data
+
+**Tasks (8-10 hours total):**
+- ⏳ **Task 1: Fiber Stats Integration** (2-3h) — Call Fiber API for agent stats
+- ⏳ **Task 2: Compare Endpoint** (2-3h) — Product comparison using Fiber data
+- ⏳ **Task 3: Analytics Layer** (2-3h) — Aggregate Fiber data into leaderboards
+- ⏳ **Task 4: Coordinate with Fiber** (🤝) — Request stats endpoints
+- ⏳ **Task 5: Rate Limit + Errors** (1-2h) — Protect API, handle failures gracefully
+
+**Architectural Decision:**
+- ✅ No persistence layer (Fiber owns the data)
+- ✅ All stats pulled from Fiber API
+- ✅ Optional Redis caching (for speed, not persistence)
+- ✅ Stateless serverless design
+- ✅ Fresh data always (5-min cache max)
 
 **Git History (Session 2):**
 ```
+ef5340e Add comprehensive Session 2 Plan: NO DATABASE — Fiber API First
 c56dbb1 Session 2 Start: Update StatisticsPage with realistic Fiber network data + demo stats endpoint
 ```
 

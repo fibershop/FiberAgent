@@ -282,7 +282,7 @@
 **Audit Docs:** API-DEEP-DIVE.md, MCP-PROTOCOL.md, FRONTEND-UX.md, DOCS-AND-GAPS.md  
 **Finding:** 6 issues + 4 gaps preventing production integration
 
-### Issues Found
+### Issues Found (6 Issues + 5 Gaps + 4 DX Issues)
 
 **🔴 Blockers (Prevent Integration):**
 1. **Catalog Returns 0 Results** — Fiber API data pipeline broken or down
@@ -301,25 +301,48 @@
 10. **Deal Filtering/Ranking** — Can't sort by cashback/price/rating (Gap 2)
 11. **No Batch Lookup** — Multi-item searches require sequential calls (Gap 3)
 
-### 3-Session Fix Roadmap (18-24 hours total)
+**🟠 Developer Experience (Friction + Trust):**
+12. **Missing Code Examples** — Zero curl/Python/JavaScript examples in OpenAPI (<1h fix)
+13. **Incomplete MCP Guide** — Endpoint exists but no connection instructions for Claude/AutoGen (1-2h fix)
+14. **No SDK/Client Libraries** — Every dev implements HTTP client from scratch (4-6h per lang, Session 3)
+15. **Minimal Onboarding Docs** — No QUICKSTART.md, FAQ, or cashback payout explanation (2-3h fix)
 
-**Session 1 (Critical Path — 6-8h):**
-- Fix catalog (Issue 1)
-- Add auth tokens (Issue 2)
-- Implement MCP tool handlers (Issue 5)
-- Add API docs link (Issue 6)
+### Top 3 Immediate Fixes (Impact vs Effort)
+1. **Restore Catalog** (Issue 1) — 🔴 Critical blocker, medium effort
+2. **Persist Stats** (Issue 3) — 🔴 High trust blocker, medium effort
+3. **Add Bearer Auth** (Issue 2) — 🟠 High security, **LOW effort (1 day)**
 
-**Session 2 (Production Ready — 8-10h):**
-- Persist stats to DB (Issue 3) + time-series schema for analytics
-- Add rate limiting (Issue 4)
-- Implement product comparison API (Gap 1)
-- Add analytics layer: history endpoint + leaderboard + trends (Gap 5)
+### Top 5 Features by Agent Value
+1. Deal ranking/filtering — Very High (Oracle gives ranked recommendations)
+2. Product comparison (GET /compare) — Very High (best deal in 1 call)
+3. Code examples in OpenAPI — High (reduces integration friction 50%)
+4. Quickstart + FAQ — High (answers "How do I get paid?" = trust)
+5. MCP client connection guide — High (unblocks production MCP adoption)
 
-**Session 3 (Polish — 4-6h):**
-- Deal filtering (Gap 2)
-- Batch search (Gap 3)
-- Full docs + integration testing
-- Publish v1.0.2
+### 3-Session Fix Roadmap (24-30 hours total)
+
+**Session 1 (Critical Path — 8-10h, was 6-8h):**
+- Fix catalog (Issue 1) — 1-2h
+- Add auth tokens (Issue 2) — 2-3h
+- Implement MCP tool handlers (Issue 5) — 3-4h
+- Add API docs link (Issue 6) — 1-2h
+- **NEW: Code examples in OpenAPI** (DX) — <1h
+- **NEW: MCP connection guide** (DX) — 1-2h
+
+**Session 2 (Production Ready — 10-12h, was 8-10h):**
+- Persist stats to DB (Issue 3) + time-series schema — 3-4h
+- Add rate limiting (Issue 4) — 1-2h
+- Implement product comparison API (Gap 1) — 2-3h
+- Add analytics layer (Gap 5) — 2-3h
+- **NEW: QUICKSTART.md** (DX) — 2-3h
+- **NEW: FAQ + SLA docs** (DX) — 1h
+
+**Session 3 (Polish — 6-8h, was 4-6h):**
+- Deal filtering (Gap 2) — 2-3h
+- Batch search (Gap 3) — 2-3h
+- **NEW: Python SDK auto-gen** (DX, optional) — 4-6h
+- **NEW: TypeScript SDK auto-gen** (DX, optional) — 4-6h
+- Full docs + integration testing + v1.0.2 — 2-3h
 
 ### Key Insight: Issue 5 (MCP Endpoint)
 - `MCP_INTEGRATION_GUIDE.md` says "MCP server live" ✓

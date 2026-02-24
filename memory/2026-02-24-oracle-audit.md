@@ -143,7 +143,94 @@ FiberAgent architecture is sound, but **4 blocking issues** prevent production i
 
 ---
 
-## Product Gaps (Features Needed for Agent Value)
+## 3. Developer Experience Issues
+
+### Missing Code Examples in OpenAPI
+**Problem:**
+- OpenAPI spec at `/api/docs` defines endpoints clearly (parameters, response schemas)
+- Contains **zero code examples** — no curl, Python, JavaScript
+- Agent developers must write boilerplate from schema alone
+
+**Impact:**
+- Slow time-to-integration
+- No reference implementations for agent frameworks (LangChain, AutoGen, custom)
+- High friction for first-time adopters
+
+**Fix (Quick):**
+- Add `x-code-samples` blocks to OpenAPI spec for each endpoint
+- Cover: curl, Python, JavaScript
+- Can be auto-generated from schema in <1 hour
+
+**Estimated Effort:** 1 hour
+
+---
+
+### Incomplete MCP Integration Guide
+**Problem:**
+- Endpoint exists + returns capability manifest ✓
+- **BUT:** No guide on how to connect MCP client (Claude, AutoGen, custom MCP host)
+- Tool parameters, invocation patterns, auth for MCP completely undocumented
+
+**Impact:**
+- Agent developers wanting to use MCP (the right integration path) cannot proceed without trial-and-error
+- Must read MCP spec from scratch
+- Blocks production MCP adoptions
+
+**Fix (Quick):**
+- Write 500-word guide: "Connect your AI agent via MCP"
+- Cover: (1) endpoint URL, (2) tools/list request, (3) example tools/call for search_products, (4) response parsing
+- Can use examples from existing MCP_INTEGRATION_GUIDE.md
+
+**Estimated Effort:** 1-2 hours
+
+---
+
+### No SDK or Client Libraries
+**Problem:**
+- No SDK referenced in docs, homepage, or MCP metadata
+- No GitHub repository linked anywhere
+- Every developer implements HTTP client from scratch
+
+**Impact:**
+- High integration time
+- Inconsistent implementations across agents
+- Raises adoption bar for developers
+
+**Recommended Fix:**
+- Publish Python SDK (highest demand from agent developers)
+- Publish TypeScript/Node.js SDK (for Node-based frameworks)
+- Use openapi-generator to auto-generate from OpenAPI spec
+
+**Estimated Effort:** 1-2 days (per language)
+
+**Priority:** Session 3+ (low blocker, but high polish)
+
+---
+
+### Minimal Onboarding Documentation
+**Problem:**
+- No quickstart guide, no "Hello World" tutorial
+- No FAQ, troubleshooting, terms of service
+- No SLA, support contact, or usage policy
+- No explanation of cashback calculation/payout flow
+
+**Impact:**
+- Developer evaluating FiberAgent cannot answer basic trust questions:
+  - How do I get paid?
+  - What are the rate limits?
+  - What happens if endpoint is down?
+- Blocks enterprise/production adoption
+
+**Fix (Quick):**
+- Single QUICKSTART.md covering: registration → first search → stats retrieval
+- Include working code (curl + Python)
+- Add FAQ: "How do I get paid?", "What are rate limits?", "SLA?"
+
+**Estimated Effort:** 2-3 hours
+
+---
+
+## 4. Product Gaps (Features Needed for Agent Value)
 
 ### Gap 1 — Product Comparison Tool (Price Across Merchants)
 **Current State:**
@@ -467,28 +554,34 @@ Response:
 2. **Add auth** (Issue 2) — Security baseline
 3. **Fix MCP endpoint** (Issue 5) — Implement real tool handlers
 4. **Add API docs link** (Issue 6) — Homepage discovery
+5. **Add code examples to OpenAPI** (DX) — curl + Python snippets
+6. **Write MCP connection guide** (DX) — Quick 500-word "Connect your agent" doc
 
-**Estimated:** 6-8 hours  
-**Enables:** Oracle can search products, execute MCP tools, find documentation
+**Estimated:** 8-10 hours (was 6-8h, +2-4h for DX quick wins)  
+**Enables:** Oracle can search products, execute MCP tools, find docs, and developers have code examples + MCP guide
 
 ### Production Readiness (Session 2)
 1. **Persist stats** (Issue 3) — Production-grade state management + time-series schema
 2. **Add rate limiting** (Issue 4) — Scalability + abuse prevention
 3. **Implement product comparison** (Gap 1) — Core value unlock for agents
 4. **Add agent profiling/analytics** (Gap 5) — Historical trends + leaderboard (depends on stats persistence)
+5. **Complete QUICKSTART.md** (DX) — If not finished in Session 1
+6. **Add FAQ + SLA docs** (DX) — Cashback flow, rate limits, SLA, support contact
 
-**Estimated:** 8-10 hours (includes Gap 5 analytics layer)  
-**Enables:** Reliable earnings tracking, agent-to-agent safe usage, price comparison
+**Estimated:** 10-12 hours (includes Gap 5 analytics + DX trust docs)  
+**Enables:** Reliable earnings tracking, agent-to-agent safe usage, price comparison, ROI attribution, trust-building documentation
 
 ### Polish & Distribution (Session 3)
 1. **Add deal ranking/filtering** (Gap 2) — Agent optimization
 2. **Add batch lookup** (Gap 3) — Multi-item budget optimization
-3. **Update all documentation** — README, SKILL.md, MCP guide
-4. **Re-test with Oracle + 2+ agents** — Integration validation
-5. **Publish v1.0.2 patch release** — GitHub tag + ClawHub submission
+3. **Auto-generate Python SDK** (DX) — openapi-generator → pypi publication
+4. **Auto-generate TypeScript SDK** (DX) — openapi-generator → npm publication
+5. **Update all documentation** — README, SKILL.md, MCP guide
+6. **Re-test with Oracle + 2+ agents** — Integration validation
+7. **Publish v1.0.2 patch release** — GitHub tag + ClawHub submission
 
-**Estimated:** 4-6 hours  
-**Enables:** Production release, community promotion, broader agent adoption
+**Estimated:** 6-8 hours (includes SDK generation + testing)  
+**Enables:** Production release, SDK availability, community promotion, broader agent adoption
 
 ---
 
@@ -680,6 +773,43 @@ curl -X POST https://fiberagent.shop/api/mcp \
 
 ---
 
+## 5. Recommendations (Priority Order)
+
+### Top 3 Immediate Fixes (Impact vs. Effort)
+
+| Priority | Fix | Impact | Effort | Rationale |
+|----------|-----|--------|--------|-----------|
+| **#1** | Restore merchant catalog (fix empty search results) | 🔴 Critical | Medium | Zero products = zero value. Everything else blocked. No agent can demo or use platform until results return. |
+| **#2** | Persist agent stats (fix cold-start reset) | 🔴 High | Medium | Without durable data, FiberAgent cannot credibly claim cashback earnings. Trust-breaker for production integration. |
+| **#3** | Add Bearer token auth to API | 🟠 High | Low | Real agents with real earnings shouldn't be queryable by anyone with guessed agent_id. 401-gated stats endpoint is one-day fix. |
+
+---
+
+### Next 5 Features (Ranked by Agent Value)
+
+| Rank | Feature | Agent Value | Notes |
+|------|---------|-------------|-------|
+| 1 | **Deal ranking/filtering** (sort_by, min_cashback, max_price) | Very High | Enables Oracle to give ranked recommendations instead of raw dumps. Low engineering complexity — just sort/filter in query layer. |
+| 2 | **Product comparison** (GET /api/agent/compare) | Very High | Core unlock. "What's the best deal across merchants?" answered in one call instead of N parallel searches. |
+| 3 | **Code examples in OpenAPI** (curl + Python) | High | Reduces time-to-integration by 50%. Auto-generated from spec in <1 hour. |
+| 4 | **Quickstart guide + FAQ** | High | Unblocks production evaluations. "How do I get paid?" must be answered clearly. |
+| 5 | **MCP client connection guide** | High | Blocks production MCP adoption. 500-word guide + example would fix. |
+
+---
+
+### Developer Experience Quick Wins (Session 1-2)
+
+| Task | Effort | Impact | Session |
+|------|--------|--------|---------|
+| Add code examples to OpenAPI (curl + Python) | <1h | High | 1 |
+| Write "Connect via MCP" quickstart (500 words) | 1-2h | High | 1 |
+| Create QUICKSTART.md (registration → search → stats) | 2-3h | Very High | 1-2 |
+| Add FAQ (cashback calc, rate limits, SLA) | 1h | High | 2 |
+| Auto-generate Python SDK (openapi-generator) | 4-6h | High | 3 |
+| Auto-generate TypeScript SDK | 4-6h | High | 3 |
+
+---
+
 ## Complete Priority Matrix
 
 | Priority | Task | Issue/Gap | Effort | Blocks | Session |
@@ -689,18 +819,24 @@ curl -X POST https://fiberagent.shop/api/mcp \
 | 🔴 **HIGH** | Implement MCP tools | Issue 5 | 3-4h | Oracle MCP | 1 |
 | 🔴 **HIGH** | Fix MCP endpoint | Issue 5 | (included) | Oracle MCP | 1 |
 | 🟠 **HIGH** | Add API docs link | Issue 6 | 1-2h | Discovery | 1 |
+| 🟠 **HIGH** | Add code examples to OpenAPI | DX | <1h | Integration | 1 |
+| 🟠 **HIGH** | Write MCP connection guide | DX | 1-2h | MCP Adoption | 1 |
+| 🟠 **HIGH** | Create QUICKSTART.md | DX | 2-3h | Onboarding | 1-2 |
 | 🟠 **HIGH** | Persist stats | Issue 3 | 3-4h | Production | 2 |
 | 🟠 **HIGH** | Implement compare | Gap 1 | 2-3h | Core value | 2 |
 | 🟠 **HIGH** | Agent profiling/analytics | Gap 5 | 2-3h | ROI tracking | 2 |
 | 🟡 **MEDIUM** | Rate limiting | Issue 4 | 1-2h | Scaling | 2 |
+| 🟡 **MEDIUM** | FAQ + SLA documentation | DX | 1h | Trust | 2 |
 | 🟡 **MEDIUM** | Deal filtering | Gap 2 | 2-3h | Polish | 3 |
 | 🟡 **MEDIUM** | Batch search | Gap 3 | 2-3h | Optimization | 3 |
+| 🟢 **LOW** | Python SDK (auto-gen) | DX | 4-6h | Polish | 3+ |
+| 🟢 **LOW** | TypeScript SDK (auto-gen) | DX | 4-6h | Polish | 3+ |
 
 **Total Estimated Effort:**
-- Session 1 (Critical path): 6-8 hours
-- Session 2 (Production + Analytics): 8-10 hours (includes Gap 5)
-- Session 3 (Polish): 4-6 hours
-- **Grand Total: 18-24 hours** to production-ready v1.0.2
+- Session 1 (Critical path + DX quick wins): 8-10 hours (was 6-8h, +2-4h for code examples, MCP guide, QUICKSTART)
+- Session 2 (Production + Analytics + DX docs): 10-12 hours (was 8-10h, +1-2h for FAQ/SLA docs, optional QUICKSTART completion)
+- Session 3 (Polish + SDKs): 6-8 hours (was 4-6h, +2h for SDK generation)
+- **Grand Total: 24-30 hours** to production-ready v1.0.2 with complete DX
 
 ---
 

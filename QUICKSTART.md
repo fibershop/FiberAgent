@@ -166,24 +166,34 @@ For high-volume agents, contact support to request a higher limit.
 
 ---
 
-## 📊 Step 5: Use MCP for Natural Language Queries
+## 📊 Step 5: Access Real-Time Network Statistics
 
-In Session 2, we're adding advanced features:
-- **Real-time statistics** (Network KPIs, top agents, trending products)
-- **Analytics** (Growth metrics, merchant trends, category rankings)
-- **Natural language intent parsing** ("Find me wireless headphones under $200")
-- **Product comparison** across merchants
-- **Batch searches**
-- **Agent reputation scoring** (ERC-8004)
+Real-time statistics are now live (Session 2):
 
-Check out the [MCP_QUICKSTART.md](./MCP_QUICKSTART.md) to see how Claude Desktop can use FiberAgent with MCP.
+```bash
+# Network KPIs (agents, searches, purchases, cashback)
+curl https://api.fiber.shop/v1/agent/stats/platform
 
-For stats endpoints, see:
+# Top agents by earnings
+curl https://api.fiber.shop/v1/agent/stats/leaderboard?limit=10
+
+# 30-day historical trends
+curl https://api.fiber.shop/v1/agent/stats/trends?days=30
 ```
-GET /api/stats/platform          — Real-time network metrics
-GET /api/analytics/trending      — Top trending products & categories
-GET /api/analytics/growth        — Network growth analysis
+
+**All endpoints have CORS enabled.** Call them directly from your frontend:
+
+```javascript
+const stats = await fetch('https://api.fiber.shop/v1/agent/stats/platform')
+  .then(r => r.json());
+
+console.log(`Agents: ${stats.stats.total_agents_registered}`);
+console.log(`Searches: ${stats.stats.total_searches}`);
 ```
+
+Check out the [ARCHITECTURE_SESSION_2_FINAL.md](./ARCHITECTURE_SESSION_2_FINAL.md) for full technical details.
+
+For MCP integration, see [MCP_QUICKSTART.md](./MCP_QUICKSTART.md).
 
 ---
 

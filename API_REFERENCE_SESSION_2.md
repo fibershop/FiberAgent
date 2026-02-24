@@ -1,14 +1,14 @@
-# API Reference — Session 2 New Endpoints
+# API Reference — Fiber API Direct Calls
 
-Quick reference for all new endpoints added in Session 2.
+Quick reference for calling Fiber API directly from the browser (CORS enabled).
 
 ---
 
-## Stats Endpoints
+## Stats Endpoints (Direct to Fiber API)
 
 ### Platform Stats
 ```
-GET /api/stats/platform
+GET https://api.fiber.shop/v1/agent/stats/platform
 ```
 
 **Returns:** Real-time network KPIs and dashboard metrics
@@ -63,7 +63,7 @@ GET /api/stats/platform
 
 ### Leaderboard
 ```
-GET /api/stats/leaderboard?limit=10&offset=0
+GET https://api.fiber.shop/v1/agent/stats/leaderboard?limit=10&offset=0
 ```
 
 **Parameters:**
@@ -104,7 +104,7 @@ GET /api/stats/leaderboard?limit=10&offset=0
 
 ### Trends
 ```
-GET /api/stats/trends?days=30
+GET https://api.fiber.shop/v1/agent/stats/trends?days=30
 ```
 
 **Parameters:**
@@ -152,115 +152,9 @@ GET /api/stats/trends?days=30
 
 ---
 
-## Analytics Endpoints
+## Note on Analytics
 
-### Trending Products
-```
-GET /api/analytics/trending?limit=10&days=7
-```
-
-**Parameters:**
-- `limit` (optional, default 10) — Max results to return
-- `days` (optional, default 7) — Time window for trending calculation
-
-**Returns:** Top merchants and categories by sales and revenue
-
-**Response:**
-```json
-{
-  "success": true,
-  "source": "fiber",
-  "trending_products": [
-    {
-      "rank": 1,
-      "merchant": "Nike",
-      "sales_count": 45,
-      "revenue_usd": 6525,
-      "growth_rate": 24.3,
-      "trending_score": 1126
-    },
-    {
-      "rank": 2,
-      "merchant": "Amazon",
-      "sales_count": 42,
-      "revenue_usd": 3150,
-      "growth_rate": 18.7,
-      "trending_score": 980
-    }
-  ],
-  "trending_categories": [
-    {
-      "rank": 1,
-      "category": "Electronics",
-      "sales_count": 94,
-      "revenue_usd": 14100,
-      "avg_order_value": 150,
-      "growth_rate": 18.5
-    }
-  ],
-  "summary": {
-    "total_products_tracked": 263,
-    "total_revenue": 52700,
-    "avg_product_revenue": 200.38
-  }
-}
-```
-
-**Rate Limit:** 100 req/min, 1000 req/hr, 5000 req/day
-
----
-
-### Growth Analytics
-```
-GET /api/analytics/growth?days=30
-```
-
-**Parameters:**
-- `days` (optional, default 30) — Time window for analysis
-
-**Returns:** Network growth metrics and historical trends
-
-**Response:**
-```json
-{
-  "success": true,
-  "source": "fiber",
-  "period": "last_30_days",
-  "daily_data": [
-    {
-      "date": "2026-01-26",
-      "new_agents": 0,
-      "new_purchases": 0,
-      "daily_revenue": 0,
-      "cumulative_agents": 10,
-      "cumulative_purchases": 15,
-      "cumulative_revenue": 225.50,
-      "daily_avg_purchase_value": 0
-    },
-    {
-      "date": "2026-02-13",
-      "new_agents": 8,
-      "new_purchases": 3,
-      "daily_revenue": 0.08,
-      "cumulative_agents": 75,
-      "cumulative_purchases": 263,
-      "cumulative_revenue": 52700,
-      "daily_avg_purchase_value": 0.027
-    }
-  ],
-  "summary": {
-    "total_agents_created": 75,
-    "total_purchases": 263,
-    "total_revenue": 52700,
-    "avg_agents_per_day": 2.5,
-    "avg_purchases_per_day": 8.77,
-    "avg_revenue_per_day": 1756.67,
-    "growth_trend": "accelerating"
-  }
-}
-```
-
-**Rate Limit:** 100 req/min, 1000 req/hr, 5000 req/day
+**Trending & Growth Analytics:** Deferred to future sessions. Frontend can aggregate Fiber data directly if needed. Fiber API provides raw data; custom aggregation endpoints will be added only if business requirements demand it.
 
 ---
 
@@ -371,22 +265,16 @@ if response.status_code == 429:
 
 ```bash
 # Platform stats
-curl https://fiberagent.shop/api/stats/platform
+curl https://api.fiber.shop/v1/agent/stats/platform
 
 # With verbose headers
-curl -i https://fiberagent.shop/api/stats/platform
+curl -i https://api.fiber.shop/v1/agent/stats/platform
 
 # Leaderboard with limit
-curl "https://fiberagent.shop/api/stats/leaderboard?limit=5"
+curl "https://api.fiber.shop/v1/agent/stats/leaderboard?limit=5"
 
 # Trends for 14 days
-curl "https://fiberagent.shop/api/stats/trends?days=14"
-
-# Trending products
-curl "https://fiberagent.shop/api/analytics/trending?limit=20"
-
-# Growth analytics
-curl "https://fiberagent.shop/api/analytics/growth?days=90"
+curl "https://api.fiber.shop/v1/agent/stats/trends?days=14"
 ```
 
 ---

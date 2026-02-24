@@ -9,22 +9,28 @@ FiberAgent is a behavioral intelligence agent built by Fiber. When other AI agen
 ## 📈 Latest Updates (Session 2 - Feb 24, 2026)
 
 ### ✨ Production Features Live
-- ✅ **Rate Limiting** (100 req/min, 1000 req/hr, 5000 req/day on all endpoints)
-- ✅ **Analytics Dashboard** (Real-time network stats with animations)
-- ✅ **Network Intelligence** (Trending products, growth metrics, leaderboards)
-- ✅ **Error Handling** (Standardized 429/error responses with retry hints)
+- ✅ **Direct Fiber API Integration** (CORS enabled, no proxy overhead)
+- ✅ **Real-Time Statistics Dashboard** (75 agents, 5 searches, 3 conversions)
+- ✅ **Animated Charts** (Framer Motion, 60fps performance)
+- ✅ **Live Network Metrics** (Token rankings, top merchants, trending categories)
+- ✅ **Auto-Refresh** (Every 5 minutes)
 - ✅ **Score: 9.0/10** (Up from 6.0/10 in Session 1)
 
-### New Endpoints
+### Live Endpoints (Call Directly from Browser)
 ```
-GET /api/stats/platform          — Network KPIs & dashboard metrics
-GET /api/stats/leaderboard?limit=10 — Top agents by earnings
-GET /api/stats/trends?days=30    — Historical growth & trends
-GET /api/analytics/trending      — Trending merchants & categories
-GET /api/analytics/growth        — Network growth analysis
+GET https://api.fiber.shop/v1/agent/stats/platform
+    ↳ Network KPIs, token rankings, merchants, categories
+
+GET https://api.fiber.shop/v1/agent/stats/leaderboard?limit=10
+    ↳ Top agents by earnings & reputation
+
+GET https://api.fiber.shop/v1/agent/stats/trends?days=30
+    ↳ Historical network growth & trends
 ```
 
-See [SESSION_2_FINAL_SUMMARY.md](./SESSION_2_FINAL_SUMMARY.md) for complete changelog.
+All endpoints have **CORS enabled** for direct browser access.
+
+See [ARCHITECTURE_SESSION_2_FINAL.md](./ARCHITECTURE_SESSION_2_FINAL.md) for technical details, [SESSION_2_FINAL_SUMMARY.md](./SESSION_2_FINAL_SUMMARY.md) for complete changelog.
 
 **Monad-powered. Agent-to-agent. Crypto-native.**
 

@@ -4,32 +4,28 @@
 
 ### 🎉 Major Features
 
-#### Rate Limiting (All Endpoints)
-- **Rate limits active:** 100 req/min, 1000 req/hr, 5000 req/day per agent
-- **Endpoints protected:** 8 critical API endpoints
-- **Response headers:** `X-RateLimit-*` on all responses
-- **429 handling:** Standardized error responses with `Retry-After` header
-- **Use case:** Prevents API abuse, protects infrastructure
+#### Direct Fiber API Integration (Simplified)
+- **Frontend calls:** `https://api.fiber.shop/v1/agent/stats/*` directly
+- **CORS enabled:** Fiber API returns `Access-Control-Allow-Origin: https://fiberagent.shop`
+- **No proxy layer:** Removed 5 proxy endpoints (738 lines of code deleted)
+- **Faster:** Direct calls, one less network hop
+- **Cleaner:** Fewer moving parts to maintain
+- **Real-time data:** StatisticsPage shows live Fiber network metrics
+- **Auto-refresh:** Every 5 minutes
 
-#### Analytics Layer
-- **New endpoint:** `GET /api/analytics/trending` — Trending products/categories by sales & revenue
-- **New endpoint:** `GET /api/analytics/growth` — Network growth metrics & historical trends
-- **Use case:** Business intelligence, marketing materials, network monitoring
-- **Data source:** Real Fiber network data with demo fallback
+#### Real-Time Network Statistics
+- **Platform KPIs:** Total agents (75), searches (5), purchases (3), cashback ($0.08)
+- **Token ranking:** BONK (749 agents), MON (53), SOL (4), etc.
+- **Merchants:** Top performing brands with sales counts and revenue
+- **Categories:** Trending verticals (Toys & Games, Clothing, Health & Beauty)
+- **Data source:** Live Fiber API with real network metrics
 
-#### Fiber Stats Integration
-- **New endpoint:** `GET /api/stats/platform` — Real-time network KPIs
-- **New endpoint:** `GET /api/stats/leaderboard` — Top agents by earnings
-- **New endpoint:** `GET /api/stats/trends` — 30-day historical trends
-- **StatisticsPage:** Updated to fetch real network data (5-min auto-refresh)
-- **Fallback:** Demo data when Fiber API unavailable (graceful degradation)
-
-#### Animated Dashboard
-- **Frontend:** Framer Motion animations on StatisticsPage
+#### Animated Dashboard (Framer Motion)
 - **Metric values:** Scale up on load with smooth easing
-- **Chart bars:** Animate from height 0 → target with stagger effect
+- **Chart bars:** Animate from height 0 → target with 0.1s stagger
 - **Merchant cards:** Slide in from left sequentially
-- **Performance:** 60fps, GPU-accelerated, accessibility-first
+- **Performance:** 60fps, GPU-accelerated, respects `prefers-reduced-motion`
+- **Result:** Professional SaaS-grade dashboard
 
 ### 🔧 Technical Updates
 

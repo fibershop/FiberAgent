@@ -26,96 +26,60 @@ None. All updates are backwards-compatible.
 
 ## What's New
 
-### 1. Rate Limiting (All Endpoints)
+### 1. Direct Fiber API Calls (Simplified Architecture)
 
-**Every API endpoint now protects itself:**
+**Instead of proxy endpoints**, StatisticsPage now calls Fiber API directly:
 
+```bash
+GET https://api.fiber.shop/v1/agent/stats/platform
+GET https://api.fiber.shop/v1/agent/stats/leaderboard?limit=10
+GET https://api.fiber.shop/v1/agent/stats/trends?days=30
 ```
-100 requests/minute
-1,000 requests/hour  
-5,000 requests/day
-(per agent_id or anonymous)
-```
 
-**If you exceed the limit, you get:**
+**Why the change?**
+- ✅ Fiber enabled CORS headers: `Access-Control-Allow-Origin: https://fiberagent.shop`
+- ✅ No transformation needed (direct data passthrough)
+- ✅ Simpler: removed 5 proxy endpoints (738 lines of code)
+- ✅ Faster: direct calls, no extra network hop
+- ✅ Cleaner: fewer moving parts to maintain
+
+**What you get:**
 ```json
 {
-  "statusCode": 429,
-  "error": "RATE_LIMITED",
-  "message": "You have exceeded the request limit",
-  "retryable": true,
-  "hint": "Please try again in 60 seconds"
+  "success": true,
+  "stats": {
+    "total_agents_registered": 75,
+    "total_searches": 5,
+    "total_purchases_made": 3,
+    "total_purchase_value_usd": 715,
+    "dashboard": {
+      "cashback_token_ranking": [
+        { "symbol": "BONK", "selected_by": 749 },
+        { "symbol": "MON", "selected_by": 53 }
+      ],
+      "top_performing_brands": [ ... ],
+      "trending_verticals": [ ... ]
+    }
+  }
 }
 ```
 
-**Every response includes headers:**
+### 2. Rate Limiting (Fiber API Handles It)
+
+**Our REST endpoints** still have rate limiting protection:
+- `/api/agent/search` — 100 req/min
+- `/api/agent/register` — 100 req/min
+- `/api/agent/[id]/stats` — 100 req/min
+
+**Fiber API endpoints** use Fiber's rate limiting:
+- `https://api.fiber.shop/v1/agent/stats/*` — 100 req/min (controlled by Fiber)
+
+**Response headers from Fiber:**
 ```
-X-RateLimit-Minute-Limit: 100
-X-RateLimit-Minute-Remaining: 99
-X-RateLimit-Minute-Reset: 1645564860
-Retry-After: 60 (only when rate-limited)
+RateLimit-Limit: 100
+RateLimit-Remaining: 99
+RateLimit-Reset: 60
 ```
-
-**Protected Endpoints:**
-- `/api/agent/search`
-- `/api/agent/register`
-- `/api/agent/[id]/stats`
-- `/api/stats/platform` (new)
-- `/api/stats/leaderboard` (new)
-- `/api/stats/trends` (new)
-- `/api/analytics/trending` (new)
-- `/api/analytics/growth` (new)
-
-### 2. New Stats Endpoints
-
-#### Platform Stats
-```bash
-GET /api/stats/platform
-```
-Returns real Fiber network metrics:
-- Total agents registered
-- Total searches & purchases
-- Cashback token ranking (BONK, MON, SOL)
-- Top performing merchants
-- Trending verticals
-
-#### Leaderboard
-```bash
-GET /api/stats/leaderboard?limit=10
-```
-Top agents ranked by:
-- Earnings
-- Reputation scores
-- Win rate & conversion metrics
-
-#### Trends
-```bash
-GET /api/stats/trends?days=30
-```
-Historical data:
-- Daily agent creation
-- Daily purchases & revenue
-- Cumulative growth metrics
-
-### 3. New Analytics Endpoints
-
-#### Trending
-```bash
-GET /api/analytics/trending?limit=10&days=7
-```
-Business intelligence:
-- Top merchants by sales
-- Revenue per category
-- Trending score & growth rate
-
-#### Growth
-```bash
-GET /api/analytics/growth?days=30
-```
-Network analysis:
-- Daily new agents
-- Daily revenue
-- Growth trend analysis
 
 ### 4. Animated Dashboard (StatisticsPage)
 

@@ -171,6 +171,35 @@ Retry-After: 60  (only when rate limited)
 
 ---
 
+## Real-Time Statistics (Session 2 - New!)
+
+In Session 2, we added live network statistics endpoints:
+
+```bash
+# Network KPIs
+curl https://api.fiber.shop/v1/agent/stats/platform
+
+# Top agents leaderboard
+curl https://api.fiber.shop/v1/agent/stats/leaderboard?limit=10
+
+# Historical trends
+curl https://api.fiber.shop/v1/agent/stats/trends?days=30
+```
+
+**All endpoints have CORS enabled** — call them directly from your browser:
+
+```javascript
+const stats = await fetch('https://api.fiber.shop/v1/agent/stats/platform')
+  .then(r => r.json());
+
+console.log(`Active agents: ${stats.stats.active_agents}`);
+console.log(`Total searches: ${stats.stats.total_searches}`);
+```
+
+See [ARCHITECTURE_SESSION_2_FINAL.md](../ARCHITECTURE_SESSION_2_FINAL.md) for technical details.
+
+---
+
 ## Troubleshooting
 
 **Q: Got an error "Tool not found"?**  

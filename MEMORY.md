@@ -306,9 +306,14 @@
 - ✅ Session breakdown: 8-10h, 10-12h, 6-8h = 24-30h total
 
 **Status Update (Feb 24, 2026 Evening):**
-- ✅ Fiber API test credentials confirmed working
+- ✅ Fiber API test credentials confirmed working (staging)
 - ✅ Bearer token auth implemented (Task 1 complete)
 - ✅ Fiber API recommendations document created (living doc)
+- ⚠️ Fiber API production migration issue discovered:
+  - Staging endpoint works: `https://api.staging.fiber.shop/v1` ✅
+  - Production endpoint broken: `https://api.fiber.shop/v1` ❌ (500 error on search)
+  - Registration works on production, search fails
+  - Recommendation: Stay on staging until Fiber fixes production
 - 🔄 Session 1 in progress (Task 2: MCP tools in progress)
 
 **Created:** FIBER_API_RECOMMENDATIONS.md

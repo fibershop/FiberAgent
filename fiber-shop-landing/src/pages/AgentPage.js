@@ -9,6 +9,13 @@ import HeroBackground from '../components/HeroBackground';
 export default function AgentPage() {
   const FIBER_API = '/api/fiber-proxy';
 
+  // Fix localhost URLs from Fiber API (production fallback)
+  const fixAffiliateLink = (link) => {
+    if (!link) return link;
+    // Replace localhost:8080 with production domain
+    return link.replace(/http:\/\/localhost:8080/g, 'https://api.fiber.shop').replace(/http:\/\/localhost/g, 'https://api.fiber.shop');
+  };
+
   // Custom react-select styles (Fiber design)
   const selectStyles = {
     control: (base) => ({
@@ -497,7 +504,7 @@ export default function AgentPage() {
                   {products.map(product => (
                     <a
                       key={product.merchant_id}
-                      href={product.affiliate_link}
+                      href={fixAffiliateLink(product.affiliate_link)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.productCard}

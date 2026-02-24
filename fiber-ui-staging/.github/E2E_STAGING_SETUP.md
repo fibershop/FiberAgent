@@ -45,7 +45,7 @@ The E2E tests need environment variables in **two places**:
 
 #### A. On Your Staging Deployment (Vercel/hosting)
 
-Your staging environment at `https://app.staging.fiber.shop` needs these (so the test API endpoints work):
+Your staging environment at `https://app.fiber.shop` needs these (so the test API endpoints work):
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-staging-project.supabase.co
@@ -65,7 +65,7 @@ This is **not a secret** - it's already visible in your browser when you visit y
 
 ```yaml
 env:
-  PLAYWRIGHT_TEST_BASE_URL: https://app.staging.fiber.shop
+  PLAYWRIGHT_TEST_BASE_URL: https://app.fiber.shop
   NEXT_PUBLIC_SUPABASE_URL: https://your-project.supabase.co
 ```
 
@@ -90,7 +90,7 @@ NEXT_PUBLIC_SUPABASE_URL: https://YOUR_PROJECT_REF.supabase.co
 
 With your actual staging Supabase URL (e.g., `https://abc123.supabase.co`).
 
-**Note**: This is not a secret - it's already visible in your browser when you visit `https://app.staging.fiber.shop`.
+**Note**: This is not a secret - it's already visible in your browser when you visit `https://app.fiber.shop`.
 
 ### Step 2: Enable GitHub Pages
 
@@ -100,7 +100,7 @@ With your actual staging Supabase URL (e.g., `https://abc123.supabase.co`).
 
 ### Step 3: Verify Staging Environment
 
-Ensure your staging deployment at `https://app.staging.fiber.shop` has these env vars configured (should already be there):
+Ensure your staging deployment at `https://app.fiber.shop` has these env vars configured (should already be there):
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -209,7 +209,7 @@ Reports are retained for 30 days.
 
 **Cause**: This shouldn't happen - the URL is hardcoded in the workflow.
 
-**Solution**: Check the [workflow file](workflows/e2e-staging-scheduled.yml#L50) has `PLAYWRIGHT_TEST_BASE_URL: https://app.staging.fiber.shop` in the env section.
+**Solution**: Check the [workflow file](workflows/e2e-staging-scheduled.yml#L50) has `PLAYWRIGHT_TEST_BASE_URL: https://app.fiber.shop` in the env section.
 
 ### Tests time out connecting to baseURL
 

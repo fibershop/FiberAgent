@@ -10,9 +10,9 @@
 **Issue:** `/api/agent/search` returns `total_results: 0` with empty results array
 
 ### Diagnosis Checklist
-- [ ] Verify `staging.fiber.shop/v1` is responding with merchant data
+- [ ] Verify `fiber.shop/v1` is responding with merchant data
 - [ ] Check if Fiber API key is valid + in `.env`
-- [ ] Test Fiber API directly: `curl https://api.staging.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test`
+- [ ] Test Fiber API directly: `curl https://api.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test`
 - [ ] Verify merchant feed is not rate-limited or expired
 - [ ] Check Vercel function logs for errors in `/api/agent/search.js`
 
@@ -309,7 +309,7 @@ Choose one:
 
 ## Questions Awaiting Laurent
 
-1. **Fiber API:** Is `staging.fiber.shop/v1` live/populated? Or need to debug data source?
+1. **Fiber API:** Is `fiber.shop/v1` live/populated? Or need to debug data source?
 2. **Database:** Postgres (preferred), Redis, DynamoDB, or Firestore?
 3. **Timeline:** End of week (Feb 28) or flexible?
 4. **Distribution:** Pause ClawHub + community promotion until all 4 phases done?

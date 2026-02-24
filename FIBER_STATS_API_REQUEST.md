@@ -253,22 +253,22 @@
 
 ```javascript
 // Get global stats
-const globalStats = await fetch('https://api.staging.fiber.shop/v1/agent/stats/platform').then(r => r.json());
+const globalStats = await fetch('https://api.fiber.shop/v1/agent/stats/platform').then(r => r.json());
 console.log(`Total agents: ${globalStats.stats.total_agents_registered}`);
 console.log(`Total earnings: $${globalStats.stats.total_earnings_usd}`);
 
 // Get leaderboard
-const leaderboard = await fetch('https://api.staging.fiber.shop/v1/agent/stats/leaderboard?limit=10').then(r => r.json());
+const leaderboard = await fetch('https://api.fiber.shop/v1/agent/stats/leaderboard?limit=10').then(r => r.json());
 leaderboard.leaderboard.forEach((agent, i) => {
   console.log(`${agent.rank}. ${agent.agent_name}: $${agent.total_earnings_usd}`);
 });
 
 // Get trends (last 30 days)
-const trends = await fetch('https://api.staging.fiber.shop/v1/agent/stats/trends?days=30').then(r => r.json());
+const trends = await fetch('https://api.fiber.shop/v1/agent/stats/trends?days=30').then(r => r.json());
 console.log(`Growth trends:`, trends.data);
 
 // Get agent details
-const agentStats = await fetch(`https://api.staging.fiber.shop/v1/agent/agent_123/stats`).then(r => r.json());
+const agentStats = await fetch(`https://api.fiber.shop/v1/agent/agent_123/stats`).then(r => r.json());
 console.log(`Searches: ${agentStats.stats.total_searches}`);
 console.log(`Earnings: $${agentStats.stats.total_earnings_usd}`);
 ```

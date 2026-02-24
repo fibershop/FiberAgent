@@ -129,17 +129,17 @@
 
 1. **Test with curl directly** (not through our Node.js wrapper)
    ```bash
-   curl "https://api.staging.fiber.shop/v1/agent/search?keywords=shoes&agent_id=fiberagent_test_001"
+   curl "https://api.fiber.shop/v1/agent/search?keywords=shoes&agent_id=fiberagent_test_001"
    ```
 
 2. **Try different parameter formats**
    ```bash
    # Variant 1: POST instead of GET
-   curl -X POST https://api.staging.fiber.shop/v1/agent/search \
+   curl -X POST https://api.fiber.shop/v1/agent/search \
      -d "keywords=shoes&agent_id=fiberagent_test_001"
    
    # Variant 2: JSON body
-   curl -X POST https://api.staging.fiber.shop/v1/agent/search \
+   curl -X POST https://api.fiber.shop/v1/agent/search \
      -H "Content-Type: application/json" \
      -d '{"keywords": "shoes", "agent_id": "fiberagent_test_001"}'
    ```
@@ -147,8 +147,8 @@
 3. **Test with different keywords**
    ```bash
    # Try ultra-common keyword
-   curl "https://api.staging.fiber.shop/v1/agent/search?keywords=shoe"
-   curl "https://api.staging.fiber.shop/v1/agent/search?keywords=amazon"
+   curl "https://api.fiber.shop/v1/agent/search?keywords=shoe"
+   curl "https://api.fiber.shop/v1/agent/search?keywords=amazon"
    ```
 
 4. **Check API key validity**
@@ -159,12 +159,12 @@
 5. **Test without agent_id**
    ```bash
    # See if agent_id is actually required or optional
-   curl "https://api.staging.fiber.shop/v1/agent/search?keywords=shoes"
+   curl "https://api.fiber.shop/v1/agent/search?keywords=shoes"
    ```
 
 6. **Check response headers**
    ```bash
-   curl -i "https://api.staging.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test"
+   curl -i "https://api.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test"
    # Look for: rate limit headers, error codes, auth issues
    ```
 
@@ -193,12 +193,12 @@
 
 Please confirm/provide:
 
-- [ ] **Fiber API staging endpoint:** (Confirm: `https://api.staging.fiber.shop/v1/agent/search`?)
+- [ ] **Fiber API staging endpoint:** (Confirm: `https://api.fiber.shop/v1/agent/search`?)
 - [ ] **API key status:** Is the key in our `.env` current and valid?
 - [ ] **Test agent ID:** Can you request a pre-registered test agent from Fiber for debugging?
 - [ ] **Quick test result:** Can you run this and share the response?
   ```bash
-  curl "https://api.staging.fiber.shop/v1/agent/search?keywords=shoes&agent_id=fiberagent_test_001&size=5"
+  curl "https://api.fiber.shop/v1/agent/search?keywords=shoes&agent_id=fiberagent_test_001&size=5"
   ```
 - [ ] **Contact:** Who at Fiber should we reach out to for quick debugging?
 

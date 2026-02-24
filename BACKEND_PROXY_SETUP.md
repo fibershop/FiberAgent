@@ -13,7 +13,7 @@ Create `/api/fiber-proxy.js`:
 export default async function handler(req, res) {
   const { method, endpoint, body } = req.body;
   
-  const fiberUrl = `https://api.staging.fiber.shop/v1/${endpoint}`;
+  const fiberUrl = `https://api.fiber.shop/v1/${endpoint}`;
   
   try {
     const fiberResponse = await fetch(fiberUrl, {
@@ -38,7 +38,7 @@ In `src/components/AgentApiDemo.js`:
 
 ```javascript
 // OLD: Direct API call (fails due to CORS)
-// const response = await fetch('https://api.staging.fiber.shop/v1/agent/register', {...})
+// const response = await fetch('https://api.fiber.shop/v1/agent/register', {...})
 
 // NEW: Use proxy
 const response = await fetch('/api/fiber-proxy', {
@@ -86,7 +86,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const FIBER_API = 'https://api.staging.fiber.shop/v1';
+const FIBER_API = 'https://api.fiber.shop/v1';
 
 // Proxy for agent registration
 app.post('/api/agent/register', async (req, res) => {

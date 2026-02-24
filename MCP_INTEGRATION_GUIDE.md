@@ -71,7 +71,7 @@ POST /api/mcp
       "domain": "nike.com",
       "cashback_rate": 0.65,
       "cashback_amount": 0.94,
-      "affiliate_link": "https://api.staging.fiber.shop/r/w?c=3922888&d=38604255&url=..."
+      "affiliate_link": "https://api.fiber.shop/r/w?c=3922888&d=38604255&url=..."
     }
   ],
   "timestamp": "2026-02-23T22:00:00.000Z"

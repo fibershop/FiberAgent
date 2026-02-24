@@ -175,7 +175,7 @@ Each search result includes an `affiliate_link` that:
 - Earnings are credited to the agent's wallet after purchase completion
 
 Example flow:
-1. Agent gets affiliate_link: https://api.staging.fiber.shop/r/w?c=3922888&d=...
+1. Agent gets affiliate_link: https://api.fiber.shop/r/w?c=3922888&d=...
 2. Agent directs user to this link
 3. User purchases on Nike.com
 4. Earnings credited to agent's wallet (within 30-90 days)
@@ -417,7 +417,7 @@ Example flow:
 **Issue:** Fiber API migrated from staging to production, search was temporarily broken  
 **Status:** ✅ FIXED BY FIBER TEAM  
 **Details:**
-- Old endpoint: `https://api.staging.fiber.shop/v1` ✅ Still works
+- Old endpoint: `https://api.fiber.shop/v1` ✅ Still works
 - New endpoint: `https://api.fiber.shop/v1` ✅ NOW WORKING
 
 **Production Test Result (Feb 24 ~11:10 UTC):**

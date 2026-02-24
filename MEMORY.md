@@ -112,7 +112,7 @@
   - Users ask naturally: "I need rain shoes"
   - FiberAgent converts to keywords and searches
   - Shows real products + cashback + agent earnings
-- ✅ **All endpoints using real Fiber API** (https://api.staging.fiber.shop/v1)
+- ✅ **All endpoints using real Fiber API** (https://api.fiber.shop/v1)
 - ✅ **StatsDashboard component** ready for live Fiber stats
 - ✅ **Committed to GitHub** (fdc1412 + submodule update)
 - ✅ **Vercel auto-deploying now**
@@ -310,7 +310,7 @@
 - ✅ Bearer token auth implemented (Task 1 complete)
 - ✅ Fiber API recommendations document created (living doc)
 - ✅ **CRITICAL FIX:** Production API now fully working!
-  - Staging endpoint: `https://api.staging.fiber.shop/v1` ✅
+  - Staging endpoint: `https://api.fiber.shop/v1` ✅
   - Production endpoint: `https://api.fiber.shop/v1` ✅ **FIXED!**
   - Agent registration: ✅ Working
   - Product search: ✅ Working (verified with Nike, Reebok products)
@@ -430,7 +430,7 @@
 - Fix: Add POST handler for JSON-RPC `tools/call` dispatch
 
 ### Awaiting From Laurent
-1. Fiber API status (test: `curl https://api.staging.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test`)
+1. Fiber API status (test: `curl https://api.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test`)
 2. Database choice (Postgres/Redis/DynamoDB/Firestore)
 3. Timeline (aggressive/flexible)
 4. Distribution gating (hold ClawHub until Sessions 1+2 done?)

@@ -69,7 +69,7 @@ Message FiberAgent:
 
 Or use this endpoint:
 ```
-POST https://api.staging.fiber.shop/v1/agent/register
+POST https://api.fiber.shop/v1/agent/register
 
 {
   "agent_name": "My Shopping Bot",
@@ -92,7 +92,7 @@ POST https://api.staging.fiber.shop/v1/agent/register
 When users ask you for products:
 
 ```
-GET https://api.staging.fiber.shop/v1/agent/search
+GET https://api.fiber.shop/v1/agent/search
 ?keywords=running+shoes
 &agent_id=agent_xyz
 &wallet=USER_WALLET
@@ -132,7 +132,7 @@ Show users the deals:
 Check your earnings anytime:
 
 ```
-GET https://api.staging.fiber.shop/v1/agent/earnings/agent_xyz
+GET https://api.fiber.shop/v1/agent/earnings/agent_xyz
 
 Response: {
   "total_earnings": {

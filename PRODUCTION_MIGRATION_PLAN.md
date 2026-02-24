@@ -2,7 +2,7 @@
 
 **Status:** 🚀 READY TO EXECUTE  
 **Date:** Feb 24, 2026  
-**Target:** Move all FiberAgent from staging (`https://api.staging.fiber.shop/v1`) → production (`https://api.fiber.shop/v1`)
+**Target:** Move all FiberAgent from staging (`https://api.fiber.shop/v1`) → production (`https://api.fiber.shop/v1`)
 
 ---
 
@@ -12,7 +12,7 @@
 
 #### `fiber-shop-landing/api/agent/search.js`
 - [ ] Update `FIBER_API` constant from staging to production
-- [ ] Change: `https://api.staging.fiber.shop/v1` → `https://api.fiber.shop/v1`
+- [ ] Change: `https://api.fiber.shop/v1` → `https://api.fiber.shop/v1`
 
 #### `fiber-shop-landing/api/agent/register.js`
 - [ ] No changes needed (uses FIBER_API from search.js or utils)
@@ -191,7 +191,7 @@ git push
 
 # Option 2: Fallback to staging (add environment check)
 const FIBER_API = process.env.USE_STAGING === 'true' 
-  ? 'https://api.staging.fiber.shop/v1'
+  ? 'https://api.fiber.shop/v1'
   : 'https://api.fiber.shop/v1';
 ```
 

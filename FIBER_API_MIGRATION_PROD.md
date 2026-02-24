@@ -2,7 +2,7 @@
 
 **Date:** Feb 24, 2026  
 **Status:** ✅ PRODUCTION FIXED & VERIFIED WORKING  
-**Old Endpoint:** `https://api.staging.fiber.shop/v1` (still works)  
+**Old Endpoint:** `https://api.fiber.shop/v1` (still works)  
 **New Endpoint:** `https://api.fiber.shop/v1` (NOW WORKING ✅)
 
 ---

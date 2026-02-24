@@ -234,9 +234,9 @@ Then publish v1.0.2 when Sessions 1-2 complete.
 
 ## Questions Awaiting Laurent
 
-1. **Fiber API Status** — Is `staging.fiber.shop/v1` live? Test:
+1. **Fiber API Status** — Is `fiber.shop/v1` live? Test:
    ```bash
-   curl "https://api.staging.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test"
+   curl "https://api.fiber.shop/v1/agent/search?keywords=shoes&agent_id=test"
    ```
 
 2. **Database for Sessions 2+** — Postgres (recommended), Redis, DynamoDB, or Firestore?

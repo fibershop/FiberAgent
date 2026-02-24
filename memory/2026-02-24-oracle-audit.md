@@ -491,7 +491,7 @@ Response:
 
 ### Phase A: Unblock Catalog (URGENT — Do First)
 ```
-1. Verify Fiber API integration is live (check staging.fiber.shop/v1)
+1. Verify Fiber API integration is live (check fiber.shop/v1)
 2. Test search endpoint with real agent_id + keywords
 3. If returns 0, debug data pipeline (API key, merchant feed, etc.)
 4. Add health check endpoint (/api/health) to detect failures early
@@ -600,7 +600,7 @@ Response:
 
 ## Key Questions for Laurent
 
-1. **Fiber API Status:** Is `staging.fiber.shop/v1` currently returning merchant data, or was it never populated?
+1. **Fiber API Status:** Is `fiber.shop/v1` currently returning merchant data, or was it never populated?
 2. **Data Persistence:** Do we have Postgres/Redis available in Vercel environment, or should we use DynamoDB/Firestore?
 3. **Timeline:** What's the priority? Fix by end of week (Feb 28) or defer to next phase?
 4. **Distribution:** Should we pause ClawHub submission until these are fixed, or publish with "Known Issues" disclaimer?

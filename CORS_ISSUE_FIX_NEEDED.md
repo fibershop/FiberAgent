@@ -4,7 +4,7 @@
 **Fiber's staging API is rejecting requests from Vercel deployment.**
 
 ```
-Error: Access to fetch at 'https://api.staging.fiber.shop/v1/agent/register' 
+Error: Access to fetch at 'https://api.fiber.shop/v1/agent/register' 
 from origin 'https://FiberAgent-ten.vercel.app' has been blocked by CORS policy
 ```
 
@@ -56,7 +56,7 @@ Create a simple Node.js proxy to forward requests:
 ```javascript
 // Add to main server/api.js
 app.post('/api/agent/register', async (req, res) => {
-  const response = await fetch('https://api.staging.fiber.shop/v1/agent/register', {
+  const response = await fetch('https://api.fiber.shop/v1/agent/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req.body)
@@ -71,7 +71,7 @@ Then in frontend, call `/api/agent/register` instead of the Fiber endpoint.
 ### Option 3: Use CORS Proxy (Temporary)
 ```javascript
 const response = await fetch(
-  'https://cors-anywhere.herokuapp.com/https://api.staging.fiber.shop/v1/agent/register',
+  'https://cors-anywhere.herokuapp.com/https://api.fiber.shop/v1/agent/register',
   { method: 'POST', ... }
 );
 ```

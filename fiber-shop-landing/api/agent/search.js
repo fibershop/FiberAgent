@@ -8,7 +8,7 @@
 
 import * as utils from '../_lib/utils.js';
 import { enforceRateLimit } from '../_lib/ratelimit.js';
-import { sendError, handleFiberApiError, validateRequired, sendValidationError } from '../_lib/errors.js';
+import { sendError, handleFiberApiError } from '../_lib/errors.js';
 
 const FIBER_API = 'https://api.fiber.shop/v1';
 
@@ -91,17 +91,30 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     keywords = req.query.keywords;
     agent_id = req.query.agent_id;
-    size = req.query.size || 10;
+    size = parseInt(req.query.size) || 10;
   } else if (req.method === 'POST') {
     keywords = req.body.query || req.body.keywords;
     agent_id = req.body.agent_id;
-    size = req.body.size || 10;
+    size = parseInt(req.body.size) || 10;
   } else {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Session 1: Validate Bearer token (optional for backward compatibility)
-  // Will be REQUIRED in Session 2 after all clients are updated
+  if (!keywords || !agent_id) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      required: ['keywords/query', 'agent_id']
+    });
+  }
+
+  // Rate limiting check (per agent_id)
+  if (!enforceRateLimit(agent_id, res)) {
+    return sendError(res, 'RATE_LIMITED', 'You have exceeded the request limit', {
+      retryAfter: 60
+    });
+  }
+
+  // Validate Bearer token (optional for backward compatibility)
   const auth_token = utils.getAuthToken(req);
   if (auth_token) {
     const validated_agent_id = utils.validateAuthToken(auth_token);
@@ -112,15 +125,6 @@ export default async function handler(req, res) {
         required: 'Authorization: Bearer <token>'
       });
     }
-    // Optional: verify that the token's agent_id matches the requesting agent_id
-    // if (validated_agent_id !== agent_id) { return 403; }
-  }
-
-  if (!keywords || !agent_id) {
-    return res.status(400).json({
-      error: 'Missing required fields',
-      required: ['keywords/query', 'agent_id']
-    });
   }
 
   try {

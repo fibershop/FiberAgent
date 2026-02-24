@@ -1,9 +1,12 @@
 /**
  * POST /api/agent/register
  * Register a new AI agent
+ * Rate limited: 10 registrations per hour per IP
  */
 
 import * as utils from '../_lib/utils.js';
+import { enforceRateLimit } from '../_lib/ratelimit.js';
+import { sendError } from '../_lib/errors.js';
 
 export default function handler(req, res) {
   // Handle CORS
@@ -12,8 +15,9 @@ export default function handler(req, res) {
     return;
   }
 
+  utils.setCorsHeaders(res);
+
   if (req.method !== 'POST') {
-    utils.setCorsHeaders(res);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -21,10 +25,16 @@ export default function handler(req, res) {
 
   // Validate required fields
   if (!agent_id || !wallet_address) {
-    utils.setCorsHeaders(res);
     return res.status(400).json({
       error: 'Missing required fields',
       required: ['agent_id', 'wallet_address']
+    });
+  }
+
+  // Rate limiting (by agent_id)
+  if (!enforceRateLimit(agent_id, res)) {
+    return sendError(res, 'RATE_LIMITED', 'Registration limit exceeded', {
+      retryAfter: 3600
     });
   }
 

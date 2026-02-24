@@ -2,7 +2,11 @@
  * GET /api/stats/platform
  * Platform-wide statistics from Fiber API
  * Returns: total agents, searches, purchases, cashback, leaderboard data
+ * Rate limited: 100 requests/minute (anonymous)
  */
+
+import { enforceRateLimit } from '../_lib/ratelimit.js';
+import { sendError } from '../_lib/errors.js';
 
 export default async function handler(req, res) {
   // CORS
@@ -17,6 +21,13 @@ export default async function handler(req, res) {
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limiting (use 'anonymous' for unauthenticated requests)
+  if (!enforceRateLimit('anonymous', res)) {
+    return sendError(res, 'RATE_LIMITED', 'Platform stats limit exceeded', {
+      retryAfter: 60
+    });
   }
 
   try {

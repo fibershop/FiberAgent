@@ -2,7 +2,11 @@
  * GET /api/stats/leaderboard?limit=10&offset=0
  * Agent leaderboard from Fiber API
  * Returns: Top agents ranked by earnings
+ * Rate limited: 100 requests/minute
  */
+
+import { enforceRateLimit } from '../_lib/ratelimit.js';
+import { sendError } from '../_lib/errors.js';
 
 export default async function handler(req, res) {
   // CORS
@@ -17,6 +21,13 @@ export default async function handler(req, res) {
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limiting
+  if (!enforceRateLimit('anonymous', res)) {
+    return sendError(res, 'RATE_LIMITED', 'Leaderboard limit exceeded', {
+      retryAfter: 60
+    });
   }
 
   try {

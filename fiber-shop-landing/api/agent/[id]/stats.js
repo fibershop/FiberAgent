@@ -1,10 +1,12 @@
 /**
  * GET /api/agent/:id/stats
  * Get agent performance statistics
- * Requires Bearer token authorization (Session 1)
+ * Rate limited: 100 requests/minute per agent
  */
 
 import * as utils from '../../_lib/utils.js';
+import { enforceRateLimit } from '../../_lib/ratelimit.js';
+import { sendError } from '../../_lib/errors.js';
 
 export default function handler(req, res) {
   if (utils.handleCors(req, res)) {
@@ -23,7 +25,14 @@ export default function handler(req, res) {
     return res.status(400).json({ error: 'agent_id is required' });
   }
 
-  // Session 1: Validate Bearer token (optional for backward compatibility)
+  // Rate limiting check (per agent_id)
+  if (!enforceRateLimit(agentId, res)) {
+    return sendError(res, 'RATE_LIMITED', 'You have exceeded the stats request limit', {
+      retryAfter: 60
+    });
+  }
+
+  // Validate Bearer token (optional for backward compatibility)
   // Will be REQUIRED in Session 2 after all clients are updated
   const auth_token = utils.getAuthToken(req);
   if (auth_token) {

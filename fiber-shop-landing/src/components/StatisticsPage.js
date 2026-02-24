@@ -205,43 +205,73 @@ export default function StatisticsPage() {
           {/* Row 1: Key Metrics */}
           <motion.div className={styles.metricCard} variants={itemVariants}>
             <div className={styles.cardHeader}>Total Volume</div>
-            <div className={styles.metricValue}>${(totalVolume / 1000000).toFixed(1)}M</div>
+            <motion.div 
+              className={styles.metricValue}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              ${(totalVolume / 1000000).toFixed(1)}M
+            </motion.div>
             <div className={styles.metricTrend}>+12.5% <span className={styles.trendLabel}>vs last week</span></div>
             <div className={styles.miniChart}>
-              <div className={styles.chartBar} style={{ height: '40%' }}></div>
-              <div className={styles.chartBar} style={{ height: '60%' }}></div>
-              <div className={styles.chartBar} style={{ height: '30%' }}></div>
-              <div className={styles.chartBar} style={{ height: '80%' }}></div>
-              <div className={styles.chartBar} style={{ height: '50%' }}></div>
-              <div className={styles.chartBar} style={{ height: '100%' }}></div>
+              {[40, 60, 30, 80, 50, 100].map((height, idx) => (
+                <motion.div 
+                  key={idx}
+                  className={styles.chartBar} 
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${height}%` }}
+                  transition={{ duration: 0.8, delay: idx * 0.1 }}
+                />
+              ))}
             </div>
           </motion.div>
 
           <motion.div className={styles.metricCard} variants={itemVariants}>
             <div className={styles.cardHeader}>Total Searches</div>
-            <div className={styles.metricValue}>{(totalSearches / 1000).toFixed(1)}k</div>
+            <motion.div 
+              className={styles.metricValue}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              {(totalSearches / 1000).toFixed(1)}k
+            </motion.div>
             <div className={styles.metricTrend}>+8.2% <span className={styles.trendLabel}>vs last week</span></div>
             <div className={styles.miniChart}>
-              <div className={styles.chartBar} style={{ height: '30%' }}></div>
-              <div className={styles.chartBar} style={{ height: '40%' }}></div>
-              <div className={styles.chartBar} style={{ height: '60%' }}></div>
-              <div className={styles.chartBar} style={{ height: '50%' }}></div>
-              <div className={styles.chartBar} style={{ height: '70%' }}></div>
-              <div className={styles.chartBar} style={{ height: '90%' }}></div>
+              {[30, 40, 60, 50, 70, 90].map((height, idx) => (
+                <motion.div 
+                  key={idx}
+                  className={styles.chartBar} 
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${height}%` }}
+                  transition={{ duration: 0.8, delay: idx * 0.1 }}
+                />
+              ))}
             </div>
           </motion.div>
 
           <motion.div className={styles.metricCard} variants={itemVariants}>
             <div className={styles.cardHeader}>Network Conversions</div>
-            <div className={styles.metricValue}>{networkStats.total_conversions}</div>
+            <motion.div 
+              className={styles.metricValue}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              {networkStats.total_conversions}
+            </motion.div>
             <div className={styles.metricTrend}>${(networkStats.total_network_revenue / 1000).toFixed(1)}k <span className={styles.trendLabel}>total revenue</span></div>
             <div className={styles.miniChart}>
-              <div className={styles.chartBar} style={{ height: '20%' }}></div>
-              <div className={styles.chartBar} style={{ height: '35%' }}></div>
-              <div className={styles.chartBar} style={{ height: '50%' }}></div>
-              <div className={styles.chartBar} style={{ height: '60%' }}></div>
-              <div className={styles.chartBar} style={{ height: '80%' }}></div>
-              <div className={styles.chartBar} style={{ height: '95%' }}></div>
+              {[20, 35, 50, 60, 80, 95].map((height, idx) => (
+                <motion.div 
+                  key={idx}
+                  className={styles.chartBar} 
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${height}%` }}
+                  transition={{ duration: 0.8, delay: idx * 0.1 }}
+                />
+              ))}
             </div>
           </motion.div>
 
@@ -311,7 +341,13 @@ export default function StatisticsPage() {
                 );
                 
                 return (
-                  <div key={merchantName} className={styles.inputCard}>
+                  <motion.div 
+                    key={merchantName} 
+                    className={styles.inputCard}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
                     <div className={styles.brandHeader}>
                       <div className={styles.brandLogoContainer}>
                         {merchant.logo && (
@@ -324,9 +360,14 @@ export default function StatisticsPage() {
                       </div>
                     </div>
                     <div className={styles.brandGraph}>
-                      <div className={styles.brandBarFill} style={{ width: `${(sales / maxSales) * 100}%` }}></div>
+                      <motion.div 
+                        className={styles.brandBarFill} 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${(sales / maxSales) * 100}%` }}
+                        transition={{ duration: 0.8, delay: index * 0.15 }}
+                      />
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>

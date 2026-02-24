@@ -82,10 +82,23 @@ ad36132 Task 4-6: Add MCP Quickstart, QUICKSTART.md, and Developer section to ho
   - Created `/api/stats/trends.js` — Wraps Fiber `/v1/agent/stats/trends`
   - Updated StatisticsPage to fetch real data from endpoints
   - Graceful fallback to demo data if Fiber API unavailable
-- ⏳ **Task 2: Compare Endpoint** (2-3h) — Product comparison using Fiber data
-- ⏳ **Task 3: Analytics Layer** (2-3h) — Aggregate Fiber data into leaderboards
-- ⏳ **Task 4: Coordinate with Fiber** (🤝) — Stats endpoints are LIVE (pending prod deployment)
-- ⏳ **Task 5: Rate Limit + Errors** (1-2h) — Protect API, handle failures gracefully
+- ⏳ **Task 2: Compare Endpoint** (2-3h) — DEFERRED (stored in TODO_COMPARISON.md)
+  - Product comparison using Fiber data
+  - Need to solve product deduplication problem first
+  - Multiple approaches documented for future implementation
+- ⏳ **Task 3: Analytics Layer** (2-3h) — TBD (next priority after rate limiting)
+  - Charts and visualization for trending products
+  - Agent analytics and historical data
+- ✅ **Task 4: Coordinate with Fiber** (🤝) — DONE
+  - Stats endpoints released and documented
+  - Integration complete, awaiting Fiber production deployment
+- ✅ **Task 5: Rate Limit + Errors** (1-2h) — READY
+  - Created `/api/_lib/ratelimit.js` — Token bucket rate limiting
+  - Created `/api/_lib/errors.js` — Standardized error responses
+  - Rate limits: 100/min, 1000/hour, 5000/day per agent
+  - Error codes: RATE_LIMITED, UNAUTHORIZED, FIBER_API_ERROR, etc.
+  - Integration guide: RATE_LIMITING_INTEGRATION.md
+  - Ready to integrate into all endpoints (6 files)
 
 **Architectural Decision:**
 - ✅ No persistence layer (Fiber owns the data)
@@ -96,10 +109,11 @@ ad36132 Task 4-6: Add MCP Quickstart, QUICKSTART.md, and Developer section to ho
 
 **Git History (Session 2):**
 ```
+3f93a9a Add rate limiting and error handling utilities + integration guide
+a77d4a6 Add Fiber Stats API Integration documentation
+4fc484c Task 1 Complete: Fiber stats integration endpoints + StatisticsPage real data fetching
 99dc860 Integrate Fiber stats API endpoints: /api/stats/platform, /api/stats/leaderboard, /api/stats/trends
 c9f94f7 Session 2: Pivot to API-first, stateless architecture — NO DATABASE, Fiber is source of truth
-ef5340e Add comprehensive Session 2 Plan: NO DATABASE — Fiber API First
-c56dbb1 Session 2 Start: Update StatisticsPage with realistic Fiber network data + demo stats endpoint
 ```
 
 **Real Fiber Endpoints (Ready to Integrate):**
@@ -130,6 +144,34 @@ Fiber just released three stats endpoints:
 - ✅ Graceful fallback working (shows demo data if Fiber unavailable)
 
 **Next:** Once Fiber pushes endpoints to production, StatisticsPage will auto-update with live data
+
+---
+
+## Session 2 Current Status (Feb 24, 2026)
+
+**Completed (~6 hours):**
+1. ✅ Created 3 Fiber API proxy endpoints (platform, leaderboard, trends)
+2. ✅ Updated StatisticsPage to fetch real network data
+3. ✅ Built rate limiting utility (token bucket, 100/min/1000/hour/5000/day)
+4. ✅ Built error handling utility (standardized responses, 12+ error codes)
+5. ✅ Documented rate limiting integration (7KB guide with examples)
+6. ✅ Documented comparison endpoint deferral (4KB strategy doc for later)
+
+**Ready to Integrate (~1-2 hours):**
+- Rate limiting into 6 API endpoints (search, register, stats, task, compare, etc.)
+- Error handling into all endpoints
+- Test rate limiting with curl (make 101 requests, verify 429)
+
+**Deferred (Future Session):**
+- Product comparison endpoint (needs product deduplication strategy first)
+- Advanced analytics (trends, charts, leaderboards)
+- Agent reputation scoring UI (ERC-8004 data available on-chain, UI TBD)
+
+**Next Actions:**
+1. Integrate rate limiting + error handling into all endpoints (~1-2h)
+2. Test: Rate limiting, errors, Fiber API fallback
+3. Verify: StatisticsPage loads real Fiber data (awaiting prod deployment)
+4. Consider: Analytics layer (Task 3) or skip to documentation (Task 4)
 
 **Next: Session 2 (10-12 hours) — Production Readiness (8.5/10)**
 - Persist stats to Postgres/Redis

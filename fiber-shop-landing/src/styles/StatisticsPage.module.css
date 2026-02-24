@@ -439,6 +439,24 @@
     font-weight: 500;
 }
 
+.brandGraph {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 12px;
+}
+
+.brandBarFill {
+    height: 100%;
+    background: linear-gradient(90deg, #00D1FF, #14F195);
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0, 209, 255, 0.4);
+}
+
 /* Layout Helpers */
 .colSpan1 {
     grid-column: span 1;

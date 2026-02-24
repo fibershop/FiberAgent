@@ -156,16 +156,42 @@ export default function StatisticsPage() {
     })) || null;
   };
 
+  // Assign colors to trending verticals (Fiber API might not include them)
+  const enrichTrendingVerticals = (verticals) => {
+    const colorMap = {
+      'Electronics': '#00D1FF',
+      'Fashion': '#E5FF00',
+      'Footwear': '#FF4500',
+      'Home & Garden': '#14F195',
+      'Home': '#14F195',
+      'Beauty': '#FF69B4',
+      'Sports & Outdoors': '#7E3AF2',
+      'Toys & Games': '#FF4500',
+      'Clothing & Apparel': '#E5FF00',
+      'Health & Beauty': '#FF69B4'
+    };
+    
+    return verticals?.map(v => ({
+      ...v,
+      color: v.color || colorMap[v.vertical || v.name] || '#00D1FF'
+    })) || null;
+  };
+
   // Use real data if available, otherwise use demo data
   const enrichedTokens = platformStats?.dashboard?.cashback_token_ranking 
     ? enrichCashbackTokens(platformStats.dashboard.cashback_token_ranking)
+    : null;
+
+  const enrichedVerticals = platformStats?.dashboard?.trending_verticals
+    ? enrichTrendingVerticals(platformStats.dashboard.trending_verticals)
     : null;
 
   const stats = platformStats ? {
     ...platformStats,
     dashboard: {
       ...platformStats.dashboard,
-      cashback_token_ranking: enrichedTokens || platformStats.dashboard?.cashback_token_ranking
+      cashback_token_ranking: enrichedTokens || platformStats.dashboard?.cashback_token_ranking,
+      trending_verticals: enrichedVerticals || platformStats.dashboard?.trending_verticals
     }
   } : {
     total_searches: 5,

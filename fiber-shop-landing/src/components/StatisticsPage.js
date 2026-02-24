@@ -193,73 +193,7 @@ export default function StatisticsPage() {
       cashback_token_ranking: enrichedTokens || platformStats.dashboard?.cashback_token_ranking,
       trending_verticals: enrichedVerticals || platformStats.dashboard?.trending_verticals
     }
-  } : {
-    total_searches: 5,
-    total_purchases_made: 3,
-    total_purchase_value_usd: 715,
-    total_agents_registered: 75,
-    dashboard: {
-      kpis: {
-        total_volume: { value_usd: 715, series: [0, 0, 0, 715, 0, 0] },
-        total_searches: { value: 5, series: [0, 0, 0, 0, 0, 5] },
-        active_agents: { value: 75, series: [0, 0, 0, 0, 0, 4] },
-        cashback_sent: { value_usd: 0.08, purchases_paid: 3 }
-      },
-      // Demo cashback token ranking (shows with logos until real data arrives)
-      cashback_token_ranking: [
-        {
-          rank: 1,
-          symbol: 'BONK',
-          name: 'Bonk',
-          network: 'Solana',
-          selected_by: 749,
-          logo: bonkLogo
-        },
-        {
-          rank: 2,
-          symbol: 'MON',
-          name: 'Monad',
-          network: 'Monad',
-          selected_by: 53,
-          logo: monadLogo
-        },
-        {
-          rank: 3,
-          symbol: 'SOL',
-          name: 'Solana',
-          network: 'Solana',
-          selected_by: 4,
-          logo: solanaLogo
-        },
-        {
-          rank: 4,
-          symbol: 'USDC',
-          name: 'USD Coin',
-          network: 'Multiple',
-          selected_by: 2,
-          logo: usd1Logo
-        },
-        {
-          rank: 5,
-          symbol: 'AOL',
-          name: "America's Official Launchpad",
-          network: 'Solana',
-          selected_by: 1,
-          logo: aolLogo
-        }
-      ],
-      top_performing_brands: [
-        { merchant: 'Nike', sales_count: 37, purchase_value_usd: 5550 },
-        { merchant: 'Amazon', sales_count: 42, purchase_value_usd: 3150 },
-        { merchant: 'Best Buy', sales_count: 28, purchase_value_usd: 4200 }
-      ],
-      trending_verticals: [
-        { vertical: 'Electronics', sales_count: 94, purchase_value_usd: 14100 },
-        { vertical: 'Fashion', sales_count: 66, purchase_value_usd: 13200 },
-        { vertical: 'Home & Garden', sales_count: 38, purchase_value_usd: 7600 }
-      ]
-    }
-  };
+  } : null;
 
   const totalVolume = stats.total_purchase_value_usd || 715;
   const totalSearches = stats.total_searches || 5;
@@ -303,11 +237,44 @@ export default function StatisticsPage() {
             <p className={styles.subtitle}>Real-time activity across the Fiber Agent ecosystem.</p>
           </div>
           <div className={styles.liveIndicator}>
-            <span className={styles.dot}></span> Live Data
+            <span className={styles.dot}></span> {loading ? 'Loading...' : 'Live Data'}
           </div>
         </motion.header>
 
-        {/* Dashboard Grid */}
+        {/* Loading State */}
+        {loading && (
+          <motion.div
+            className={styles.loadingContainer}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className={styles.spinner} />
+            <p className={styles.loadingText}>Fetching real-time network data...</p>
+          </motion.div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <motion.div
+            className={styles.errorContainer}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className={styles.errorText}>⚠️ Unable to fetch statistics</p>
+            <p className={styles.errorDetail}>{error}</p>
+            <button 
+              className={styles.retryButton}
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </motion.div>
+        )}
+
+        {/* Dashboard Grid (only show when data loaded) */}
+        {stats && !loading && (
         <motion.div
           className={styles.dashboardGrid}
           variants={containerVariants}
@@ -485,6 +452,7 @@ export default function StatisticsPage() {
             </div>
           </motion.div>
         </motion.div>
+        )}
       </div>
     </div>
   );

@@ -457,6 +457,85 @@
     box-shadow: 0 0 10px rgba(0, 209, 255, 0.4);
 }
 
+/* Loading State */
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 20px;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid #E5FF00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingText {
+    color: #888;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Error State */
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+    background: rgba(255, 0, 0, 0.05);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 40px;
+}
+
+.errorText {
+    color: #ff6b6b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.errorDetail {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.retryButton {
+    background: linear-gradient(135deg, #E5FF00, #14F195);
+    color: #000;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+}
+
+.retryButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(229, 255, 0, 0.3);
+}
+
 /* Layout Helpers */
 .colSpan1 {
     grid-column: span 1;

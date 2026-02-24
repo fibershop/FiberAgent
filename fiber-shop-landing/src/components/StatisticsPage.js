@@ -265,6 +265,45 @@ export default function StatisticsPage() {
             </div>
           </motion.div>
 
+          <motion.div className={styles.metricCard} variants={itemVariants}>
+            <div className={styles.cardHeader}>Products Suggested</div>
+            <motion.div 
+              className={styles.metricValue}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              {(stats?.total_products_suggested || 0).toLocaleString()}
+            </motion.div>
+            <div className={styles.metricTrend}>Across all agent searches</div>
+          </motion.div>
+
+          <motion.div className={styles.metricCard} variants={itemVariants}>
+            <div className={styles.cardHeader}>Avg Products/Search</div>
+            <motion.div 
+              className={styles.metricValue}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              {(stats?.avg_products_per_search || 0).toFixed(2)}
+            </motion.div>
+            <div className={styles.metricTrend}>Search result quality</div>
+          </motion.div>
+
+          <motion.div className={styles.metricCard} variants={itemVariants}>
+            <div className={styles.cardHeader}>Searches/Agent</div>
+            <motion.div 
+              className={styles.metricValue}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+            >
+              {(stats?.avg_searches_per_registered_agent || 0).toFixed(2)}
+            </motion.div>
+            <div className={styles.metricTrend}>Agent engagement level</div>
+          </motion.div>
+
           {/* Cashback Token Ranking */}
           <motion.div className={`${styles.metricCard} ${styles.scrollCard}`} variants={itemVariants}>
             <div className={styles.cardHeader}>Cashback Token Ranking</div>

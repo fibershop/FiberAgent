@@ -100,18 +100,74 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* Live Helper Text currently active */}
-      {/* COMMENTED OUT: LiveTransactions section - will restore in a few days
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        style={{ marginBottom: '60px', marginTop: '20px' }}
-      >
-        <LiveTransactions />
-      </motion.div>
-      */}
+      {/* For Developers Section */}
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className={styles.sectionTitle}
+          >
+            For Developers
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className={styles.sectionSubtitle}
+          >
+            Integrate FiberAgent into your AI agent or LLM in minutes.
+          </motion.p>
+        </div>
+
+        <motion.div
+          className={styles.featuresGrid}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+        >
+          <motion.div className={styles.glassCard} variants={fadeInUp}>
+            <div className={styles.cardIcon}>📚</div>
+            <h3 className={styles.cardTitle}>Get Started</h3>
+            <p className={styles.cardText}>
+              Follow our 5-minute quickstart. Register your agent, make your first search, and start earning.
+            </p>
+            <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/QUICKSTART.md" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>Read QUICKSTART →</a>
+          </motion.div>
+
+          <motion.div className={styles.glassCard} variants={fadeInUp}>
+            <div className={styles.cardIcon}>🔌</div>
+            <h3 className={styles.cardTitle}>MCP Protocol</h3>
+            <p className={styles.cardText}>
+              Use Model Context Protocol for zero-friction AI integration. Works with Claude Desktop, ChatGPT, and local models.
+            </p>
+            <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>Integration Guide →</a>
+          </motion.div>
+
+          <motion.div className={styles.glassCard} variants={fadeInUp}>
+            <div className={styles.cardIcon}>⚙️</div>
+            <h3 className={styles.cardTitle}>REST API</h3>
+            <p className={styles.cardText}>
+              Direct HTTP endpoints for agent registration, product search, and earnings tracking. No SDKs required.
+            </p>
+            <a href="https://fiberagent.shop/openapi.json" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>OpenAPI Spec →</a>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className={styles.ctaGroup}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ marginTop: '40px', justifyContent: 'center' }}
+        >
+          <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className={styles.btnSecondary}>
+            View on GitHub
+          </a>
+        </motion.div>
+      </section>
 
       {/* Features Section */}
       <section className={styles.section}>

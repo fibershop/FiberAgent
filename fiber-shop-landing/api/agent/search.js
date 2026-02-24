@@ -14,7 +14,7 @@ async function searchFiberAPI(keywords, agentId, size = 10) {
     const params = new URLSearchParams({
       keywords,
       agent_id: agentId,
-      size: String(size)
+      limit: String(size)
     });
 
     const response = await fetch(`${FIBER_API}/agent/search?${params}`, {

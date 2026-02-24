@@ -1,16 +1,17 @@
-# Fiber API Test Agent — Verified Working
+# Fiber API Test Agent — Production Verified
 
-**Status:** ✅ CONFIRMED WORKING  
+**Status:** ✅ CONFIRMED WORKING (Production)  
 **Date:** Feb 24, 2026  
 **Verified by:** Laurent
+**Endpoint:** `https://api.fiber.shop/v1` (Production)
 
 ---
 
-## Test Agent Credentials
+## Production Test Agent Credentials
 
-**Agent ID (SAVE THIS):**
+**Agent ID:**
 ```
-agent_51ab9e782a306e789309d5be
+agent_2dbf947b6ca049b57469cf39
 ```
 
 **Associated Wallet:**
@@ -20,13 +21,29 @@ agent_51ab9e782a306e789309d5be
 
 ---
 
-## Test Command (Works)
+## Test Command (Production — Works)
 
+```bash
+curl -s "https://api.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_2dbf947b6ca049b57469cf39&limit=5" | jq
+```
+
+**Response:** ✅ 5 products returned with real data (Nike, Reebok shoes, cashback rates)
+
+---
+
+## Staging Test Agent (Legacy — Still Works)
+
+**Agent ID (Staging):**
+```
+agent_51ab9e782a306e789309d5be
+```
+
+**Test Command (Staging):**
 ```bash
 curl -s "https://api.staging.fiber.shop/v1/agent/search?keywords=running+shoes&agent_id=agent_51ab9e782a306e789309d5be&limit=5" | jq
 ```
 
-**Response:** ✅ 5 products returned with real data (Nike, Reebok shoes, cashback rates)
+**Note:** Staging endpoint still works but production is now the primary.
 
 ---
 

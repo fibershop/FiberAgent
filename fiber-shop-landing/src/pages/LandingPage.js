@@ -261,7 +261,7 @@ export default function LandingPage() {
             <div className={howStyles.stepIcon}>💰</div>
             <div className={howStyles.stepContent}>
               <h3>Earn</h3>
-              <p>You earn MON or BONK on every purchase. Automatic. On-chain.</p>
+              <p>You earn crypto on every purchase. Automatic. On-chain.</p>
             </div>
           </motion.div>
         </motion.div>

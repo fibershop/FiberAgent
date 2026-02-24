@@ -464,7 +464,7 @@ export default function AgentPage() {
                 <div className={styles.howStep}>
                   <span className={styles.stepNum}>03</span>
                   <h3>Earn</h3>
-                  <p>User buys. You earn {selectedToken}. Automatic. On-chain.</p>
+                  <p>User buys. You earn crypto. Automatic. On-chain.</p>
                 </div>
               </div>
             </section>

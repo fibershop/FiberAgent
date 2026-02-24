@@ -555,9 +555,16 @@ cd skills/fiberagent && npm publish --access public
 
 ### Continuity Notes for Next Session
 1. **Wallet addresses:** Primary = `0x790b405d466f7fddcee4be90d504eb56e3fedcae` (COMPROMISED, needs rotation)
-2. **Fiber API:** staging.fiber.shop/v1 endpoint (no auth, returns native affiliate_link URLs)
+2. **Fiber API:** production.fiber.shop/v1 endpoint LIVE (no auth, returns results with nested cashback object)
+   - GET /v1/agent/search: `?keywords=...&agent_id=...&limit=N` (note: `limit` not `size`)
+   - Returns: `{ success, results: [...], agent_id, wallet, cashback: { rate_percent, amount_usd, display } }`
+   - affiliate_link format: `https://api.fiber.shop/r/w?c=<campaign>&d=<deal>&url=<encoded_url>`
 3. **Agent ID:** Auto-registered on first search (e.g., `agent_demo_001`)
+   - Production test agent: `agent_2dbf947b6ca049b57469cf39` (created Feb 24, verified working)
 4. **MCP endpoint:** `https://fiberagent.shop/api/mcp` (no auth required, stateless)
 5. **Vercel:** Auto-deploys on git push; ESM import must use `await import()` in serverless functions
+   - Deployment domain: `https://fiberagent.shop`
+   - Auto-rebuild time: ~10-30s after push
 6. **ClawHub:** Manual submission at https://clawhub.com (search "FiberAgent" to verify when live)
 7. **ERC-8004:** Agent 135 on Monad (https://www.8004scan.io/agents/monad/135) — ONLY commerce agent
+8. **Session 1 Status (Feb 24):** Code fixes pushed, awaiting Vercel deployment completion for live testing

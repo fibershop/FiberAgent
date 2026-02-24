@@ -27,64 +27,8 @@ import valorLogo from '../assets/coins/valor.png';
 import penguLogo from '../assets/coins/pengu.png';
 import aolLogo from '../assets/coins/aol.png';
 
-// Realistic Data Generator (Based on Fiber Network)
-const generateData = () => {
-  // Top Brands on Fiber.shop with realistic metrics
-  const brands = [
-    { name: 'Nike', logo: null, category: 'Footwear' },
-    { name: 'Amazon', logo: null, category: 'General Retail' },
-    { name: 'Best Buy', logo: bestBuyLogo, category: 'Electronics' },
-    { name: "Macy's", logo: macysLogo, category: 'Fashion' },
-    { name: 'Sephora', logo: sephoraLogo, category: 'Beauty' },
-    { name: 'Adidas', logo: adidasLogo, category: 'Footwear' },
-    { name: 'Target', logo: null, category: 'General Retail' },
-    { name: 'Walmart', logo: walmartLogo, category: 'General Retail' },
-    { name: 'Alo Yoga', logo: aloLogo, category: 'Fashion' },
-    { name: "Lowe's", logo: lowesLogo, category: 'Home & Garden' }
-  ];
-
-  // Realistic metrics based on actual Fiber network data
-  return brands.map((b, idx) => {
-    const baseConversions = [37, 42, 28, 22, 25, 35, 19, 18, 12, 8][idx];
-    const baseCashback = [5.0, 1.0, 3.5, 15.0, 12.0, 3.5, 2.5, 2.5, 8.0, 5.0][idx];
-    
-    return {
-      ...b,
-      searches: Math.floor(baseConversions * 18) + Math.floor(Math.random() * 100),
-      volume: Math.floor(baseConversions * 150) + Math.floor(Math.random() * 1000),
-      conversions: baseConversions + Math.floor(Math.random() * 5),
-      cashback_rate: baseCashback,
-      growth: Math.floor(Math.random() * 15) + 3
-    };
-  }).sort((a, b) => b.conversions - a.conversions);
-};
-
-// Cashback Tokens (Realistic Distribution)
-const generateCashbackData = () => {
-  const tokens = [
-    { name: 'MON', logo: monadLogo, color: '#7E3AF2', agents: 47 },
-    { name: 'USDC', logo: usd1Logo, color: '#00D1FF', agents: 38 },
-    { name: 'BONK', logo: bonkLogo, color: '#FFA500', agents: 28 },
-    { name: 'SOL', logo: solanaLogo, color: '#14F195', agents: 18 },
-    { name: 'CHOG', logo: chogLogo, color: '#FFD700', agents: 12 },
-    { name: 'MF', logo: mfLogo, color: '#E5FF00', agents: 9 },
-    { name: 'PENGU', logo: penguLogo, color: '#FF69B4', agents: 7 },
-    { name: 'VALOR', logo: valorLogo, color: '#FF4500', agents: 5 },
-    { name: 'AOL', logo: aolLogo, color: '#0000FF', agents: 3 }
-  ];
-
-  return tokens.sort((a, b) => b.agents - a.agents);
-};
-
-// Trending Categories based on Fiber network data
-const trendingVerticals = [
-  { name: "Electronics", value: 94, color: '#00D1FF', conversions: 94, revenue: 14100 },
-  { name: "Fashion", value: 66, color: '#E5FF00', conversions: 66, revenue: 13200 },
-  { name: "Footwear", value: 31, color: '#FF4500', conversions: 31, revenue: 7750 },
-  { name: "Home & Garden", value: 38, color: '#14F195', conversions: 38, revenue: 7600 },
-  { name: "Beauty", value: 34, color: '#FF69B4', conversions: 34, revenue: 6800 },
-  { name: "Sports & Outdoors", value: 23, color: '#7E3AF2', conversions: 23, revenue: 5175 }
-];
+// NO FAKE DATA - Only real data from Fiber API
+// If you see fake data, that's a bug. Report it!
 
 export default function StatisticsPage() {
   const [platformStats, setPlatformStats] = useState(null);
@@ -132,9 +76,8 @@ export default function StatisticsPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Fallback to demo data if API not available
-  const brandData = useMemo(() => generateData(), []);
-  const cashbackData = useMemo(() => generateCashbackData(), []);
+  // NO FAKE DATA - Only show real data from Fiber API
+  // If data doesn't load, show loading state or error state instead
 
   // TODO: Once Fiber API includes token logos, remove this hardcoded mapping
   // See: FIBER_API_ENHANCEMENT_PROPOSAL.md
@@ -201,15 +144,15 @@ export default function StatisticsPage() {
     }
   } : null;
 
-  const totalVolume = stats?.total_purchase_value_usd || 715;
-  const totalSearches = stats?.total_searches || 5;
+  const totalVolume = stats?.total_purchase_value_usd ?? 0;
+  const totalSearches = stats?.total_searches ?? 0;
   
   const networkStats = {
-    total_agents: stats?.total_agents_registered || 75,
-    total_searches: stats?.total_searches || 5,
-    total_conversions: stats?.total_purchases_made || 3,
-    total_network_revenue: stats?.total_purchase_value_usd || 715,
-    total_commissions_paid: stats?.total_cashback_sent_usd || 0.08
+    total_agents: stats?.total_agents_registered ?? 0,
+    total_searches: stats?.total_searches ?? 0,
+    total_conversions: stats?.total_purchases_made ?? 0,
+    total_network_revenue: stats?.total_purchase_value_usd ?? 0,
+    total_commissions_paid: stats?.total_cashback_sent_usd ?? 0
   };
 
   const containerVariants = {
@@ -364,7 +307,7 @@ export default function StatisticsPage() {
           <motion.div className={`${styles.metricCard} ${styles.scrollCard}`} variants={itemVariants}>
             <div className={styles.cardHeader}>Cashback Token Ranking</div>
             <div className={styles.cashbackList}>
-              {(stats.dashboard?.cashback_token_ranking || cashbackData).map((token, index) => (
+              {stats?.dashboard?.cashback_token_ranking?.map((token, index) => (
                 <div key={token.symbol || token.name} className={styles.cashbackItem}>
                   <div className={styles.cashbackRank}>#{token.rank || index + 1}</div>
                   <div className={styles.tokenAvatar} style={{
@@ -391,7 +334,7 @@ export default function StatisticsPage() {
           <motion.div className={`${styles.dashboardCard} ${styles.colSpan1}`} variants={itemVariants}>
             <h3 className={styles.cardTitle}>Trending Verticals</h3>
             <div className={styles.verticalChart}>
-              {(stats.dashboard?.trending_verticals || trendingVerticals).map((v, i) => {
+              {stats?.dashboard?.trending_verticals?.map((v, i) => {
                 const verticalName = v.vertical || v.name;
                 const value = v.sales_count ? Math.min((v.sales_count / 5) * 100, 100) : v.value;
                 return (
@@ -415,11 +358,11 @@ export default function StatisticsPage() {
           <motion.div className={`${styles.dashboardCard} ${styles.colSpan2}`} variants={itemVariants}>
             <h3 className={styles.cardTitle}>Top Performing Merchants</h3>
             <div className={styles.brandsGrid}>
-              {(stats.dashboard?.top_performing_brands || brandData.slice(0, 6)).map((merchant, index) => {
+              {stats?.dashboard?.top_performing_brands?.map((merchant, index) => {
                 const merchantName = merchant.merchant || merchant.name;
                 const sales = merchant.sales_count !== undefined ? merchant.sales_count : merchant.conversions;
                 const maxSales = Math.max(
-                  ...(stats.dashboard?.top_performing_brands || brandData.slice(0, 6)).map(m => 
+                  ...(stats?.dashboard?.top_performing_brands || []).map(m => 
                     m.sales_count !== undefined ? m.sales_count : m.conversions
                   ),
                   1

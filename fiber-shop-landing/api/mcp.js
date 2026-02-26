@@ -381,7 +381,21 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `🚨 **STOP — I CANNOT SEARCH WITHOUT YOUR WALLET**\n\nTo search for "${keywords}" with cashback rewards, you MUST provide:\n\n**1️⃣ Your Blockchain Wallet Address**\n   (from Metamask, Coinbase Wallet, or similar)\n   • Get Metamask: https://metamask.io\n   • Get Coinbase: https://coinbase.com/wallet\n   • Format: 0x1234567890abcdef1234567890abcdef12345678\n\n**2️⃣ Your Preferred Reward Token**\n   • MON (default, native token)\n   • BONK (community token)\n   • USDC (stablecoin)\n\n**You MUST reply with BOTH:**\n   "0x[your-wallet-address] [TOKEN]"\n\n**Example:**\n   "0x9f2d567890abcdef1234567890abcdef12345678 USDC"\n\n⚠️ **WITHOUT YOUR WALLET, I CANNOT COMPLETE THIS SEARCH.**`
+                    text: `To search for "${keywords}" with cashback rewards, I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).`
+                  }]
+                },
+                id
+              });
+            }
+            
+            // If wallet provided but no token preference, ask for it
+            if (wallet_address && !preferred_token && !agent_id) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `Great! Now, which token would you like to earn your cashback in?\n\n• **MON** — Default, Monad native token (recommended)\n• **BONK** — Community token\n• **USDC** — Stablecoin (no price volatility)\n\nJust say: **MON**, **BONK**, or **USDC**`
                   }]
                 },
                 id
@@ -487,7 +501,21 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `🚨 **STOP — I CANNOT: "${intent}" WITHOUT YOUR WALLET**\n\nTo complete this search with cashback rewards, you MUST provide:\n\n**1️⃣ Your Blockchain Wallet Address**\n   (from Metamask, Coinbase Wallet, or similar)\n   • Get Metamask: https://metamask.io\n   • Get Coinbase: https://coinbase.com/wallet\n   • Format: 0x1234567890abcdef1234567890abcdef12345678\n\n**2️⃣ Your Preferred Reward Token**\n   • MON (default, native token)\n   • BONK (community token)\n   • USDC (stablecoin)\n\n**You MUST reply with BOTH:**\n   "0x[your-wallet-address] [TOKEN]"\n\n**Example:**\n   "0x9f2d567890abcdef1234567890abcdef12345678 USDC"\n\n⚠️ **WITHOUT YOUR WALLET, I CANNOT COMPLETE THIS SEARCH.**`
+                    text: `To help with "${intent}" and earn cashback, I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).`
+                  }]
+                },
+                id
+              });
+            }
+            
+            // If wallet provided but no token preference, ask for it
+            if (wallet_address && !preferred_token && !agent_id) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `Great! Now, which token would you like to earn your cashback in?\n\n• **MON** — Default, Monad native token (recommended)\n• **BONK** — Community token\n• **USDC** — Stablecoin (no price volatility)\n\nJust say: **MON**, **BONK**, or **USDC**`
                   }]
                 },
                 id
@@ -731,18 +759,67 @@ export default async function handler(req, res) {
               agent_id = lastAgent?.agent_id;
             }
             
-            // CRITICAL: Must have registered agent for affiliate links
+            // If no agent and no wallet provided, REQUIRE wallet
+            const wallet_address = args?.wallet_address;
+            const preferred_token = args?.preferred_token || 'MON';
+            
             if (!agent_id || agent_id === 'mcp-user') {
-              return res.status(200).json({
-                jsonrpc: '2.0',
-                result: {
-                  content: [{
-                    type: 'text',
-                    text: `⚠️ **No registered agent found.**\n\nTo compare cashback and earn rewards, you need to:\n\n1. **Create a wallet:** \`create_wallet\`\n2. **Register your agent:** \`register_agent\` with the address\n3. **Then compare:** You'll see affiliate links to earn from!\n\n**Your search:** "${product_query}"\n\nReady? Call \`create_wallet\` first!`
-                  }]
-                },
-                id
-              });
+              if (!wallet_address) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  result: {
+                    content: [{
+                      type: 'text',
+                      text: `To compare prices and cashback for "${product_query}", I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).`
+                    }]
+                  },
+                  id
+                });
+              }
+              
+              // If wallet provided but no token preference, ask for it
+              if (wallet_address && !preferred_token) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  result: {
+                    content: [{
+                      type: 'text',
+                      text: `Great! Now, which token would you like to earn your cashback in?\n\n• **MON** — Default, Monad native token (recommended)\n• **BONK** — Community token\n• **USDC** — Stablecoin (no price volatility)\n\nJust say: **MON**, **BONK**, or **USDC**`
+                    }]
+                  },
+                  id
+                });
+              }
+              
+              // Register with wallet
+              if (wallet_address) {
+                try {
+                  const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                      wallet_address: wallet_address,
+                      preferred_token: preferred_token
+                    }),
+                    signal: AbortSignal.timeout(10000)
+                  });
+                  
+                  const fiberResponse = await registerResponse.json();
+                  if (registerResponse.ok) {
+                    agent_id = fiberResponse.agent_id;
+                    const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+                    agents[localKey] = {
+                      agent_id,
+                      wallet: wallet_address,
+                      device_id: fiberResponse.wildfire_device_id,
+                      registered_at: new Date().toISOString()
+                    };
+                  }
+                } catch (err) {
+                  // Fallback to search
+                }
+              }
             }
             
             const results = await searchViaBackend(product_query, agent_id, 20);

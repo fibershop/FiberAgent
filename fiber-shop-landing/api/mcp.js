@@ -503,14 +503,13 @@ export default async function handler(req, res) {
             }
             
             try {
-              // Register with Fiber API via our backend
-              const registerResponse = await fetch(`${BASE_URL}/api/agent/register`, {
+              // Register DIRECTLY with Fiber API (not through our backend)
+              const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   agent_id: agent_name,
-                  wallet_address: wallet_address,
-                  agent_name: agent_name
+                  wallet_address: wallet_address
                 }),
                 signal: AbortSignal.timeout(10000)
               });
@@ -820,14 +819,13 @@ export default async function handler(req, res) {
         }
         
         try {
-          // Register with Fiber API
-          const registerResponse = await fetch(`${BASE_URL}/api/agent/register`, {
+          // Register DIRECTLY with Fiber API (not through our backend proxy)
+          const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               agent_id: name,
-              wallet_address: wallet_address,
-              agent_name: name
+              wallet_address: wallet_address
             }),
             signal: AbortSignal.timeout(10000)
           });

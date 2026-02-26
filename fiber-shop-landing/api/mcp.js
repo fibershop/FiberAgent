@@ -455,6 +455,25 @@ export default async function handler(req, res) {
             
             const max_results = Math.min(args?.max_results || 5, 20);
             
+            // Get the wallet address for this agent
+            let agentWallet = wallet_address;
+            if (!agentWallet && agent_id) {
+              try {
+                // Fetch agent info from Fiber API to get correct wallet
+                const agentStatsResponse = await fetch(`${FIBER_API}/agent/${agent_id}/stats`, {
+                  signal: AbortSignal.timeout(5000)
+                });
+                if (agentStatsResponse.ok) {
+                  const agentStats = await agentStatsResponse.json();
+                  agentWallet = agentStats.stats?.wallet_address || '(wallet registered)';
+                }
+              } catch (err) {
+                // Fallback: try agents object
+                const agentEntry = Object.values(agents).find(a => a.agent_id === agent_id);
+                agentWallet = agentEntry?.wallet || '(wallet registered)';
+              }
+            }
+            
             // Search with registered agent
             let results = await searchViaBackend(keywords, agent_id, max_results);
             let source = '🔗 Fiber API Live';
@@ -468,7 +487,7 @@ export default async function handler(req, res) {
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet registered)'}*` }]
+                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}\n💰 All earnings go to: ${agentWallet}*` }]
               },
               id
             });
@@ -573,6 +592,25 @@ export default async function handler(req, res) {
               }
             }
             
+            // Get the wallet address for this agent
+            let agentWallet = wallet_address;
+            if (!agentWallet && agent_id) {
+              try {
+                // Fetch agent info from Fiber API to get correct wallet
+                const agentStatsResponse = await fetch(`${FIBER_API}/agent/${agent_id}/stats`, {
+                  signal: AbortSignal.timeout(5000)
+                });
+                if (agentStatsResponse.ok) {
+                  const agentStats = await agentStatsResponse.json();
+                  agentWallet = agentStats.stats?.wallet_address || '(wallet registered)';
+                }
+              } catch (err) {
+                // Fallback: try agents object
+                const agentEntry = Object.values(agents).find(a => a.agent_id === agent_id);
+                agentWallet = agentEntry?.wallet || '(wallet registered)';
+              }
+            }
+            
             // Search with registered agent
             let results = await searchViaBackend(keywords, agent_id, 20);
             let source = '🔗 Fiber API Live';
@@ -590,7 +628,7 @@ export default async function handler(req, res) {
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet registered)'}` }]
+                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 All earnings go to: ${agentWallet}` }]
               },
               id
             });

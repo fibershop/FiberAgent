@@ -333,6 +333,62 @@ Both tools now properly registered in MCP SDK and visible to Claude Desktop
 
 **Status:** ✅ CODE DEPLOYED (Git: b403ff8) — Vercel rebuilding
 **ETA:** 2-3 minutes for tools to appear in Claude Desktop
+
+### 10. FINAL SIMPLIFICATION: Wallet Address on First Search (Commit a70726c + e875946)
+
+**The Simplest Possible Flow:**
+
+```
+User: "Find Nike shoes"
+↓
+Claude: "What's your wallet address? (0x...)"
+↓
+User: "0x1234567..."
+↓
+Claude: ✅ Registered! [Results table]
+↓
+User: Clicks [🛒] → Buys → Earnings to wallet
+```
+
+**That's it. Done.**
+
+**Implementation (Commits a70726c + e875946):**
+
+1. **JSON-RPC Handlers:**
+   - `search_products` — Asks for wallet if not registered
+   - `search_by_intent` — Same flow
+   - Registers with Fiber automatically
+   - Stores agent_id in session memory
+
+2. **SDK Tools (server.tool):**
+   - `search_products` — Takes keywords + optional wallet_address
+   - `search_by_intent` — Takes intent + optional wallet_address
+   - Both register automatically and search immediately
+
+3. **Subsequent Searches:**
+   - Session remembers registered wallet/agent_id
+   - All searches use same wallet automatically
+   - No re-asking, no friction
+
+**Removed:**
+- `create_wallet` — No longer needed (user provides own)
+- `export_private_key` — No server-side key generation
+- `register_agent` — Happens automatically on first search
+- All "registration requirement" checks
+
+**Added:**
+- Wallet address prompt on first search
+- Automatic registration with Fiber
+- Session-scoped agent_id storage
+- Wallet memory across searches
+
+**Result:**
+- ✅ Fewest clicks: Just 1 wallet address paste + search
+- ✅ Most transparent: User's own wallet, no key management
+- ✅ Simplest code: Direct registration flow
+- ✅ Best UX: "Just tell me your wallet, then search"
+
+**Status:** ✅ CODE DEPLOYED (Git: a70726c, e875946) — Live in ~2-3 minutes
 **ETA:** ~2-3 minutes for deployment to be live
 **Next Test:** After Vercel finishes, run Claude Desktop MCP again
 

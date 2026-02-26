@@ -102,11 +102,25 @@ function extractMaxPrice(intent) {
 
 function formatResults(results) {
   if (!results.length) return 'No products found.';
-  return results.map((p, i) => {
-    const link = p.affiliateUrl ? `[🛒 Shop now](${p.affiliateUrl})` : '🛒 (No link available)';
-    const cashback = p.cashbackRate ? `${p.cashbackRate}% cashback → $${p.cashbackAmount.toFixed(2)}` : 'No cashback';
-    return `${i+1}. **${p.title}**\n   $${p.price.toFixed(2)} at ${p.merchant} | ${cashback}\n   ${link}`;
-  }).join('\n\n');
+  
+  // Build markdown table with images
+  const rows = results.map((p, i) => {
+    const image = p.image ? `![](${p.image})` : '📦';
+    const title = p.title || 'Unknown';
+    const price = `$${p.price.toFixed(2)}`;
+    const merchant = p.merchant || 'Unknown';
+    const cashback = p.cashbackRate ? `${p.cashbackRate}%` : '0%';
+    const cashbackAmount = p.cashbackAmount ? `$${p.cashbackAmount.toFixed(2)}` : '$0';
+    const link = p.affiliateUrl ? `[🛒](${p.affiliateUrl})` : '❌';
+    
+    return `| ${image} | **${title}** | ${price} | ${merchant} | ${cashback} (${cashbackAmount}) | ${link} |`;
+  });
+  
+  const table = `| Image | Product | Price | Merchant | Cashback | Link |
+|-------|---------|-------|----------|----------|------|
+${rows.join('\n')}`;
+
+  return table;
 }
 
 // ─── In-memory store (session-scoped, per MCP client) ───

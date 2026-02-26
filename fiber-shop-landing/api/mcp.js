@@ -25,18 +25,22 @@ async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
     });
 
     // Call Fiber API DIRECTLY (not our backend proxy - simpler and faster)
-    const response = await fetch(`${FIBER_API}/agent/search?${params}`, {
+    const url = `${FIBER_API}/agent/search?${params}`;
+    console.log(`[Fiber Search] Calling: ${url}`);
+    
+    const response = await fetch(url, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(10000)
     });
 
     if (!response.ok) {
-      console.error(`Fiber API search returned ${response.status}`);
+      console.error(`[Fiber Search] Failed: ${response.status} ${response.statusText}`);
       return null;
     }
 
     const data = await response.json();
+    console.log(`[Fiber Search] Got response:`, data);
     
     // Normalize Fiber API response directly
     if (data.results && Array.isArray(data.results)) {
@@ -59,30 +63,31 @@ async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
         }));
       
       if (products.length > 0) {
+        console.log(`[Fiber Search] Returned ${products.length} products (Fiber API live)`);
         return products;
       } else {
-        console.error(`No products found after filtering. Total results: ${data.results.length}, types:`, data.results.map(r => r.type));
+        console.error(`[Fiber Search] No products after filtering. Total results: ${data.results.length}`);
         return null;
       }
     }
 
-    console.error('No results in Fiber response:', data);
+    console.error('[Fiber Search] No results in response');
     return null;
   } catch (err) {
-    console.error('Fiber API search error:', err.message);
+    console.error(`[Fiber Search] Error: ${err.message}`);
     return null;
   }
 }
 
 // ─── Fallback Mock Catalog (ONLY for development/demo) ───
-// NOTE: All fallback links are DEMO ONLY and will fail at Fiber
-// Always prefer real Fiber API results
+// NOTE: When using fallback, links are DEMO ONLY
+// Always prefer real Fiber API results (with real tracking IDs)
 const FALLBACK_PRODUCTS = [
-  { id: 'nike_pegasus_41', title: "Nike Pegasus 41 — Men's Road Running Shoes", brand: 'Nike', price: 145.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 0.94, affiliateUrl: null },
-  { id: 'nike_vomero_premium', title: "Nike Vomero Premium — Men's Road Running Shoes", brand: 'Nike', price: 230.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.50, affiliateUrl: null },
-  { id: 'nike_vomero5_fl', title: "Women's Nike Zoom Vomero 5 — Casual Shoes", brand: 'Nike', price: 170.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 5.53, affiliateUrl: null },
-  { id: 'nike_airmax270', title: 'Nike Air Max 270', brand: 'Nike', price: 170.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.11, affiliateUrl: null },
-  { id: 'nike_af1_fl', title: "Men's Nike Air Force 1 '07 LV8 — Casual Shoes", brand: 'Nike', price: 115.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 3.74, affiliateUrl: null },
+  { id: 'nike_pegasus_41', title: "Nike Pegasus 41 — Men's Road Running Shoes", brand: 'Nike', price: 145.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 0.94, image: 'https://images.nike.com/is/image/DotCom/PS_0000_PEGASUS_41_MENS_BLACK_WHT_34-050724?$SNKRS$', affiliateUrl: 'https://api.fiber.shop/r/w?c=0&d=0&url=https%3A%2F%2Fwww.nike.com%2Ft%2Fpegasus-41-mens-road-running-shoes' },
+  { id: 'nike_vomero_premium', title: "Nike Vomero Premium — Men's Road Running Shoes", brand: 'Nike', price: 230.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.50, image: 'https://images.nike.com/is/image/DotCom/PS_0000_VOMERO_PREMIUM_MENS_OBSIDIAN_50-050524?$SNKRS$', affiliateUrl: 'https://api.fiber.shop/r/w?c=0&d=0&url=https%3A%2F%2Fwww.nike.com%2Ft%2Fvomero-premium-road-running-shoes' },
+  { id: 'nike_vomero5_fl', title: "Women's Nike Zoom Vomero 5 — Casual Shoes", brand: 'Nike', price: 170.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 5.53, image: 'https://images.finishline.com/image/0/750/750/12589/12589/1.jpg', affiliateUrl: 'https://api.fiber.shop/r/w?c=1234&d=0&url=https%3A%2F%2Fwww.finishline.com%2Fproduct%2Fnike-zoom-vomero-5-womens%2F' },
+  { id: 'nike_airmax270', title: 'Nike Air Max 270', brand: 'Nike', price: 170.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.11, image: 'https://images.nike.com/is/image/DotCom/PS_0000_AIR_MAX_270_MENS_BLK_WHT_50-050124?$SNKRS$', affiliateUrl: 'https://api.fiber.shop/r/w?c=0&d=0&url=https%3A%2F%2Fwww.nike.com%2Ft%2Fair-max-270-shoes' },
+  { id: 'nike_af1_fl', title: "Men's Nike Air Force 1 '07 LV8 — Casual Shoes", brand: 'Nike', price: 115.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 3.74, image: 'https://images.finishline.com/image/0/750/750/12345/12345/1.jpg', affiliateUrl: 'https://api.fiber.shop/r/w?c=1234&d=0&url=https%3A%2F%2Fwww.finishline.com%2Fproduct%2Fnike-air-force-1-mens%2F' },
 ];
 
 function searchFallback(query, max = 5) {
@@ -950,7 +955,10 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
           source = '📦 Fallback Catalog';
         }
         
-        return { content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network.\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet}*` }] };
+        const tableMarkdown = formatResults(results);
+        const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet not set)'}*`;
+        
+        return { content: [{ type: 'text', text: `## 🛍️ Search Results: "${keywords}"\n\n${tableMarkdown}${footer}\n\n⬆️ **Click 🛒 links above to earn cashback! No changes to your shopping — we just give you commissions.**` }] };
       }
     );
 
@@ -1028,7 +1036,11 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         if (wantsCashback) results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
         results = results.slice(0, 5);
 
-        return { content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet}` }] };
+        const tableMarkdown = formatResults(results);
+        const filters = `${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}`;
+        const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet not set)'}*`;
+
+        return { content: [{ type: 'text', text: `## 🛍️ Search: "${intent}"\n**Parsed:** ${keywords}${filters}\n\n${tableMarkdown}${footer}\n\n⬆️ **Click 🛒 links above to earn cashback!**` }] };
       }
     );
 
@@ -1207,11 +1219,13 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         if (!results.length) return { content: [{ type: 'text', text: `No products found for "${product_query}".` }] };
         
         const best = results[0];
-        const table = `| Rank | Merchant | Cashback | Product | Price | Link |
+        const comparisonTable = `| Rank | Merchant | Cashback | Product | Price | Link |
 |------|----------|----------|---------|-------|------|
 ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate}% ($${p.cashbackAmount.toFixed(2)}) | ${p.title} | $${p.price.toFixed(2)} | ${p.affiliateUrl ? `[🛒](${p.affiliateUrl})` : '❌'} |`).join('\n')}`;
         
-        return { content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 **Best Deal:** ${best.merchant} at ${best.cashbackRate}% ($${best.cashbackAmount.toFixed(2)} cashback)\n\n---\nSource: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet}` }] };
+        const footer = `\n\n---\n*Source: ${source}\n💰 Earnings tracked to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet not set)'}*`;
+
+        return { content: [{ type: 'text', text: `## 💰 Cashback Comparison: "${product_query}"\n\n${comparisonTable}\n\n🏆 **Best Deal:** ${best.merchant} at **${best.cashbackRate}%** = **$${best.cashbackAmount.toFixed(2)} cashback**${footer}\n\n⬆️ **Click 🛒 link to buy and earn!**` }] };
       }
     );
 

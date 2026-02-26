@@ -1,0 +1,163 @@
+TEST ACCOUNT SETUP INSTRUCTIONS
+
+═══════════════════════════════════════════════════════════════════════════════
+
+NO SETUP REQUIRED — ENDPOINT IS PUBLIC
+
+The FiberAgent MCP server requires zero configuration. Use it immediately with 
+the pre-registered test agent below. No API keys, no OAuth, no authentication.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PRE-REGISTERED TEST ACCOUNT (Ready to Use)
+
+Agent ID:       agent_375fe785219e94cf5f2f060e
+Wallet Address: 0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d
+Endpoint:       https://fiberagent.shop/api/mcp
+Protocol:       HTTP POST, JSON-RPC 2.0
+
+This agent is already registered with real earnings data. No setup needed.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+QUICK START (3 Commands — Copy & Paste)
+
+COMMAND 1 — Verify the endpoint is live:
+───────────────────────────────────────────────────────────────────────────────
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+Expected: JSON response listing 3 tools (search_products, register_agent, get_agent_stats)
+Time: <1 second
+
+
+COMMAND 2 — Search 50,000+ merchants for products:
+───────────────────────────────────────────────────────────────────────────────
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0","id":1,"method":"tools/call",
+    "params":{
+      "name":"search_products",
+      "arguments":{
+        "keywords":"shoes",
+        "agent_id":"agent_375fe785219e94cf5f2f060e",
+        "limit":5
+      }
+    }
+  }'
+
+Expected: 5 real products with:
+  - Product names (Nike Pegasus 41, etc.)
+  - Real prices ($145, $170, $115, etc.)
+  - Real cashback rates (0.65%, 3.25%, etc.)
+  - Affiliate links with tracking (c=, d=39106401)
+  - Merchant names (Nike, Finish Line, Easy Spirit, etc.)
+Time: <200ms
+
+
+COMMAND 3 — Retrieve agent earnings and statistics:
+───────────────────────────────────────────────────────────────────────────────
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0","id":1,"method":"tools/call",
+    "params":{
+      "name":"get_agent_stats",
+      "arguments":{
+        "agent_id":"agent_375fe785219e94cf5f2f060e"
+      }
+    }
+  }'
+
+Expected: Agent statistics including:
+  - Agent name and ID
+  - Total searches completed
+  - Total earnings (USD value)
+  - Top converting merchants
+  - Reputation score
+Time: <200ms
+
+═══════════════════════════════════════════════════════════════════════════════
+
+WHAT YOU'LL VERIFY
+
+✅ Endpoint is live and responding
+✅ All 3 tools are discoverable with full schemas
+✅ Product search returns real data from 50,000+ merchants
+✅ Real prices, real cashback rates, real affiliate links
+✅ Agent earnings are tracked and retrievable
+✅ JSON-RPC 2.0 protocol is implemented correctly
+✅ Error handling works (try invalid agent_id)
+✅ Response times are fast (<200ms)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+OPTIONAL — REGISTER YOUR OWN TEST AGENT
+
+If you want to create a fresh agent instead of using the pre-made one:
+
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0","id":1,"method":"tools/call",
+    "params":{
+      "name":"register_agent",
+      "arguments":{
+        "agent_name":"My Test Agent",
+        "wallet_address":"0x0000000000000000000000000000000000000001",
+        "preferred_token":"MON"
+      }
+    }
+  }'
+
+Response will include a new agent_id. Use that instead of 
+agent_375fe785219e94cf5f2f060e in Command 2.
+
+(But the pre-registered agent is easier — it already has data to show.)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING
+
+Problem: "Connection refused"
+→ Verify internet connection and that endpoint URL is exactly:
+  https://fiberagent.shop/api/mcp
+
+Problem: "search_products" returns empty results
+→ Try simpler keywords: "shoes", "electronics", "coffee"
+→ Verify agent_id: agent_375fe785219e94cf5f2f060e
+
+Problem: "Agent not found" error
+→ Make sure agent_id is exactly: agent_375fe785219e94cf5f2f060e
+→ If you registered your own, use the agent_id you received
+
+Problem: Response is very slow (>5 seconds)
+→ Server may be under load — wait 60 seconds and retry
+→ Check status: https://status.fiber.shop
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DOCUMENTATION & SUPPORT
+
+Full Testing Guide: https://github.com/fibershop/FiberAgent/blob/main/REGISTRY_TEST_CREDENTIALS.txt
+API Documentation: https://fiberagent.shop/docs/mcp
+GitHub Issues:     https://github.com/fibershop/FiberAgent/issues
+Response Time:     24 hours for critical issues
+
+═══════════════════════════════════════════════════════════════════════════════
+
+SUMMARY
+
+1. Copy Command 1 → Verify endpoint is live
+2. Copy Command 2 → See real products from real merchants
+3. Copy Command 3 → See earnings data
+
+All 3 commands use the pre-registered agent:
+  agent_375fe785219e94cf5f2f060e
+
+No credentials. No setup. No authentication.
+Just copy-paste and test.
+
+═══════════════════════════════════════════════════════════════════════════════

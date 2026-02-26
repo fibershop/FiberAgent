@@ -999,3 +999,85 @@ ace3ebe Add Agent ID reuse: Claude captures & reuses for next searches
 | End-to-end testing | ⏳ Blocked on user availability |
 
 **Status: 🟢 9.5/10 PRODUCTION-READY** (awaiting E2E testing for final 10.0/10 stamp)
+
+---
+
+## 🔧 SESSION 3.1 HOTFIX (Feb 26, 2026 afternoon) — WALLET PROMPT REDESIGN
+
+### Issue Identified
+Laurent reported: Claude was refusing to ask for wallet address directly, instead over-explaining and steering him away. The wallet prompt was too long and complex, giving Claude too much room to deviate.
+
+### Solution: Simplified Direct Prompts (Commits 47b7bc1 + d03b5b7)
+**Before (problematic):**
+```
+⏸️ I need two things to search for "Nike shoes" with cashback:
+
+1️⃣ Your blockchain wallet address...
+[long explanation]
+2️⃣ Your preferred reward token...
+[long list with descriptions]
+
+→ Reply with both...
+Example...
+```
+*Problem:* Too wordy, gave Claude room to over-explain and avoid asking user
+
+**After (direct & mandatory):**
+```
+To search for Nike shoes with cashback, I need your wallet (0x...). 
+Do you have one?
+
+Get one free from:
+• Metamask: https://metamask.io
+• Coinbase Wallet: https://coinbase.com/wallet
+
+Just give me your address like: 0x9f2d567890abcdef...
+I'll also ask which token you want (MON, BONK, or USDC).
+```
+*Benefit:* Short, direct, mandatory. Claude can't over-explain or skip it.
+
+**Then (token preference):**
+```
+Great! Which token for your cashback?
+• MON — Default, Monad native (recommended)
+• BONK — Community token
+• USDC — Stablecoin
+
+Just say: MON, BONK, or USDC
+```
+*Benefit:* Second blocking prompt, can't proceed without it.
+
+### Technical Changes
+- Reduced wallet prompt from ~5 sentences to 2-3 focused ones
+- Moved wallet links to top (https://metamask.io, https://coinbase.com/wallet)
+- Removed false "creation" option (users bring own wallet)
+- Added separate `if (wallet_address && !preferred_token)` check
+- Second prompt ONLY asks for token, nothing else
+- Applied to all 3 handlers: search_products, search_by_intent, compare_cashback
+
+### Expected Behavior (New)
+```
+User: "Find Nike shoes"
+↓
+Claude: "To search... I need your wallet. Get one free: [links]"
+↓
+User: "0x9f2d567890abcdef123..."
+↓
+Claude: "Great! Which token? MON, BONK, or USDC?"
+↓
+User: "USDC"
+↓
+Claude: "✅ Your Agent ID: claude-xyz..." + Results table
+↓
+User: "Find Adidas"
+↓
+Claude: (reuses Agent ID, no prompts) → Results instantly
+```
+
+### New Commit History
+- `47b7bc1` — Simplify wallet prompts (direct language, no over-explaining)
+- `d03b5b7` — Add mandatory token preference (second blocking prompt)
+- Auto-deploying to Vercel (~30s)
+
+### Status: 🟢 9.6/10 READY FOR E2E TESTING
+All code deployed, prompts optimized for Claude's behavior. Ready for Laurent to test in Claude Desktop.

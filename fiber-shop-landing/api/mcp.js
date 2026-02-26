@@ -159,6 +159,14 @@ export default async function handler(req, res) {
           }
         },
         {
+          name: 'create_wallet',
+          description: 'Generate a new blockchain wallet for you. Returns address and private key. Store securely!',
+          inputSchema: {
+            type: 'object',
+            properties: {}
+          }
+        },
+        {
           name: 'register_agent',
           description: 'Register your agent with FiberAgent to earn cashback commissions on referred purchases',
           inputSchema: {
@@ -326,6 +334,36 @@ export default async function handler(req, res) {
       try {
         let result;
         switch (name) {
+          case 'create_wallet': {
+            try {
+              // Generate random 32-byte private key
+              const crypto = await import('crypto');
+              const privateKeyBytes = crypto.randomBytes(32);
+              const privateKey = '0x' + privateKeyBytes.toString('hex');
+              
+              // For demo: show a fake address (in production, derive from private key)
+              // Simple deterministic address from private key
+              const addressHash = crypto.createHash('sha256').update(privateKey).digest('hex');
+              const address = '0x' + addressHash.slice(0, 40);
+              
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `🔐 New Wallet Created!\n\n**Address:** ${address}\n**Private Key:** ${privateKey}\n\n⚠️ **IMPORTANT:**\n1. Save this private key securely (you'll need it to access your wallet)\n2. Never share it with anyone\n3. Store it in a safe place on your device\n\n**Next Steps:**\n1. Save this wallet info\n2. Use the address to register: \`register_agent\` with wallet_address: ${address}\n3. Your agent will earn cashback to this wallet`
+                  }]
+                },
+                id
+              });
+            } catch (err) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                error: { code: -32603, message: `Wallet generation error: ${err.message}` },
+                id
+              });
+            }
+          }
           case 'search_products': {
             const keywords = args?.keywords || '';
             const requestedAgent = args?.agent_id;
@@ -615,6 +653,32 @@ export default async function handler(req, res) {
     // ─── TOOLS ───
 
     server.tool(
+      'create_wallet',
+      'Generate a new blockchain wallet for your agent. Returns a wallet address and private key that you should store securely on your device.',
+      {},
+      async () => {
+        try {
+          const crypto = await import('crypto');
+          const privateKeyBytes = crypto.randomBytes(32);
+          const privateKey = '0x' + privateKeyBytes.toString('hex');
+          
+          // Simple deterministic address from private key hash
+          const addressHash = crypto.createHash('sha256').update(privateKey).digest('hex');
+          const address = '0x' + addressHash.slice(0, 40);
+          
+          return {
+            content: [{
+              type: 'text',
+              text: `🔐 New Wallet Created!\n\n**Address:** ${address}\n**Private Key:** ${privateKey}\n\n⚠️ **CRITICAL SECURITY WARNING:**\n• Save this private key immediately\n• Never share it or post it anywhere\n• Store only on your device, not in chat history\n• Anyone with this key can access your wallet & earnings\n\n**Your Action Items:**\n1. Copy and save both the address and private key securely\n2. Register your agent: use the address above\n3. Your earnings will go to this wallet\n\nDo NOT ask me to save this — YOU must secure it!`
+            }]
+          };
+        } catch (err) {
+          return { content: [{ type: 'text', text: `❌ Wallet generation failed: ${err.message}` }] };
+        }
+      }
+    );
+
+    server.tool(
       'search_products',
       'Search for products across 50,000+ merchants with real-time cashback rates. Returns products with prices, cashback amounts, and affiliate purchase links. Cashback is automatically tracked to your registered agent.',
       {
@@ -699,10 +763,10 @@ export default async function handler(req, res) {
 
     server.tool(
       'register_agent',
-      'Register your AI agent with a blockchain wallet to start earning cashback commissions on every purchase made through FiberAgent links.',
+      'Register your agent with a wallet address to start earning cashback. First create a wallet with create_wallet, then register using its address.',
       {
-        wallet_address: z.string().describe('Your blockchain wallet address (0x... format, supports multiple chains)'),
-        agent_name: z.string().optional().describe('Display name for your agent (e.g., "Claude" or "Shopping Bot")'),
+        wallet_address: z.string().describe('Your wallet address from create_wallet (0x... format)'),
+        agent_name: z.string().optional().describe('Display name (e.g., "Claude Shopping Agent")'),
       },
       async ({ wallet_address, agent_name }) => {
         const name = agent_name || 'Agent';

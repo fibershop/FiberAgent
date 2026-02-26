@@ -213,3 +213,18 @@ Claude: 📊 Earnings: 5 pending searches, $12.50 pending earnings
 - `/api/mcp.js` — Complete agent lifecycle implementation
 
 **Status:** ✅ READY FOR TESTING
+
+### 3. Blockchain-Agnostic Messaging (Commit 41dfcfa)
+
+**Laurent's Request:** "Don't mention Monad — we want to support many blockchains in the future"
+
+**Changes:**
+- Removed all "Monad wallet" references → "blockchain wallet"
+- Removed "Monad EVM address" → "blockchain address"  
+- Updated on_chain metadata: shows multiple networks coming (Solana, Ethereum)
+- Changed status: "Multi-chain commerce agent" (was: "Only commerce agent on Monad")
+- Updated prompts: generic "cryptocurrency" instead of specific "MON on Monad"
+
+**Result:** MCP is now blockchain-agnostic while currently deployed on Monad. Easy to add Solana, Ethereum, Polygon, etc. in future without rewriting messaging.
+
+**Status:** ✅ DEPLOYED

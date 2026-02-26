@@ -818,6 +818,11 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
           return { content: [{ type: 'text', text: `To search for "${keywords}" with cashback rewards, I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).` }] };
         }
         
+        // If wallet provided but no token preference, ask for it
+        if (wallet_address && !preferred_token && !agent_id) {
+          return { content: [{ type: 'text', text: `Great! Now, which token would you like to earn your cashback in?\n\n• **MON** — Default, Monad native token (recommended)\n• **BONK** — Community token\n• **USDC** — Stablecoin (no price volatility)\n\nJust say: **MON**, **BONK**, or **USDC**` }] };
+        }
+        
         // If we have agent_id, use it directly (no re-registration)
         let finalAgentId = agent_id;
         
@@ -886,6 +891,11 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
           return { content: [{ type: 'text', text: `To help with "${intent}" and earn cashback, I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).` }] };
+        }
+        
+        // If wallet provided but no token preference, ask for it
+        if (wallet_address && !preferred_token && !agent_id) {
+          return { content: [{ type: 'text', text: `Great! Now, which token would you like to earn your cashback in?\n\n• **MON** — Default, Monad native token (recommended)\n• **BONK** — Community token\n• **USDC** — Stablecoin (no price volatility)\n\nJust say: **MON**, **BONK**, or **USDC**` }] };
         }
         
         const keywords = extractKeywords(intent);
@@ -1084,6 +1094,11 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
           return { content: [{ type: 'text', text: `To compare prices and cashback for "${product_query}", I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).` }] };
+        }
+        
+        // If wallet provided but no token preference, ask for it
+        if (wallet_address && !preferred_token && !agent_id) {
+          return { content: [{ type: 'text', text: `Great! Now, which token would you like to earn your cashback in?\n\n• **MON** — Default, Monad native token (recommended)\n• **BONK** — Community token\n• **USDC** — Stablecoin (no price volatility)\n\nJust say: **MON**, **BONK**, or **USDC**` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)

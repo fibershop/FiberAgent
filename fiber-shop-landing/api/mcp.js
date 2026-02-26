@@ -898,50 +898,46 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'search_products',
-      'Search for products across 50,000+ merchants with real-time cashback. Provide your wallet address once, then search immediately. All earnings go to your wallet.',
+      'Search for products across 50,000+ merchants with real-time cashback. IMPORTANT: Include wallet_address every time (system is stateless). All earnings go to your wallet.',
       {
         keywords: z.string().describe('Product search terms (e.g., "nike running shoes")'),
-        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Provide once, registered automatically.'),
+        wallet_address: z.string().describe('Your blockchain wallet (0x...). REQUIRED every search — the system is stateless.'),
         max_results: z.number().optional().default(5).describe('Max results (1-20)'),
       },
       async ({ keywords, wallet_address, max_results }) => {
-        // Check if agent already registered
-        let agent_id = Object.values(agents).sort((a, b) => 
-          new Date(b.registered_at) - new Date(a.registered_at)
-        )[0]?.agent_id;
-        
-        // If wallet provided, register it
-        if (wallet_address && !agent_id) {
-          try {
-            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                wallet_address: wallet_address
-              }),
-              signal: AbortSignal.timeout(10000)
-            });
-            
-            const fiberResponse = await registerResponse.json();
-            if (registerResponse.ok) {
-              agent_id = fiberResponse.agent_id;
-              const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
-              agents[localKey] = {
-                agent_id,
-                wallet: wallet_address,
-                device_id: fiberResponse.wildfire_device_id,
-                registered_at: new Date().toISOString()
-              };
-            }
-          } catch (err) {
-            return { content: [{ type: 'text', text: `❌ Registration failed: ${err.message}` }] };
-          }
+        // Wallet address is REQUIRED (stateless system - no memory between requests)
+        if (!wallet_address) {
+          return { content: [{ type: 'text', text: `🔐 **Wallet address required.**\n\nThe system is stateless. I need your wallet to search: "${keywords}"\n\n**Provide your wallet:** 0x1234567890123456789012345678901234567890` }] };
         }
         
-        // If still no agent, ask for wallet
-        if (!agent_id) {
-          return { content: [{ type: 'text', text: `🔐 **What's your wallet address?**\n\nI'll register it and track your earnings.\n\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we search!` }] };
+        // Register with provided wallet
+        let agent_id;
+        try {
+          const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+              wallet_address: wallet_address
+            }),
+            signal: AbortSignal.timeout(10000)
+          });
+          
+          const fiberResponse = await registerResponse.json();
+          if (!registerResponse.ok) {
+            return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+          }
+          
+          agent_id = fiberResponse.agent_id;
+          const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+          agents[localKey] = {
+            agent_id,
+            wallet: wallet_address,
+            device_id: fiberResponse.wildfire_device_id,
+            registered_at: new Date().toISOString()
+          };
+        } catch (err) {
+          return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
         }
         
         const limit = Math.min(max_results || 5, 20);
@@ -964,54 +960,50 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'search_by_intent',
-      'Natural language shopping — describe what you want. Provide wallet once, search immediately. Supports price limits ("under $30") and cashback optimization.',
+      'Natural language shopping — describe what you want. IMPORTANT: Include wallet_address every time (system is stateless). Supports price limits ("under $30") and cashback optimization.',
       {
         intent: z.string().describe('Natural language request (e.g., "Find Nike shoes under $150, best cashback")'),
-        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Provide once, registered automatically.'),
+        wallet_address: z.string().describe('Your blockchain wallet (0x...). REQUIRED every search — the system is stateless.'),
         preferences: z.array(z.string()).optional().describe('Preferences (e.g., ["running", "lightweight"])'),
       },
       async ({ intent, wallet_address, preferences }) => {
+        // Wallet address is REQUIRED (stateless system - no memory between requests)
+        if (!wallet_address) {
+          return { content: [{ type: 'text', text: `🔐 **Wallet address required.**\n\nThe system is stateless. I need your wallet for: "${intent}"\n\n**Provide your wallet:** 0x1234567890123456789012345678901234567890` }] };
+        }
+        
         const keywords = extractKeywords(intent);
         const maxPrice = extractMaxPrice(intent);
         const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
         
-        // Check if agent already registered
-        let agent_id = Object.values(agents).sort((a, b) => 
-          new Date(b.registered_at) - new Date(a.registered_at)
-        )[0]?.agent_id;
-        
-        // If wallet provided, register it
-        if (wallet_address && !agent_id) {
-          try {
-            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                wallet_address: wallet_address
-              }),
-              signal: AbortSignal.timeout(10000)
-            });
-            
-            const fiberResponse = await registerResponse.json();
-            if (registerResponse.ok) {
-              agent_id = fiberResponse.agent_id;
-              const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
-              agents[localKey] = {
-                agent_id,
-                wallet: wallet_address,
-                device_id: fiberResponse.wildfire_device_id,
-                registered_at: new Date().toISOString()
-              };
-            }
-          } catch (err) {
-            return { content: [{ type: 'text', text: `❌ Registration failed: ${err.message}` }] };
+        // Register with provided wallet
+        let agent_id;
+        try {
+          const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+              wallet_address: wallet_address
+            }),
+            signal: AbortSignal.timeout(10000)
+          });
+          
+          const fiberResponse = await registerResponse.json();
+          if (!registerResponse.ok) {
+            return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
           }
-        }
-        
-        // If still no agent, ask for wallet
-        if (!agent_id) {
-          return { content: [{ type: 'text', text: `🔐 **What's your wallet address?**\n\nI'll register it and track your earnings for: "${intent}"\n\n(e.g., 0x1234567890123456789012345678901234567890)` }] };
+          
+          agent_id = fiberResponse.agent_id;
+          const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+          agents[localKey] = {
+            agent_id,
+            wallet: wallet_address,
+            device_id: fiberResponse.wildfire_device_id,
+            registered_at: new Date().toISOString()
+          };
+        } catch (err) {
+          return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
         }
 
         if (!keywords) return { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150, best cashback"' }] };
@@ -1159,49 +1151,45 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'compare_cashback',
-      'Compare the same product across different merchants to find the highest cashback. Provide wallet once, compare immediately. All earnings go to your wallet.',
+      'Compare the same product across different merchants to find the highest cashback. IMPORTANT: Include wallet_address every time (system is stateless). All earnings go to your wallet.',
       {
         product_query: z.string().describe('Product to compare (e.g., "nike air force 1")'),
-        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Provide once, registered automatically.'),
+        wallet_address: z.string().describe('Your blockchain wallet (0x...). REQUIRED every search — the system is stateless.'),
       },
       async ({ product_query, wallet_address }) => {
-        // Check if agent already registered
-        let agent_id = Object.values(agents).sort((a, b) => 
-          new Date(b.registered_at) - new Date(a.registered_at)
-        )[0]?.agent_id;
-        
-        // If wallet provided, register it
-        if (wallet_address && !agent_id) {
-          try {
-            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                wallet_address: wallet_address
-              }),
-              signal: AbortSignal.timeout(10000)
-            });
-            
-            const fiberResponse = await registerResponse.json();
-            if (registerResponse.ok) {
-              agent_id = fiberResponse.agent_id;
-              const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
-              agents[localKey] = {
-                agent_id,
-                wallet: wallet_address,
-                device_id: fiberResponse.wildfire_device_id,
-                registered_at: new Date().toISOString()
-              };
-            }
-          } catch (err) {
-            return { content: [{ type: 'text', text: `❌ Registration failed: ${err.message}` }] };
-          }
+        // Wallet address is REQUIRED (stateless system - no memory between requests)
+        if (!wallet_address) {
+          return { content: [{ type: 'text', text: `🔐 **Wallet address required.**\n\nThe system is stateless. I need your wallet to compare: "${product_query}"\n\n**Provide your wallet:** 0x1234567890123456789012345678901234567890` }] };
         }
         
-        // If still no agent, ask for wallet
-        if (!agent_id) {
-          return { content: [{ type: 'text', text: `🔐 **What's your wallet address?**\n\nI'll register it and compare cashback for: "${product_query}"\n\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we compare!` }] };
+        // Register with provided wallet
+        let agent_id;
+        try {
+          const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+              wallet_address: wallet_address
+            }),
+            signal: AbortSignal.timeout(10000)
+          });
+          
+          const fiberResponse = await registerResponse.json();
+          if (!registerResponse.ok) {
+            return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+          }
+          
+          agent_id = fiberResponse.agent_id;
+          const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+          agents[localKey] = {
+            agent_id,
+            wallet: wallet_address,
+            device_id: fiberResponse.wildfire_device_id,
+            registered_at: new Date().toISOString()
+          };
+        } catch (err) {
+          return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
         }
         
         // Search with registered agent

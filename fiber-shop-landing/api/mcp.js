@@ -40,7 +40,7 @@ async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
     
     // Normalize Fiber API response directly
     if (data.results && Array.isArray(data.results)) {
-      return data.results
+      const products = data.results
         .filter(p => p.type === 'product') // Only products, not merchants
         .map(p => ({
           id: p.id || `fiber_${Math.random()}`,
@@ -57,8 +57,16 @@ async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
           inStock: p.in_stock !== false,
           url: p.product_url || null
         }));
+      
+      if (products.length > 0) {
+        return products;
+      } else {
+        console.error(`No products found after filtering. Total results: ${data.results.length}, types:`, data.results.map(r => r.type));
+        return null;
+      }
     }
 
+    console.error('No results in Fiber response:', data);
     return null;
   } catch (err) {
     console.error('Fiber API search error:', err.message);

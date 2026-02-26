@@ -715,35 +715,37 @@ export default async function handler(req, res) {
             }
           }
           case 'get_agent_stats': {
-            const agent_id = args?.agent_id;
+            let agent_id = args?.agent_id || Object.values(agents).sort((a, b) => 
+              new Date(b.registered_at) - new Date(a.registered_at)
+            )[0]?.agent_id;
             
-            // Look up agent in local store
-            const localAgent = Object.values(agents).find(a => a.agent_id === agent_id);
-            
-            if (!localAgent) {
+            if (!agent_id) {
               return res.status(200).json({
                 jsonrpc: '2.0',
-                error: { code: -32602, message: `Agent "${agent_id}" not found in this session. Register first with register_agent.` },
+                error: { code: -32602, message: 'No agent_id provided and no agent found in session. Provide agent_id parameter.' },
                 id
               });
             }
             
             try {
-              // Fetch live stats from Fiber API
+              // Fetch live stats from Fiber API (works for any agent_id, not just local)
               const statsResponse = await fetch(`${FIBER_API}/agent/stats?agent_id=${encodeURIComponent(agent_id)}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 signal: AbortSignal.timeout(8000)
               });
               
+              // Look up agent in local store for fallback
+              const localAgent = Object.values(agents).find(a => a.agent_id === agent_id);
+              
               let stats = {
                 agent_id,
-                name: localAgent.name,
-                wallet: localAgent.wallet,
-                device_id: localAgent.device_id,
-                registered_at: localAgent.registered_at,
-                token: localAgent.token,
-                total_searches: localAgent.searches,
+                name: localAgent?.name || 'Agent',
+                wallet: localAgent?.wallet || 'Unknown',
+                device_id: localAgent?.device_id || 'Unknown',
+                registered_at: localAgent?.registered_at || new Date().toISOString(),
+                token: localAgent?.token || 'MON',
+                total_searches: localAgent?.searches || 0,
                 total_earnings_pending: 0,
                 total_earnings_confirmed: 0,
                 cashback_pending: 0,
@@ -766,7 +768,7 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `📊 Agent Stats: ${localAgent.name}\n\n**Wallet:** ${localAgent.wallet}\n**Device ID:** ${localAgent.device_id}\n**Registered:** ${localAgent.registered_at}\n**Token:** ${localAgent.token}\n\n**Searches:** ${stats.total_searches}\n**Cashback (Pending):** ${stats.cashback_pending} ${localAgent.token}\n**Cashback (Confirmed):** ${stats.cashback_confirmed} ${localAgent.token}\n**Earnings (Pending):** $${stats.total_earnings_pending.toFixed(2)}\n**Earnings (Confirmed):** $${stats.total_earnings_confirmed.toFixed(2)}\n\n**Total Potential:** $${(stats.total_earnings_pending + stats.total_earnings_confirmed).toFixed(2)}`
+                    text: `📊 Agent Stats: ${stats.name}\n\n**Wallet:** ${stats.wallet}\n**Device ID:** ${stats.device_id}\n**Registered:** ${stats.registered_at}\n**Token:** ${stats.token}\n\n**Searches:** ${stats.total_searches}\n**Cashback (Pending):** ${stats.cashback_pending} ${stats.token}\n**Cashback (Confirmed):** ${stats.cashback_confirmed} ${stats.token}\n**Earnings (Pending):** $${stats.total_earnings_pending.toFixed(2)}\n**Earnings (Confirmed):** $${stats.total_earnings_confirmed.toFixed(2)}\n\n**Total Potential:** $${(stats.total_earnings_pending + stats.total_earnings_confirmed).toFixed(2)}`
                   }]
                 },
                 id
@@ -777,7 +779,7 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `📊 Agent Stats: ${localAgent.name}\n\n**Wallet:** ${localAgent.wallet}\n**Device ID:** ${localAgent.device_id}\n**Token:** ${localAgent.token}\n**Searches:** ${localAgent.searches}\n\n(Fiber API unavailable for live earnings — check back soon)`
+                    text: `📊 Agent Stats: ${stats.name}\n\n**Wallet:** ${stats.wallet}\n**Device ID:** ${stats.device_id}\n**Token:** ${stats.token}\n**Searches:** ${stats.total_searches}\n\n(Fiber API unavailable for live earnings — check back soon)`
                   }]
                 },
                 id

@@ -1,0 +1,92 @@
+Test Account Setup Instructions
+
+═══════════════════════════════════════════════════════════════════════════════
+
+NO SETUP REQUIRED — Complete setup in 3 commands (takes <30 seconds).
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 1: List available tools (verify endpoint):
+
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+Expected: List of 5 tools with full schemas
+Time: <1 second
+
+───────────────────────────────────────────────────────────────────────────────
+
+STEP 2: Register a fresh test agent (takes <1 second):
+
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"register_agent","arguments":{"agent_name":"MCP Registry Test","wallet_address":"0x0000000000000000000000000000000000000099"}}}'
+
+Expected response will include:
+  Agent ID: agent_XXXXXXXXXXXXX
+  Wallet: 0x0000...0099
+  Device ID: XXXXX
+
+SAVE the Agent ID from this response.
+
+───────────────────────────────────────────────────────────────────────────────
+
+STEP 3: Search products using the Agent ID you just created:
+
+(Replace AGENT_ID_FROM_STEP_2 with the actual agent_id you got above)
+
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_products","arguments":{"keywords":"shoes","agent_id":"AGENT_ID_FROM_STEP_2","max_results":5}}}'
+
+Expected: 5 real products from 50,000+ merchants with:
+  - Real prices
+  - Real cashback rates
+  - Real affiliate links with tracking
+  - Earnings properly attributed to your wallet
+
+Time: <1 second
+
+───────────────────────────────────────────────────────────────────────────────
+
+STEP 4 (Optional): Get agent stats:
+
+curl -X POST https://fiberagent.shop/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_agent_stats","arguments":{"agent_id":"AGENT_ID_FROM_STEP_2"}}}'
+
+Expected: Agent name, wallet, registration date, searches, earnings
+
+═══════════════════════════════════════════════════════════════════════════════
+
+SUMMARY:
+
+Total time: <30 seconds
+Total commands: 4 (or 3 if skipping optional stats)
+No authentication needed
+No email verification
+No approval process
+Just HTTP POST calls
+
+═══════════════════════════════════════════════════════════════════════════════
+
+KEY POINTS:
+
+✓ Each command is independent (can run separately)
+✓ Agent persists after registration (works across sessions)
+✓ Wallet association is immediate and correct
+✓ Real product data from live merchant network
+✓ Real cashback tracking
+✓ All responses in <1 second
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Full reference guide: https://github.com/fibershop/FiberAgent/blob/main/WORKING_TEST_COMMANDS.txt
+Support: https://github.com/fibershop/FiberAgent/issues (24h response)
+
+═══════════════════════════════════════════════════════════════════════════════

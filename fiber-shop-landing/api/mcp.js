@@ -423,16 +423,32 @@ export default async function handler(req, res) {
             
             // Use requested agent or last-registered agent
             let agent_id = requestedAgent;
+            let registeredAgent = null;
+            
             if (!agent_id) {
-              const lastAgent = Object.values(agents).sort((a, b) => 
+              registeredAgent = Object.values(agents).sort((a, b) => 
                 new Date(b.registered_at) - new Date(a.registered_at)
               )[0];
-              agent_id = lastAgent?.agent_id || 'mcp-user';
+              agent_id = registeredAgent?.agent_id;
+            }
+            
+            // CRITICAL: Must have registered agent for affiliate links
+            if (!agent_id || agent_id === 'mcp-user') {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `⚠️ **No registered agent found.**\n\nTo search and earn cashback, you need to:\n\n1. **Create a wallet:**\n   \`create_wallet\` → I'll generate an address for you\n\n2. **Register your agent:**\n   \`register_agent\` with the address from step 1\n   → You'll get an agent_id and device_id\n\n3. **Then search:**\n   Search products with your agent_id\n   → All affiliate links will be active and tracked!\n\n**Without registration, links don't work because Fiber can't track your earnings.**\n\nReady? Call \`create_wallet\` first!`
+                  }]
+                },
+                id
+              });
             }
             
             const max_results = Math.min(args?.max_results || 5, 20);
             
-            // Call our backend (which handles Fiber API + fallback)
+            // Call Fiber API directly with registered agent
             let results = await searchViaBackend(keywords, agent_id, max_results);
             let source = '🔗 Fiber API Live';
             
@@ -442,12 +458,10 @@ export default async function handler(req, res) {
               source = '📦 Fallback Catalog';
             }
             
-            const agentInfo = agent_id === 'mcp-user' ? '' : `\n\n**Cashback tracked to:** ${agent_id}`;
-            
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}${agentInfo}*` }]
+                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}\n💰 Earnings tracked to: ${agent_id}*` }]
               },
               id
             });
@@ -467,16 +481,30 @@ export default async function handler(req, res) {
               });
             }
             
-            // Use requested agent or last-registered agent
+            // Check if agent is registered
             let agent_id = requestedAgent;
             if (!agent_id) {
               const lastAgent = Object.values(agents).sort((a, b) => 
                 new Date(b.registered_at) - new Date(a.registered_at)
               )[0];
-              agent_id = lastAgent?.agent_id || 'mcp-user';
+              agent_id = lastAgent?.agent_id;
             }
             
-            // Call our backend (which handles Fiber API + fallback)
+            // CRITICAL: Must have registered agent for affiliate links
+            if (!agent_id || agent_id === 'mcp-user') {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `⚠️ **No registered agent found.**\n\nTo search and earn cashback, you need to:\n\n1. **Create a wallet:** \`create_wallet\`\n2. **Register your agent:** \`register_agent\` with the address\n3. **Then search:** You'll get active affiliate links!\n\n**Your request:** "${intent}"\n\nReady? Call \`create_wallet\` first!`
+                  }]
+                },
+                id
+              });
+            }
+            
+            // Call Fiber API directly with registered agent
             let results = await searchViaBackend(keywords, agent_id, 20);
             let source = '🔗 Fiber API Live';
             
@@ -490,12 +518,10 @@ export default async function handler(req, res) {
             if (wantsCashback) results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
             results = results.slice(0, args?.max_results || 5);
             
-            const agentInfo = agent_id === 'mcp-user' ? '' : `\n\n**Cashback tracked to:** ${agent_id}`;
-            
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}${agentInfo}` }]
+                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 Earnings tracked to: ${agent_id}` }]
               },
               id
             });
@@ -653,23 +679,54 @@ export default async function handler(req, res) {
           }
           case 'compare_cashback': {
             const product_query = args?.product_name || args?.product_query || '';
-            const results = search(product_query, 20).sort((a, b) => b.cashbackRate - a.cashbackRate);
+            const requestedAgent = args?.agent_id;
             
-            if (!results.length) {
+            // Check if agent is registered
+            let agent_id = requestedAgent;
+            if (!agent_id) {
+              const lastAgent = Object.values(agents).sort((a, b) => 
+                new Date(b.registered_at) - new Date(a.registered_at)
+              )[0];
+              agent_id = lastAgent?.agent_id;
+            }
+            
+            // CRITICAL: Must have registered agent for affiliate links
+            if (!agent_id || agent_id === 'mcp-user') {
               return res.status(200).json({
                 jsonrpc: '2.0',
-                result: { content: [{ type: 'text', text: `No products found for "${product_query}".` }] },
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `⚠️ **No registered agent found.**\n\nTo compare cashback and earn rewards, you need to:\n\n1. **Create a wallet:** \`create_wallet\`\n2. **Register your agent:** \`register_agent\` with the address\n3. **Then compare:** You'll see affiliate links to earn from!\n\n**Your search:** "${product_query}"\n\nReady? Call \`create_wallet\` first!`
+                  }]
+                },
                 id
               });
             }
             
+            const results = await searchViaBackend(product_query, agent_id, 20);
+            
+            if (!results || results.length === 0) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                result: { content: [{ type: 'text', text: `No products found for "${product_query}". Try a different search!` }] },
+                id
+              });
+            }
+            
+            // Sort by cashback amount (highest first)
+            results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
             const best = results[0];
-            const table = results.map((p, i) => `${i+1}. **${p.merchant}** — ${p.cashbackRate}% → $${p.cashbackAmount.toFixed(2)} | ${p.title} $${p.price.toFixed(2)}`).join('\n');
+            
+            // Format as table for easy comparison
+            const table = `| Rank | Merchant | Cashback | Product | Price | Link |
+|------|----------|----------|---------|-------|------|
+${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate}% ($${p.cashbackAmount.toFixed(2)}) | ${p.title} | $${p.price.toFixed(2)} | ${p.affiliateUrl ? `[🛒](${p.affiliateUrl})` : '❌'} |`).join('\n')}`;
             
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 Best: ${best.merchant} at ${best.cashbackRate}%` }]
+                content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 **Best Deal:** ${best.merchant} at ${best.cashbackRate}% (${best.cashbackAmount.toFixed(2)} cashback)\n\n💰 Earnings tracked to: ${agent_id}` }]
               },
               id
             });
@@ -758,12 +815,17 @@ export default async function handler(req, res) {
           const lastAgent = Object.values(agents).sort((a, b) => 
             new Date(b.registered_at) - new Date(a.registered_at)
           )[0];
-          agent = lastAgent?.agent_id || 'mcp-user';
+          agent = lastAgent?.agent_id;
+        }
+        
+        // CRITICAL: Must have registered agent for affiliate links
+        if (!agent || agent === 'mcp-user') {
+          return { content: [{ type: 'text', text: `⚠️ **No registered agent found.**\n\nTo search and earn cashback with active affiliate links:\n\n1. **\`create_wallet\`** → I'll generate your address\n2. **\`register_agent\`** → Register with your address\n3. **Then search** → Active links + earned cashback!\n\n**Your search:** "${keywords}"\n\nReady to get started? Call \`create_wallet\` first!` }] };
         }
         
         const limit = Math.min(max_results || 5, 20);
         
-        // Call backend (handles Fiber API + fallback)
+        // Call Fiber API directly (no proxy)
         let results = await searchViaBackend(keywords, agent, limit);
         let source = '🔗 Fiber API Live';
         
@@ -773,8 +835,7 @@ export default async function handler(req, res) {
           source = '📦 Fallback Catalog';
         }
         
-        const agentInfo = agent === 'mcp-user' ? '' : `\n\n**💰 Cashback tracked to:** ${agent}`;
-        return { content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}${agentInfo}*` }] };
+        return { content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}\n💰 Earnings tracked to: ${agent}*` }] };
       }
     );
 
@@ -796,12 +857,17 @@ export default async function handler(req, res) {
           const lastAgent = Object.values(agents).sort((a, b) => 
             new Date(b.registered_at) - new Date(a.registered_at)
           )[0];
-          agent = lastAgent?.agent_id || 'mcp-user';
+          agent = lastAgent?.agent_id;
+        }
+        
+        // CRITICAL: Must have registered agent for affiliate links
+        if (!agent || agent === 'mcp-user') {
+          return { content: [{ type: 'text', text: `⚠️ **No registered agent found.**\n\nTo search with active affiliate links:\n\n1. **\`create_wallet\`** → Get your address\n2. **\`register_agent\`** → Register & get agent_id\n3. **Then search** → Active links + cashback!\n\n**Your request:** "${intent}"\n\nReady? Call \`create_wallet\` first!` }] };
         }
 
         if (!keywords) return { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150"' }] };
 
-        // Call backend (handles Fiber API + fallback)
+        // Call Fiber API directly
         let results = await searchViaBackend(keywords, agent, 20);
         let source = '🔗 Fiber API Live';
         
@@ -822,8 +888,7 @@ export default async function handler(req, res) {
         if (wantsCashback) results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
         results = results.slice(0, 5);
 
-        const agentInfo = agent === 'mcp-user' ? '' : `\n\n**💰 Cashback tracked to:** ${agent}`;
-        return { content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}${agentInfo}` }] };
+        return { content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 Earnings tracked to: ${agent}` }] };
       }
     );
 

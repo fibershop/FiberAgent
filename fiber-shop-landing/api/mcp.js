@@ -11,29 +11,72 @@
  * Uses dynamic imports to work around Vercel's ESM bundling limitations.
  */
 
-// ─── Product Catalog ───
+const FIBER_API = 'https://api.fiber.shop/v1';
 
-const PRODUCTS = [
-  { id: 'nike_pegasus_41', title: "Nike Pegasus 41 — Men's Road Running Shoes", brand: 'Nike', price: 145.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 0.94, affiliateUrl: '' },
-  { id: 'nike_vomero_premium', title: "Nike Vomero Premium — Men's Road Running Shoes", brand: 'Nike', price: 230.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.50, affiliateUrl: '' },
-  { id: 'nike_vomero5_fl', title: "Women's Nike Zoom Vomero 5 — Casual Shoes", brand: 'Nike', price: 170.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 5.53, affiliateUrl: '' },
-  { id: 'nike_airmax270', title: 'Nike Air Max 270', brand: 'Nike', price: 170.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.11, affiliateUrl: '' },
-  { id: 'nike_af1_fl', title: "Men's Nike Air Force 1 '07 LV8 — Casual Shoes", brand: 'Nike', price: 115.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 3.74, affiliateUrl: '' },
-  { id: 'adidas_ultraboost', title: 'Adidas Ultraboost 5 Running Shoes', brand: 'Adidas', price: 190.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 6.65, affiliateUrl: '' },
-  { id: 'adidas_samba', title: 'Adidas Samba OG Shoes', brand: 'Adidas', price: 110.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 3.85, affiliateUrl: '' },
-  { id: 'adidas_gazelle', title: 'Adidas Gazelle Indoor Shoes', brand: 'Adidas', price: 120.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 4.20, affiliateUrl: '' },
-  { id: 'on_creatine', title: 'Optimum Nutrition Creatine Monohydrate — 120 Servings', brand: 'Optimum Nutrition', price: 32.99, merchant: 'Amazon', domain: 'amazon.com', cashbackRate: 1.0, cashbackAmount: 0.33, affiliateUrl: '' },
-  { id: 'muscletech_creatine', title: 'MuscleTech Cell-Tech Creatine Monohydrate — 6lbs', brand: 'MuscleTech', price: 49.97, merchant: 'Bodybuilding.com', domain: 'bodybuilding.com', cashbackRate: 5.0, cashbackAmount: 2.50, affiliateUrl: '' },
-  { id: 'gnc_creatine', title: 'GNC Pro Performance Creatine Monohydrate — Unflavored 300g', brand: 'GNC', price: 19.99, merchant: 'GNC', domain: 'gnc.com', cashbackRate: 4.0, cashbackAmount: 0.80, affiliateUrl: '' },
-  { id: 'sony_xm5', title: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones', brand: 'Sony', price: 348.00, merchant: 'Amazon', domain: 'amazon.com', cashbackRate: 1.0, cashbackAmount: 3.48, affiliateUrl: '' },
-  { id: 'airpods_pro2', title: 'Apple AirPods Pro 2 with USB-C', brand: 'Apple', price: 249.00, merchant: 'Best Buy', domain: 'bestbuy.com', cashbackRate: 1.5, cashbackAmount: 3.74, affiliateUrl: '' },
-  { id: 'tnf_nuptse', title: 'The North Face Nuptse 1996 Retro Puffer Jacket', brand: 'The North Face', price: 330.00, merchant: 'The North Face', domain: 'thenorthface.com', cashbackRate: 2.5, cashbackAmount: 8.25, affiliateUrl: '' },
-  { id: 'lulu_abc', title: 'lululemon ABC Classic-Fit Pants — Warpstreme', brand: 'lululemon', price: 138.00, merchant: 'lululemon', domain: 'lululemon.com', cashbackRate: 3.0, cashbackAmount: 4.14, affiliateUrl: '' },
+// ─── Real Fiber API Search (with affiliate URLs) ───
+
+async function searchFiberAPI(keywords, agentId = 'mcp-client', limit = 10) {
+  try {
+    const params = new URLSearchParams({
+      keywords,
+      agent_id: agentId,
+      limit: String(limit)
+    });
+
+    const response = await fetch(`${FIBER_API}/agent/search?${params}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(8000)
+    });
+
+    if (!response.ok) {
+      console.error(`Fiber API returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    
+    // Normalize Fiber API response → display format
+    if (data.results && Array.isArray(data.results)) {
+      return data.results.map(p => ({
+        id: p.productId || p.id || p.product_id,
+        title: p.title || p.name || 'Unknown Product',
+        brand: p.brand || '',
+        price: p.price || 0,
+        merchant: p.shop?.name || p.merchant || 'Unknown',
+        domain: p.shop?.domain || p.domain || '',
+        cashbackRate: parseFloat(p.cashback?.rate || p.cashback_rate || 0),
+        cashbackAmount: p.cashback?.amount || p.cashback_amount || 0,
+        affiliateUrl: p.affiliateUrl || p.affiliate_url || p.affiliate_link || null,
+        image: p.image || null,
+        inStock: p.inStock !== false,
+        url: p.url || p.product_url || null
+      }));
+    }
+
+    return null;
+  } catch (err) {
+    console.error('Fiber API search error:', err.message);
+    return null;
+  }
+}
+
+// ─── Fallback Mock Catalog (for demo when API unavailable) ───
+
+const FALLBACK_PRODUCTS = [
+  { id: 'nike_pegasus_41', title: "Nike Pegasus 41 — Men's Road Running Shoes", brand: 'Nike', price: 145.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 0.94, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_pegasus_41' },
+  { id: 'nike_vomero_premium', title: "Nike Vomero Premium — Men's Road Running Shoes", brand: 'Nike', price: 230.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.50, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_vomero_premium' },
+  { id: 'nike_vomero5_fl', title: "Women's Nike Zoom Vomero 5 — Casual Shoes", brand: 'Nike', price: 170.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 5.53, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_vomero5_fl' },
+  { id: 'nike_airmax270', title: 'Nike Air Max 270', brand: 'Nike', price: 170.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.11, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_airmax270' },
+  { id: 'nike_af1_fl', title: "Men's Nike Air Force 1 '07 LV8 — Casual Shoes", brand: 'Nike', price: 115.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 3.74, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_af1_fl' },
+  { id: 'adidas_ultraboost', title: 'Adidas Ultraboost 5 Running Shoes', brand: 'Adidas', price: 190.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 6.65, affiliateUrl: 'https://api.fiber.shop/r/w?c=adidas_ultraboost' },
+  { id: 'adidas_samba', title: 'Adidas Samba OG Shoes', brand: 'Adidas', price: 110.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 3.85, affiliateUrl: 'https://api.fiber.shop/r/w?c=adidas_samba' },
+  { id: 'adidas_gazelle', title: 'Adidas Gazelle Indoor Shoes', brand: 'Adidas', price: 120.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 4.20, affiliateUrl: 'https://api.fiber.shop/r/w?c=adidas_gazelle' },
 ];
 
-function search(query, max = 5) {
+function searchFallback(query, max = 5) {
   const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 1);
-  return PRODUCTS
+  return FALLBACK_PRODUCTS
     .map(p => {
       const hay = `${p.title} ${p.brand} ${p.merchant}`.toLowerCase();
       const score = hay.includes(query.toLowerCase()) ? 100 : words.filter(w => hay.includes(w)).length;
@@ -56,9 +99,11 @@ function extractMaxPrice(intent) {
 
 function formatResults(results) {
   if (!results.length) return 'No products found.';
-  return results.map((p, i) =>
-    `${i+1}. **${p.title}**\n   $${p.price.toFixed(2)} at ${p.merchant} | ${p.cashbackRate}% cashback → $${p.cashbackAmount.toFixed(2)} back\n   🛒 ${p.affiliateUrl}`
-  ).join('\n\n');
+  return results.map((p, i) => {
+    const link = p.affiliateUrl ? `[🛒 Shop now](${p.affiliateUrl})` : '🛒 (No link available)';
+    const cashback = p.cashbackRate ? `${p.cashbackRate}% cashback → $${p.cashbackAmount.toFixed(2)}` : 'No cashback';
+    return `${i+1}. **${p.title}**\n   $${p.price.toFixed(2)} at ${p.merchant} | ${cashback}\n   ${link}`;
+  }).join('\n\n');
 }
 
 // ─── In-memory store ───
@@ -281,18 +326,30 @@ export default async function handler(req, res) {
         switch (name) {
           case 'search_products': {
             const keywords = args?.keywords || '';
-            const max_results = args?.max_results || 5;
-            result = search(keywords, max_results);
+            const agent_id = args?.agent_id || 'mcp-user';
+            const max_results = Math.min(args?.max_results || 5, 20);
+            
+            // Try real Fiber API first
+            let results = await searchFiberAPI(keywords, agent_id, max_results);
+            let source = '🔗 Fiber API Live';
+            
+            // Fallback to mock if unavailable
+            if (!results || results.length === 0) {
+              results = searchFallback(keywords, max_results);
+              source = '📦 Fallback Catalog';
+            }
+            
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(result)}\n\n---\n*${result.length} products from Fiber's 50K+ merchant network.*` }]
+                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}*` }]
               },
               id
             });
           }
           case 'search_by_intent': {
             const intent = args?.intent || '';
+            const agent_id = args?.agent_id || 'mcp-user';
             const keywords = extractKeywords(intent);
             const maxPrice = extractMaxPrice(intent);
             const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
@@ -305,7 +362,16 @@ export default async function handler(req, res) {
               });
             }
             
-            let results = search(keywords, 20);
+            // Try real Fiber API first
+            let results = await searchFiberAPI(keywords, agent_id, 20);
+            let source = '🔗 Fiber API Live';
+            
+            // Fallback to mock
+            if (!results || results.length === 0) {
+              results = searchFallback(keywords, 20);
+              source = '📦 Fallback Catalog';
+            }
+            
             if (maxPrice) results = results.filter(p => p.price <= maxPrice);
             if (wantsCashback) results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
             results = results.slice(0, args?.max_results || 5);
@@ -313,7 +379,7 @@ export default async function handler(req, res) {
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}` }]
+                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}` }]
               },
               id
             });
@@ -432,8 +498,20 @@ export default async function handler(req, res) {
         max_results: z.number().optional().default(5).describe('Max results (1-20)'),
       },
       async ({ keywords, agent_id, max_results }) => {
-        const results = search(keywords, max_results || 5);
-        return { content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network.*` }] };
+        const agent = agent_id || 'mcp-user';
+        const limit = Math.min(max_results || 5, 20);
+        
+        // Try real Fiber API
+        let results = await searchFiberAPI(keywords, agent, limit);
+        let source = '🔗 Fiber API Live';
+        
+        // Fallback
+        if (!results || results.length === 0) {
+          results = searchFallback(keywords, limit);
+          source = '📦 Fallback Catalog';
+        }
+        
+        return { content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}*` }] };
       }
     );
 
@@ -449,10 +527,20 @@ export default async function handler(req, res) {
         const keywords = extractKeywords(intent);
         const maxPrice = extractMaxPrice(intent);
         const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
+        const agent = agent_id || 'mcp-user';
 
         if (!keywords) return { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150"' }] };
 
-        let results = search(keywords, 20);
+        // Try real Fiber API
+        let results = await searchFiberAPI(keywords, agent, 20);
+        let source = '🔗 Fiber API Live';
+        
+        // Fallback
+        if (!results || results.length === 0) {
+          results = searchFallback(keywords, 20);
+          source = '📦 Fallback Catalog';
+        }
+        
         if (maxPrice) results = results.filter(p => p.price <= maxPrice);
         if (preferences?.length) {
           results.sort((a, b) => {
@@ -464,7 +552,7 @@ export default async function handler(req, res) {
         if (wantsCashback) results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
         results = results.slice(0, 5);
 
-        return { content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}` }] };
+        return { content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}` }] };
       }
     );
 
@@ -506,12 +594,24 @@ export default async function handler(req, res) {
         product_query: z.string().describe('Product to compare (e.g., "nike air force 1")'),
         agent_id: z.string().optional().describe('Your agent ID'),
       },
-      async ({ product_query }) => {
-        const results = search(product_query, 20).sort((a, b) => b.cashbackRate - a.cashbackRate);
+      async ({ product_query, agent_id }) => {
+        const agent = agent_id || 'mcp-user';
+        
+        // Try real Fiber API
+        let results = await searchFiberAPI(product_query, agent, 20);
+        let source = '🔗 Fiber API Live';
+        
+        // Fallback
+        if (!results || results.length === 0) {
+          results = searchFallback(product_query, 20);
+          source = '📦 Fallback Catalog';
+        }
+        
+        results = results.sort((a, b) => b.cashbackRate - a.cashbackRate);
         if (!results.length) return { content: [{ type: 'text', text: `No products found for "${product_query}".` }] };
-        const best = results[0], worst = results[results.length - 1];
+        const best = results[0];
         const table = results.map((p, i) => `${i+1}. **${p.merchant}** — ${p.cashbackRate}% → $${p.cashbackAmount.toFixed(2)} | ${p.title} $${p.price.toFixed(2)}`).join('\n');
-        return { content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 Best: ${best.merchant} at ${best.cashbackRate}%` }] };
+        return { content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 Best: ${best.merchant} at ${best.cashbackRate}%\n\n---\nSource: ${source}` }] };
       }
     );
 

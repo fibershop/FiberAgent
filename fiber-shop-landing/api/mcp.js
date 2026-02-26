@@ -166,7 +166,7 @@ export default async function handler(req, res) {
             properties: {
               agent_id: { type: 'string', description: 'Unique identifier for your agent' },
               agent_name: { type: 'string', description: 'Human-readable name for your agent (optional)' },
-              wallet: { type: 'string', description: 'Monad blockchain wallet address (0x...) where commissions are paid' }
+              wallet: { type: 'string', description: 'Blockchain wallet address (0x...) where commissions are paid' }
             },
             required: ['agent_id', 'wallet']
           }
@@ -305,12 +305,12 @@ export default async function handler(req, res) {
       },
 
       on_chain: {
-        network: 'Monad',
-        standard: 'ERC-8004',
+        networks: ['Monad', 'Solana (Coming)', 'Ethereum (Coming)'],
+        standard: 'ERC-8004 (Monad)',
         agent_id: 135,
         registry_url: 'https://8004scan.io/agents/monad/135',
         verified: true,
-        status: 'Only commerce agent on Monad'
+        status: 'Multi-chain commerce agent'
       }
     });
   }
@@ -416,7 +416,7 @@ export default async function handler(req, res) {
             if (!wallet_address) {
               return res.status(200).json({
                 jsonrpc: '2.0',
-                error: { code: -32602, message: 'Missing required parameter: wallet_address (0x... Monad EVM address)' },
+                error: { code: -32602, message: 'Missing required parameter: wallet_address (0x... blockchain address)' },
                 id
               });
             }
@@ -699,9 +699,9 @@ export default async function handler(req, res) {
 
     server.tool(
       'register_agent',
-      'Register your AI agent with a Monad wallet to start earning cashback commissions on every purchase made through FiberAgent links.',
+      'Register your AI agent with a blockchain wallet to start earning cashback commissions on every purchase made through FiberAgent links.',
       {
-        wallet_address: z.string().describe('Your EVM wallet on Monad (0x... format)'),
+        wallet_address: z.string().describe('Your blockchain wallet address (0x... format, supports multiple chains)'),
         agent_name: z.string().optional().describe('Display name for your agent (e.g., "Claude" or "Shopping Bot")'),
       },
       async ({ wallet_address, agent_name }) => {
@@ -855,7 +855,7 @@ export default async function handler(req, res) {
     });
 
     server.resource('agent-card', 'fiber://agent-card', { description: 'FiberAgent discovery metadata', mimeType: 'application/json' }, async () => ({
-      contents: [{ uri: 'fiber://agent-card', mimeType: 'application/json', text: JSON.stringify({ name: 'FiberAgent', version: '1.0.0', blockchain: { network: 'Monad', standard: 'ERC-8004', agent_id: 135 }, mcp: 'https://fiberagent.shop/api/mcp', rest: 'https://fiberagent.shop/api/docs' }, null, 2) }],
+      contents: [{ uri: 'fiber://agent-card', mimeType: 'application/json', text: JSON.stringify({ name: 'FiberAgent', version: '1.0.0', blockchain: { networks: ['Monad', 'Multi-chain ready'], standard: 'ERC-8004 (Monad)', agent_id: 135 }, mcp: 'https://fiberagent.shop/api/mcp', rest: 'https://fiberagent.shop/api/docs' }, null, 2) }],
     }));
 
     server.resource('cashback-rates', 'fiber://rates/top', { description: 'Top cashback rates by merchant', mimeType: 'application/json' }, async () => {
@@ -870,7 +870,7 @@ export default async function handler(req, res) {
       budget: z.string().optional().describe('Max budget'),
       category: z.string().optional().describe('Product category'),
     }, async ({ budget, category }) => ({
-      messages: [{ role: 'user', content: { type: 'text', text: `You are a shopping assistant powered by FiberAgent with access to 50,000+ merchants.\n${budget ? `Budget: ${budget}\n` : ''}${category ? `Category: ${category}\n` : ''}\nUse search_products and compare_cashback to find the best deals. Always recommend the highest-cashback merchant. Cashback is earned in crypto (MON on Monad).` } }],
+      messages: [{ role: 'user', content: { type: 'text', text: `You are a shopping assistant powered by FiberAgent with access to 50,000+ merchants.\n${budget ? `Budget: ${budget}\n` : ''}${category ? `Category: ${category}\n` : ''}\nUse search_products and compare_cashback to find the best deals. Always recommend the highest-cashback merchant. Cashback is earned in cryptocurrency and sent to your wallet.` } }],
     }));
 
     server.prompt('deal_finder', 'Find the absolute best deal for a specific item', {

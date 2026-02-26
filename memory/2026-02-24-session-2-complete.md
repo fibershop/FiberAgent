@@ -144,7 +144,9 @@ All commits pushed to `origin/main` ✅
 - **Rate Limiting:** Ready to integrate into remaining endpoints (8 total coverage planned)
 - **Data Integrity:** NEVER show demo data — policy enforced across all pages
 
-## 🔧 Session 2 Post-Launch Fix (Feb 26) — MCP Affiliate Link Bug
+## 🔧 Session 2 Post-Launch Fixes (Feb 26)
+
+### 1. MCP Affiliate Link Bug (Commit 5be6a1f)
 
 **Issue Identified:**
 - Laurent tested MCP in Claude Desktop, got 🛒 emoji with empty affiliate URLs
@@ -157,19 +159,57 @@ All commits pushed to `origin/main` ✅
 - MCP tried calling Fiber API directly with non-existent 'mcp-client' agent ID
 - Fiber API requires registered agent to return real affiliate links with device ID
 
-**Solution Implemented (Commit 5be6a1f):**
+**Solution:**
 - MCP now calls our backend `/api/agent/search` instead of Fiber directly
-- Backend handles Fiber integration properly (registered agent, proper auth)
 - Real affiliate URLs returned with proper format:
   ```
   https://api.fiber.shop/r/w?c=3922888&d=39090631&url=https%3A%2F%2Fwww.nike.com
   ```
-  Where:
-  - `c` = tracking ID from Fiber
-  - `d` = device ID (wildfire_device_id from agent registration)
-  - `url` = product URL (URL-encoded)
+
+**Status:** ✅ FIXED
+
+### 2. Agent Lifecycle + Wallet Registration (Commit 749b83f)
+
+**Laurent's Request:** "Claude should register with wallet → get agent_id → track cashback → check balance"
+
+**Implementation:**
+1. **`register_agent` tool** — Claude provides wallet address → receives:
+   - `agent_id` (Fiber-issued, stored locally)
+   - `device_id` (for affiliate link tracking)
+   - Wallet address + token type
+   - Registration timestamp
+
+2. **`search_products` / `search_by_intent`** — Auto-use registered agent:
+   - If agent_id not provided, uses last-registered agent
+   - Displays "💰 Cashback tracked to: [agent_id]" on results
+   - All searches attributed to agent for earnings
+
+3. **`get_agent_stats`** — Check earnings + pending rewards:
+   - Fetches live stats from Fiber API
+   - Shows pending + confirmed earnings
+   - Returns token type (MON, BONK, USDC)
+   - Shows total searches, device ID, registration date
+
+4. **Session-scoped storage** — Agent context persists across multiple searches in same conversation:
+   - Claude registers once with wallet
+   - All subsequent searches use that agent_id
+   - Earnings tracked continuously
+
+**Example Flow (Claude Desktop):**
+```
+User: "Register with wallet 0x1234..."
+Claude: ✅ Registered! Agent ID: agent_9752edb...
+        Device ID: 39090631
+        
+User: "Find Nike running shoes"
+Claude: (searches with agent_id automatically tracked)
+        💰 Cashback tracked to: agent_9752edb...
+        
+User: "Check my earnings"
+Claude: 📊 Earnings: 5 pending searches, $12.50 pending earnings
+```
 
 **Files Modified:**
-- `/api/mcp.js` — All search tools now use `searchViaBackend()` instead of hardcoded catalog
+- `/api/mcp.js` — Complete agent lifecycle implementation
 
-**Status:** ✅ FIXED — MCP now returns proper affiliate links with full Fiber integration
+**Status:** ✅ READY FOR TESTING

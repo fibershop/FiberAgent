@@ -1,0 +1,45 @@
+SIMPLEST TEST — Skip Registration Entirely
+
+Use this pre-existing test account to test immediately:
+
+Agent ID:  agent_c56b31fd2bd952ed214c7452
+Wallet:    0x0000000000000000000000000000000000000002
+
+═══════════════════════════════════════════════════════════════════════════════
+
+3 COMMANDS (No Registration Needed):
+
+1. List tools:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+Expected: List of 5 tools with schemas
+
+───────────────────────────────────────────────────────────────────────────────
+
+2. Search products (no registration needed):
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_products","arguments":{"keywords":"shoes","agent_id":"agent_c56b31fd2bd952ed214c7452","max_results":5}}}'
+
+Expected: 5 products from 50,000+ merchants with real prices and cashback
+
+───────────────────────────────────────────────────────────────────────────────
+
+3. Get agent stats (no registration needed):
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_agent_stats","arguments":{"agent_id":"agent_c56b31fd2bd952ed214c7452"}}}'
+
+Expected: Agent details, searches completed, earnings
+
+═══════════════════════════════════════════════════════════════════════════════
+
+That's it. Copy-paste all 3 commands. No setup, no registration, real data.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+OPTIONAL: Register your own (if you want fresh data)
+
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"register_agent","arguments":{"agent_name":"My Test Agent","wallet_address":"0x0000000000000000000000000000000000000088"}}}'
+
+(Change wallet last digit if "already registered" error)
+
+Get the returned agent_id and use it in the search/stats commands above.
+
+═══════════════════════════════════════════════════════════════════════════════

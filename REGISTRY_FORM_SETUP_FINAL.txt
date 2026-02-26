@@ -1,0 +1,46 @@
+Test Account Setup Instructions
+
+═══════════════════════════════════════════════════════════════════════════════
+
+NO SETUP REQUIRED — Use existing test account (no registration needed).
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PRE-EXISTING TEST ACCOUNT:
+
+Agent ID:  agent_c56b31fd2bd952ed214c7452
+Wallet:    0x0000000000000000000000000000000000000002
+
+═══════════════════════════════════════════════════════════════════════════════
+
+3 COPY-PASTE COMMANDS (each takes <1 second):
+
+1. Verify endpoint is live:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+→ Returns list of 5 tools with full schemas
+
+───────────────────────────────────────────────────────────────────────────────
+
+2. Search 50,000+ merchants for products:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_products","arguments":{"keywords":"shoes","agent_id":"agent_c56b31fd2bd952ed214c7452","max_results":5}}}'
+
+→ Returns 5 real products with real prices and cashback rates
+
+───────────────────────────────────────────────────────────────────────────────
+
+3. Retrieve agent earnings:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_agent_stats","arguments":{"agent_id":"agent_c56b31fd2bd952ed214c7452"}}}'
+
+→ Returns agent details, registration date, wallet, earnings
+
+═══════════════════════════════════════════════════════════════════════════════
+
+THAT'S IT.
+
+No login. No authentication. No registration. Just copy-paste the 3 commands above.
+
+Full guide: https://github.com/fibershop/FiberAgent/blob/main/SIMPLE_TEST_COMMANDS.txt
+Support: https://github.com/fibershop/FiberAgent/issues
+
+═══════════════════════════════════════════════════════════════════════════════

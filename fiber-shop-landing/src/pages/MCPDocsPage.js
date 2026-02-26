@@ -281,6 +281,10 @@ console.log(data);`}</code></pre>
             <h3>🛠️ Developer Portal</h3>
             <p>More tools, OpenAPI spec, examples</p>
           </a>
+          <a href="/privacy" className="resource-card">
+            <h3>🔒 Privacy Policy</h3>
+            <p>Data handling, retention, user rights</p>
+          </a>
         </div>
       </motion.section>
 

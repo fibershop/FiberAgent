@@ -367,6 +367,7 @@ export default async function handler(req, res) {
           case 'search_products': {
             const keywords = args?.keywords || '';
             const wallet_address = args?.wallet_address;
+            const preferred_token = args?.preferred_token || 'MON';
             
             // Check if agent is already registered in this session
             let agent_id = Object.values(agents).sort((a, b) => 
@@ -380,7 +381,7 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `🔐 **First time? Let's set you up.**\n\nI'll track your earnings to your wallet.\n\n**What's your wallet address?**\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we're ready to search!`
+                    text: `⏸️ **I need two things to search for "${keywords}" with cashback:**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 MON"`
                   }]
                 },
                 id
@@ -395,7 +396,8 @@ export default async function handler(req, res) {
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                    wallet_address: wallet_address
+                    wallet_address: wallet_address,
+                    preferred_token: preferred_token
                   }),
                   signal: AbortSignal.timeout(10000)
                 });
@@ -459,7 +461,8 @@ export default async function handler(req, res) {
           }
           case 'search_by_intent': {
             const intent = args?.intent || '';
-            const wallet_address = args?.agent_id || args?.wallet_address; // Could be wallet
+            const wallet_address = args?.wallet_address;
+            const preferred_token = args?.preferred_token || 'MON';
             const keywords = extractKeywords(intent);
             const maxPrice = extractMaxPrice(intent);
             const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
@@ -484,7 +487,7 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `🔐 **First time? Let's set you up.**\n\nI'll track your earnings to your wallet.\n\n**What's your wallet address?**\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we're ready to search!`
+                    text: `⏸️ **I need two things to: "${intent}"**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 USDC"`
                   }]
                 },
                 id
@@ -499,7 +502,8 @@ export default async function handler(req, res) {
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                    wallet_address: wallet_address
+                    wallet_address: wallet_address,
+                    preferred_token: preferred_token
                   }),
                   signal: AbortSignal.timeout(10000)
                 });

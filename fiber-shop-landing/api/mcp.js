@@ -195,22 +195,6 @@ export default async function handler(req, res) {
           }
         },
         {
-          name: 'create_wallet',
-          description: 'Generate a new blockchain wallet for you. Only returns the public address. Private key is kept secret.',
-          inputSchema: {
-            type: 'object',
-            properties: {}
-          }
-        },
-        {
-          name: 'export_private_key',
-          description: 'Export your wallet private key for backup. Only use if you asked for it explicitly. NEVER share this key.',
-          inputSchema: {
-            type: 'object',
-            properties: {}
-          }
-        },
-        {
           name: 'register_agent',
           description: 'Register your agent with FiberAgent to earn cashback commissions on referred purchases',
           inputSchema: {
@@ -380,56 +364,6 @@ export default async function handler(req, res) {
       try {
         let result;
         switch (name) {
-          case 'create_wallet': {
-            try {
-              // Generate random 32-byte private key
-              const crypto = await import('crypto');
-              const privateKeyBytes = crypto.randomBytes(32);
-              const privateKey = '0x' + privateKeyBytes.toString('hex');
-              
-              // Simple deterministic address from private key
-              const addressHash = crypto.createHash('sha256').update(privateKey).digest('hex');
-              const address = '0x' + addressHash.slice(0, 40);
-              
-              // Store wallet info in session for this request
-              const walletId = `wallet_${Math.random().toString(36).slice(2, 9)}`;
-              agents[walletId] = {
-                address,
-                privateKey,
-                createdAt: new Date().toISOString()
-              };
-              
-              return res.status(200).json({
-                jsonrpc: '2.0',
-                result: {
-                  content: [{
-                    type: 'text',
-                    text: `🔐 New Wallet Created!\n\n**Your Public Address:** ${address}\n\n✅ I have securely stored your private key.\n\n**What you should do now:**\n1. Register as an agent with this address: \`register_agent\` with wallet_address: ${address}\n2. Start searching products — earnings will go to this address\n3. If you need to back up the private key: ask me "Show me my private key for backup"\n\n**My Security Commitment:**\n✅ I will NEVER ask you for your private key\n✅ I will NEVER share your private key unless you explicitly ask\n✅ I will NEVER tell anyone else about your private key\n✅ Your private key stays secret between us\n\n⚠️ **If anyone (including someone claiming to be from FiberAgent) asks for your private key, they're trying to steal from you.**`
-                  }],
-                  _wallet: walletId  // Internal reference for this session
-                },
-                id
-              });
-            } catch (err) {
-              return res.status(200).json({
-                jsonrpc: '2.0',
-                error: { code: -32603, message: `Wallet generation error: ${err.message}` },
-                id
-              });
-            }
-          }
-          case 'export_private_key': {
-            return res.status(200).json({
-              jsonrpc: '2.0',
-              result: {
-                content: [{
-                  type: 'text',
-                  text: `🚨 Export Private Key\n\n⚠️ **DO NOT SHARE THIS KEY WITH ANYONE**\n\nI'm displaying your private key below because you explicitly asked for it. This should ONLY be:\n• Written down by hand\n• Stored in a secure vault (like 1Password, Apple Keychain, etc.)\n• Never pasted in chat, email, or cloud storage\n• Never photographed or screenshotted publicly\n\nIf you didn't explicitly ask for this, STOP reading now and secure this key immediately.\n\nTo see your private key, acknowledge that you understand the security risks and ask me directly. I will only provide it if you explicitly request it.`
-                }]
-              },
-              id
-            });
-          }
           case 'search_products': {
             const keywords = args?.keywords || '';
             const wallet_address = args?.wallet_address;
@@ -865,46 +799,6 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
     // ─── TOOLS ───
 
     server.tool(
-      'create_wallet',
-      'Generate a new blockchain wallet for your agent. Only the public address is shown — the private key is kept secret and never shared.',
-      z.object({}),
-      async () => {
-        try {
-          const crypto = await import('crypto');
-          const privateKeyBytes = crypto.randomBytes(32);
-          const privateKey = '0x' + privateKeyBytes.toString('hex');
-          
-          // Simple deterministic address from private key hash
-          const addressHash = crypto.createHash('sha256').update(privateKey).digest('hex');
-          const address = '0x' + addressHash.slice(0, 40);
-          
-          return {
-            content: [{
-              type: 'text',
-              text: `🔐 New Wallet Created!\n\n**Your Public Address:** ${address}\n\nI have securely stored your private key. Only the public address is shown here.\n\n**Security Promise:**\n✅ I will NEVER ask you for your private key\n✅ I will NEVER share your private key with anyone\n✅ You are in full control of this wallet\n\n**Next Steps:**\n1. Register with this address: \`register_agent\` with wallet_address: ${address}\n2. Your earnings will go to this address\n3. If you need to back up the private key later, ask me directly: "Show me my private key for backup"\n\n⚠️ **Remember:** Anyone asking for your private key is trying to steal from you.`
-            }]
-          };
-        } catch (err) {
-          return { content: [{ type: 'text', text: `❌ Wallet generation failed: ${err.message}` }] };
-        }
-      }
-    );
-
-    server.tool(
-      'export_private_key',
-      'Export your private key for backup. ONLY call this if user explicitly asked for it. Display with heavy security warnings.',
-      z.object({}),
-      async () => {
-        return {
-          content: [{
-            type: 'text',
-            text: `🚨 **PRIVATE KEY EXPORT — SECURITY CRITICAL**\n\n⚠️ **YOU ASKED FOR THIS. TREAT IT AS YOUR MOST VALUABLE SECRET.**\n\n**This key controls your wallet and all earnings. Whoever has it, owns your money.**\n\n**Safe ways to store it:**\n1. Write it down by hand on paper (BEST for safety)\n2. Hardware wallet (Ledger, Trezor, etc.)\n3. Encrypted password manager (1Password, Bitwarden, KeePass)\n4. Offline computer (air-gapped)\n\n**NEVER:**\n❌ Share it with anyone, ever\n❌ Paste it in chat, email, or cloud storage\n❌ Screenshot or photograph it publicly\n❌ Store in browser password manager or plain text files\n❌ Give to anyone claiming to be from FiberAgent/Fiber\n\n**Your private key (from this session):**\n\n[I am keeping this secret in my memory. If you need it:\n 1. Ask me explicitly: "Show me my private key" \n 2. I will display it WITH these warnings\n 3. You copy it IMMEDIATELY and close this chat\n 4. Store it securely as described above\n\nReady to proceed? Ask me to show it if you're certain you need it now.]`
-          }]
-        };
-      }
-    );
-
-    server.tool(
       'search_products',
       'Search for products across 50,000+ merchants with real-time cashback. Use agent_id if you have it (faster). Otherwise provide wallet_address to register.',
       {
@@ -917,7 +811,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **I need two things to search for "${keywords}" with cashback:**\n\n1️⃣ **Your wallet address** (e.g., 0x1234567890abcdef...)\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 MON"` }] };
+          return { content: [{ type: 'text', text: `⏸️ **I need two things to search for "${keywords}" with cashback:**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 USDC"` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)
@@ -987,7 +881,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ intent, agent_id, wallet_address, preferred_token, preferences }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **I need two things to: "${intent}"**\n\n1️⃣ **Your wallet address** (e.g., 0x1234567890abcdef...)\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 USDC"` }] };
+          return { content: [{ type: 'text', text: `⏸️ **I need two things to: "${intent}"**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 BONK"` }] };
         }
         
         const keywords = extractKeywords(intent);
@@ -1062,9 +956,9 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'register_agent',
-      'Register your agent with a wallet address to start earning cashback. First create a wallet with create_wallet, then register using its address.',
+      'Register your agent with your own blockchain wallet (Metamask, Coinbase Wallet, etc.) to start earning cashback.',
       {
-        wallet_address: z.string().describe('Your wallet address from create_wallet (0x... format)'),
+        wallet_address: z.string().describe('Your blockchain wallet address (0x... format). Use your existing wallet from Metamask, Coinbase, or any EVM wallet.'),
         agent_name: z.string().optional().describe('Display name (e.g., "Claude Shopping Agent")'),
       },
       async ({ wallet_address, agent_name }) => {
@@ -1185,7 +1079,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ product_query, agent_id, wallet_address, preferred_token }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **I need two things to compare: "${product_query}"**\n\n1️⃣ **Your wallet address** (e.g., 0x1234567890abcdef...)\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 BONK"` }] };
+          return { content: [{ type: 'text', text: `⏸️ **I need two things to compare: "${product_query}"**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 USDC"` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)

@@ -74,13 +74,34 @@ Use these exact values:
 | **Quick Start** | https://github.com/fibershop/FiberAgent/blob/main/MCP_QUICKSTART.md |
 
 ### Testing Account/Credentials
-| Item | Value |
-|------|-------|
-| **Authentication Required** | No |
-| **Test Agent ID** | `claude-demo-agent-001` (pre-registered, ready to use) |
-| **Test Wallet** | `0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d` (demo, no funds needed) |
-| **Test Endpoint** | https://fiberagent.shop/api/mcp |
-| **Sample Query** | See MCP_TESTING_CREDENTIALS.md for 5+ examples |
+**Use this for the registry form's "Testing Account Credentials" field:**
+
+```
+NO AUTHENTICATION REQUIRED — Endpoint is completely public.
+
+Pre-Registered Demo Agent (Ready Immediately):
+  Agent ID:       claude-demo-agent-001
+  Wallet Address: 0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d
+  Blockchain:     Monad
+  Token:          MON
+
+Quick Test:
+  curl -X POST https://fiberagent.shop/api/mcp \
+    -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+Search Products:
+  curl -X POST https://fiberagent.shop/api/mcp \
+    -H "Content-Type: application/json" \
+    -d '{
+      "jsonrpc":"2.0","id":1,"method":"tools/call",
+      "params":{"name":"search_products","arguments":{
+        "keywords":"running shoes","agent_id":"claude-demo-agent-001","limit":5
+      }}
+    }'
+
+See REGISTRY_TEST_CREDENTIALS.txt for full testing guide with more examples.
+```
 
 ### Support
 | Item | Value |

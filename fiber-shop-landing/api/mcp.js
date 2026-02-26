@@ -166,14 +166,14 @@ export default async function handler(req, res) {
       tools: [
         {
           name: 'search_products',
-          description: 'Search across 50K+ merchants for products with real-time cashback rates and affiliate links',
+          description: 'Search across 50K+ merchants for products with real-time cashback rates and affiliate links. IMPORTANT: This tool REQUIRES either an agent_id OR a wallet_address + preferred_token. Before calling this tool, ask the user: "To enable cashback rewards, please share your blockchain wallet address (0x...) and preferred token (MON, BONK, or USDC)." Then call this tool with those values.',
           inputSchema: {
             type: 'object',
             properties: {
               keywords: { type: 'string', description: 'Product search terms (e.g., "running shoes", "wireless headphones")' },
-              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
-              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
-              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'Preferred reward token (optional, defaults to MON)' },
+              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse, skips wallet prompt)' },
+              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)' },
+              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'REQUIRED if no agent_id: Your preferred reward token (MON=default, BONK=community, USDC=stable)' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
             required: ['keywords']
@@ -181,14 +181,14 @@ export default async function handler(req, res) {
         },
         {
           name: 'search_by_intent',
-          description: 'Natural language product search — describe what you want, we parse intent and find matching products',
+          description: 'Natural language product search — describe what you want, we parse intent and find matching products with cashback. IMPORTANT: This tool REQUIRES either an agent_id OR a wallet_address + preferred_token. Before calling this tool, ask the user: "To enable cashback rewards, please share your blockchain wallet address (0x...) and preferred token (MON, BONK, or USDC)." Then call this tool with those values.',
           inputSchema: {
             type: 'object',
             properties: {
               intent: { type: 'string', description: 'Natural language description (e.g., "find running shoes under $150 with good reviews")' },
-              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
-              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
-              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'Preferred reward token (optional, defaults to MON)' },
+              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse, skips wallet prompt)' },
+              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)' },
+              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'REQUIRED if no agent_id: Your preferred reward token (MON=default, BONK=community, USDC=stable)' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
             required: ['intent']
@@ -220,14 +220,14 @@ export default async function handler(req, res) {
         },
         {
           name: 'compare_cashback',
-          description: 'Compare cashback rates across different merchants for the same product to find the best deal',
+          description: 'Compare cashback rates across different merchants for the same product to find the best deal. IMPORTANT: This tool REQUIRES either an agent_id OR a wallet_address + preferred_token. Before calling this tool, ask the user: "To enable cashback rewards, please share your blockchain wallet address (0x...) and preferred token (MON, BONK, or USDC)." Then call this tool with those values.',
           inputSchema: {
             type: 'object',
             properties: {
               product_query: { type: 'string', description: 'Product name or title to compare (e.g., "Nike Pegasus 41")' },
-              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
-              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
-              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'Preferred reward token (optional, defaults to MON)' }
+              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse, skips wallet prompt)' },
+              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)' },
+              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'REQUIRED if no agent_id: Your preferred reward token (MON=default, BONK=community, USDC=stable)' }
             },
             required: ['product_query']
           }
@@ -804,12 +804,12 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'search_products',
-      'Search for products across 50,000+ merchants with real-time cashback. Use agent_id if you have it (faster). Otherwise provide wallet_address to register.',
+      'Search for products across 50,000+ merchants with real-time cashback rewards. REQUIRES WALLET: Ask user for their blockchain wallet address (0x...) and preferred token (MON, BONK, or USDC) BEFORE calling this tool if they don\'t already have an agent_id. Use agent_id if you have it (faster). Otherwise provide wallet_address + preferred_token.',
       {
         keywords: z.string().describe('Product search terms (e.g., "nike running shoes")'),
-        agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
-        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
-        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('Preferred reward token (MON, BONK, or USDC). Defaults to MON if not specified.'),
+        agent_id: z.string().optional().describe('Your agent ID (if already registered — use this to skip wallet prompt)'),
+        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)'),
+        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('REQUIRED if no agent_id: Preferred reward token (MON=default native, BONK=community, USDC=stablecoin)'),
         max_results: z.number().optional().default(5).describe('Max results (1-20)'),
       },
       async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
@@ -874,12 +874,12 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'search_by_intent',
-      'Natural language shopping — describe what you want. Use agent_id if you have it (faster). Otherwise provide wallet_address to register.',
+      'Natural language shopping with cashback rewards — describe what you want. REQUIRES WALLET: Ask user for their blockchain wallet address (0x...) and preferred token (MON, BONK, or USDC) BEFORE calling this tool if they don\'t already have an agent_id. Use agent_id if available (faster). Otherwise provide wallet_address + preferred_token.',
       {
         intent: z.string().describe('Natural language request (e.g., "Find Nike shoes under $150, best cashback")'),
-        agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
-        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
-        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('Preferred reward token (MON, BONK, or USDC). Defaults to MON if not specified.'),
+        agent_id: z.string().optional().describe('Your agent ID (if already registered — use this to skip wallet prompt)'),
+        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)'),
+        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('REQUIRED if no agent_id: Preferred reward token (MON=default native, BONK=community, USDC=stablecoin)'),
         preferences: z.array(z.string()).optional().describe('Preferences (e.g., ["running", "lightweight"])'),
       },
       async ({ intent, agent_id, wallet_address, preferred_token, preferences }) => {
@@ -1073,12 +1073,12 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'compare_cashback',
-      'Compare the same product across different merchants to find the highest cashback. Use agent_id if you have it (faster). Otherwise provide wallet_address to register.',
+      'Compare the same product across different merchants to find the highest cashback. REQUIRES WALLET: Ask user for their blockchain wallet address (0x...) and preferred token (MON, BONK, or USDC) BEFORE calling this tool if they don\'t already have an agent_id. Use agent_id if available (faster). Otherwise provide wallet_address + preferred_token.',
       {
         product_query: z.string().describe('Product to compare (e.g., "nike air force 1")'),
-        agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
-        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
-        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('Preferred reward token (MON, BONK, or USDC). Defaults to MON if not specified.'),
+        agent_id: z.string().optional().describe('Your agent ID (if already registered — use this to skip wallet prompt)'),
+        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)'),
+        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('REQUIRED if no agent_id: Preferred reward token (MON=default native, BONK=community, USDC=stablecoin)'),
       },
       async ({ product_query, agent_id, wallet_address, preferred_token }) => {
         // Need either agent_id OR wallet_address

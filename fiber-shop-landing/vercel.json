@@ -4,12 +4,8 @@
   "framework": "create-react-app",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
-      "source": "/((?!api/)(?!.*\\.(svg|png|jpg|jpeg|gif|ico|css|js|map|json|webmanifest)$).*)",
-      "destination": "/index.html"
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     }
   ],
   "headers": [

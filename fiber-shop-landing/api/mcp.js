@@ -893,75 +893,125 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'search_products',
-      'Search for products across 50,000+ merchants with real-time cashback rates. Returns products with prices, cashback amounts, and affiliate purchase links. Cashback is automatically tracked to your registered agent.',
+      'Search for products across 50,000+ merchants with real-time cashback. Provide your wallet address once, then search immediately. All earnings go to your wallet.',
       {
-        keywords: z.string().describe('Product search terms (e.g., "nike running shoes", "creatine", "wireless headphones")'),
-        agent_id: z.string().optional().describe('Your registered agent ID (optional — uses your last-registered agent if not provided)'),
+        keywords: z.string().describe('Product search terms (e.g., "nike running shoes")'),
+        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Provide once, registered automatically.'),
         max_results: z.number().optional().default(5).describe('Max results (1-20)'),
       },
-      async ({ keywords, agent_id, max_results }) => {
-        let agent = agent_id;
-        if (!agent) {
-          const lastAgent = Object.values(agents).sort((a, b) => 
-            new Date(b.registered_at) - new Date(a.registered_at)
-          )[0];
-          agent = lastAgent?.agent_id;
+      async ({ keywords, wallet_address, max_results }) => {
+        // Check if agent already registered
+        let agent_id = Object.values(agents).sort((a, b) => 
+          new Date(b.registered_at) - new Date(a.registered_at)
+        )[0]?.agent_id;
+        
+        // If wallet provided, register it
+        if (wallet_address && !agent_id) {
+          try {
+            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                wallet_address: wallet_address
+              }),
+              signal: AbortSignal.timeout(10000)
+            });
+            
+            const fiberResponse = await registerResponse.json();
+            if (registerResponse.ok) {
+              agent_id = fiberResponse.agent_id;
+              const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+              agents[localKey] = {
+                agent_id,
+                wallet: wallet_address,
+                device_id: fiberResponse.wildfire_device_id,
+                registered_at: new Date().toISOString()
+              };
+            }
+          } catch (err) {
+            return { content: [{ type: 'text', text: `❌ Registration failed: ${err.message}` }] };
+          }
         }
         
-        // CRITICAL: Must have registered agent for affiliate links
-        if (!agent || agent === 'mcp-user') {
-          return { content: [{ type: 'text', text: `⚠️ **No registered agent found.**\n\nTo search and earn cashback with active affiliate links:\n\n1. **\`create_wallet\`** → I'll generate your address\n2. **\`register_agent\`** → Register with your address\n3. **Then search** → Active links + earned cashback!\n\n**Your search:** "${keywords}"\n\nReady to get started? Call \`create_wallet\` first!` }] };
+        // If still no agent, ask for wallet
+        if (!agent_id) {
+          return { content: [{ type: 'text', text: `🔐 **What's your wallet address?**\n\nI'll register it and track your earnings.\n\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we search!` }] };
         }
         
         const limit = Math.min(max_results || 5, 20);
         
-        // Call Fiber API directly (no proxy)
-        let results = await searchViaBackend(keywords, agent, limit);
+        // Search with registered agent
+        let results = await searchViaBackend(keywords, agent_id, limit);
         let source = '🔗 Fiber API Live';
         
-        // Fallback
         if (!results || results.length === 0) {
           results = searchFallback(keywords, limit);
           source = '📦 Fallback Catalog';
         }
         
-        return { content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}\n💰 Earnings tracked to: ${agent}*` }] };
+        return { content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network.\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet}*` }] };
       }
     );
 
     server.tool(
       'search_by_intent',
-      'Natural language shopping — describe what you want. Supports price limits ("under $30"), cashback optimization, and preferences. Cashback is automatically tracked to your registered agent.',
+      'Natural language shopping — describe what you want. Provide wallet once, search immediately. Supports price limits ("under $30") and cashback optimization.',
       {
-        intent: z.string().describe('Natural language request (e.g., "Find creatine monohydrate under $30, highest cashback")'),
-        agent_id: z.string().optional().describe('Your registered agent ID (optional — uses your last-registered agent if not provided)'),
-        preferences: z.array(z.string()).optional().describe('Boost preferences (e.g., ["unflavored", "bulk"])'),
+        intent: z.string().describe('Natural language request (e.g., "Find Nike shoes under $150, best cashback")'),
+        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Provide once, registered automatically.'),
+        preferences: z.array(z.string()).optional().describe('Preferences (e.g., ["running", "lightweight"])'),
       },
-      async ({ intent, agent_id, preferences }) => {
+      async ({ intent, wallet_address, preferences }) => {
         const keywords = extractKeywords(intent);
         const maxPrice = extractMaxPrice(intent);
         const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
         
-        let agent = agent_id;
-        if (!agent) {
-          const lastAgent = Object.values(agents).sort((a, b) => 
-            new Date(b.registered_at) - new Date(a.registered_at)
-          )[0];
-          agent = lastAgent?.agent_id;
+        // Check if agent already registered
+        let agent_id = Object.values(agents).sort((a, b) => 
+          new Date(b.registered_at) - new Date(a.registered_at)
+        )[0]?.agent_id;
+        
+        // If wallet provided, register it
+        if (wallet_address && !agent_id) {
+          try {
+            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                wallet_address: wallet_address
+              }),
+              signal: AbortSignal.timeout(10000)
+            });
+            
+            const fiberResponse = await registerResponse.json();
+            if (registerResponse.ok) {
+              agent_id = fiberResponse.agent_id;
+              const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+              agents[localKey] = {
+                agent_id,
+                wallet: wallet_address,
+                device_id: fiberResponse.wildfire_device_id,
+                registered_at: new Date().toISOString()
+              };
+            }
+          } catch (err) {
+            return { content: [{ type: 'text', text: `❌ Registration failed: ${err.message}` }] };
+          }
         }
         
-        // CRITICAL: Must have registered agent for affiliate links
-        if (!agent || agent === 'mcp-user') {
-          return { content: [{ type: 'text', text: `⚠️ **No registered agent found.**\n\nTo search with active affiliate links:\n\n1. **\`create_wallet\`** → Get your address\n2. **\`register_agent\`** → Register & get agent_id\n3. **Then search** → Active links + cashback!\n\n**Your request:** "${intent}"\n\nReady? Call \`create_wallet\` first!` }] };
+        // If still no agent, ask for wallet
+        if (!agent_id) {
+          return { content: [{ type: 'text', text: `🔐 **What's your wallet address?**\n\nI'll register it and track your earnings for: "${intent}"\n\n(e.g., 0x1234567890123456789012345678901234567890)` }] };
         }
 
-        if (!keywords) return { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150"' }] };
+        if (!keywords) return { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150, best cashback"' }] };
 
-        // Call Fiber API directly
-        let results = await searchViaBackend(keywords, agent, 20);
+        // Search with registered agent
+        let results = await searchViaBackend(keywords, agent_id, 20);
         let source = '🔗 Fiber API Live';
         
-        // Fallback
         if (!results || results.length === 0) {
           results = searchFallback(keywords, 20);
           source = '📦 Fallback Catalog';
@@ -978,7 +1028,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         if (wantsCashback) results.sort((a, b) => b.cashbackAmount - a.cashbackAmount);
         results = results.slice(0, 5);
 
-        return { content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 Earnings tracked to: ${agent}` }] };
+        return { content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet}` }] };
       }
     );
 

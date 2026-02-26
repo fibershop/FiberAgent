@@ -100,8 +100,8 @@ function DevelopersPage() {
                 <li>✓ Auto-discovered by agents</li>
                 <li>✓ Full feature parity</li>
               </ul>
-              <code>npm install github:openclawlaurent/FiberAgent#v1.0.1</code>
-              <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
+              <code>npm install github:fibershop/FiberAgent#v1.0.1</code>
+              <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
             </div>
           </div>
         </section>
@@ -216,7 +216,7 @@ function DevelopersPage() {
               </div>
             </a>
 
-            <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className="doc-link">
+            <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer" className="doc-link">
               <div className="doc-icon">🔧</div>
               <div>
                 <h3>GitHub Repository</h3>
@@ -247,8 +247,8 @@ function DevelopersPage() {
           <h2>Get Support</h2>
           <p>Questions? Issues? Want to contribute?</p>
           <div className="support-links">
-            <a href="https://github.com/openclawlaurent/FiberAgent/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a>
-            <a href="https://github.com/openclawlaurent/FiberAgent/discussions" target="_blank" rel="noopener noreferrer">Discussions</a>
+            <a href="https://github.com/fibershop/FiberAgent/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a>
+            <a href="https://github.com/fibershop/FiberAgent/discussions" target="_blank" rel="noopener noreferrer">Discussions</a>
             <a href="https://twitter.com/fiberagent" target="_blank" rel="noopener noreferrer">Twitter</a>
           </div>
         </section>

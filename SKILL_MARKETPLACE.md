@@ -131,9 +131,9 @@ Each skill publishes metadata to ClawHub:
   ],
   "category": "commerce",
   "author": "Laurent Salou",
-  "repository": "https://github.com/openclawlaurent/FiberAgent",
+  "repository": "https://github.com/fibershop/FiberAgent",
   "installFrom": {
-    "github": "openclawlaurent/FiberAgent#v1.0.1",
+    "github": "fibershop/FiberAgent#v1.0.1",
     "npm": "fiberagent@1.0.1",
     "clawhub": "fiberagent/1.0.1"
   },
@@ -196,7 +196,7 @@ Response:
       "keywords": ["shopping", "cashback", "crypto", "monad", "deals"],
       "installFrom": {
         "npm": "fiberagent@1.0.1",
-        "github": "openclawlaurent/FiberAgent#v1.0.1"
+        "github": "fibershop/FiberAgent#v1.0.1"
       }
     },
     ...

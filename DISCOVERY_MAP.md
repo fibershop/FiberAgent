@@ -36,7 +36,7 @@
 | 24 | Organization Schema | Landing page | Metadata | Search engines | JSON-LD | Legal name, logo, contact | Static |
 | 25 | Breadcrumb Schema | All pages | Metadata | Search engines | JSON-LD | Navigation hierarchy | Per page |
 | **EXTERNAL POINTERS** |
-| 26 | GitHub Repository | `https://github.com/openclawlaurent/FiberAgent` | External | Developers & Everyone | HTML + Git | Full source code + docs | Real-time |
+| 26 | GitHub Repository | `https://github.com/fibershop/FiberAgent` | External | Developers & Everyone | HTML + Git | Full source code + docs | Real-time |
 | 27 | Twitter/X | `https://x.com/fiber_shop` | External | General public | Social media | Updates & announcements | Real-time |
 | 28 | ERC-8004 Registry | `https://www.8004scan.io/agents/monad/135` | External (Blockchain) | Blockchain explorers & Monad users | HTML | On-chain agent verification | Real-time |
 | 29 | Email Contact | `support@fiber.shop` | External | Support seekers | Email | Customer support | Real-time |

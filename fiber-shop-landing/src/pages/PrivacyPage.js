@@ -231,7 +231,7 @@ export default function PrivacyPage() {
           
           <h3>GDPR (EU Users)</h3>
           <p>
-            If you're in the EU, you have the right to access, correct, delete, or port your personal data. To exercise these rights, open an issue on <a href="https://github.com/openclawlaurent/FiberAgent/issues" target="_blank" rel="noopener noreferrer">GitHub</a> with "GDPR Request" in the title.
+            If you're in the EU, you have the right to access, correct, delete, or port your personal data. To exercise these rights, open an issue on <a href="https://github.com/fibershop/FiberAgent/issues" target="_blank" rel="noopener noreferrer">GitHub</a> with "GDPR Request" in the title.
           </p>
           <p>
             <strong>Response time:</strong> 30 days.
@@ -268,8 +268,8 @@ export default function PrivacyPage() {
             Questions about this privacy policy?
           </p>
           <ul>
-            <li><strong>Open an issue:</strong> <a href="https://github.com/openclawlaurent/FiberAgent/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a></li>
-            <li><strong>Check:</strong> <a href="https://github.com/openclawlaurent/FiberAgent#support" target="_blank" rel="noopener noreferrer">Support page</a></li>
+            <li><strong>Open an issue:</strong> <a href="https://github.com/fibershop/FiberAgent/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a></li>
+            <li><strong>Check:</strong> <a href="https://github.com/fibershop/FiberAgent#support" target="_blank" rel="noopener noreferrer">Support page</a></li>
           </ul>
         </section>
 

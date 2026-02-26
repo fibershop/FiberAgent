@@ -43,8 +43,8 @@ function CapabilitiesPage() {
         "name": "fiberagent",
         "version": "1.0.1",
         "description": "OpenClaw skill for FiberAgent commerce integration",
-        "repository": "https://github.com/openclawlaurent/FiberAgent",
-        "installable": "npm install github:openclawlaurent/FiberAgent#v1.0.1"
+        "repository": "https://github.com/fibershop/FiberAgent",
+        "installable": "npm install github:fibershop/FiberAgent#v1.0.1"
       }
     ],
     "authentication": "None (public API)",
@@ -63,7 +63,7 @@ function CapabilitiesPage() {
     },
     "support": {
       "documentation": "https://fiberagent.shop/about",
-      "github": "https://github.com/openclawlaurent/FiberAgent",
+      "github": "https://github.com/fibershop/FiberAgent",
       "live_demo": "https://fiberagent.shop/visual-demo"
     }
   };
@@ -127,7 +127,7 @@ function CapabilitiesPage() {
                 <p>On-chain agent registration (Monad)</p>
               </div>
             </a>
-            <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className="link-card">
+            <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer" className="link-card">
               <div className="link-icon">🔧</div>
               <div className="link-text">
                 <strong>GitHub</strong>
@@ -274,7 +274,7 @@ function CapabilitiesPage() {
           </div>
 
           <p className="resource-note">
-            📖 Full MCP integration guide with cURL, Python, Node.js, and JavaScript examples: <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer">MCP_INTEGRATION_GUIDE.md</a>
+            📖 Full MCP integration guide with cURL, Python, Node.js, and JavaScript examples: <a href="https://github.com/fibershop/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer">MCP_INTEGRATION_GUIDE.md</a>
           </p>
         </section>
 
@@ -413,9 +413,9 @@ function CapabilitiesPage() {
           
           <div className="skill-box">
             <h3>fiberagent v1.0.1</h3>
-            <p><strong>Repository:</strong> <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">github.com/openclawlaurent/FiberAgent</a></p>
+            <p><strong>Repository:</strong> <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer">github.com/fibershop/FiberAgent</a></p>
             <p><strong>Installation:</strong></p>
-            <pre className="code-block"><code>npm install github:openclawlaurent/FiberAgent#v1.0.1</code></pre>
+            <pre className="code-block"><code>npm install github:fibershop/FiberAgent#v1.0.1</code></pre>
             <p><strong>Or:</strong> Copy <code>skills/fiberagent/</code> to <code>~/.openclaw/workspace/skills/</code> for auto-discovery</p>
             <p className="skill-desc">
               Provides OpenClaw integration for FiberAgent. Compatible with local personal AI assistants. Auto-discovered via semantic skill matching.
@@ -495,7 +495,7 @@ const response = await client.request("search_products", {
         <section className="cap-section cap-support">
           <h2>Support & Resources</h2>
           <div className="support-grid">
-            <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className="support-card">
+            <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer" className="support-card">
               <strong>GitHub</strong>
               <p>Source code, issues, and discussions</p>
             </a>

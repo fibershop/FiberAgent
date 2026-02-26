@@ -240,7 +240,7 @@ Error: { "error": "Unauthorized" }
 - **MCP Quickstart:** [MCP_QUICKSTART.md](./MCP_QUICKSTART.md) — 5-minute MCP setup
 - **API Capabilities:** https://fiberagent.shop/capabilities
 - **OpenAPI Spec:** https://fiberagent.shop/openapi.json
-- **GitHub:** https://github.com/openclawlaurent/FiberAgent
+- **GitHub:** https://github.com/fibershop/FiberAgent
 
 ---
 
@@ -267,4 +267,4 @@ Error: { "error": "Unauthorized" }
 
 **Ready?** Start with Step 1 above, then check out the full [MCP_INTEGRATION_GUIDE.md](./MCP_INTEGRATION_GUIDE.md) to integrate with Claude Desktop or Cursor.
 
-**Questions?** Open an issue on [GitHub](https://github.com/openclawlaurent/FiberAgent) or email support@fiber.shop.
+**Questions?** Open an issue on [GitHub](https://github.com/fibershop/FiberAgent) or email support@fiber.shop.

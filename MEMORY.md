@@ -7,8 +7,8 @@
 **STATUS: 🟢 LIVE ON GITHUB + PRODUCTION PAGES LIVE**
 - ✅ Skill source code in `/Users/laurentsalou/.openclaw/workspace-fiber/skills/fiberagent/`
 - ✅ Git tag created: `openclaw-skill-v1.0.1`
-- ✅ GitHub release pushed: https://github.com/openclawlaurent/FiberAgent/releases/tag/openclaw-skill-v1.0.1
-- ✅ Installable: `npm install github:openclawlaurent/FiberAgent#openclaw-skill-v1.0.1`
+- ✅ GitHub release pushed: https://github.com/fibershop/FiberAgent/releases/tag/openclaw-skill-v1.0.1
+- ✅ Installable: `npm install github:fibershop/FiberAgent#openclaw-skill-v1.0.1`
 - ✅ Agents can discover & use it locally in workspace
 - ✅ Visual Demo page live (`/visual-demo`)
 - ✅ Capabilities page live (`/capabilities`)
@@ -254,8 +254,8 @@ Fiber just released three stats endpoints:
 - ✅ **OpenClaw Skill v1.0.1 PUBLISHED TO GITHUB** 
   - Skill location: `/Users/laurentsalou/.openclaw/workspace-fiber/skills/fiberagent/`
   - Implementations: search_products, register_agent, get_agent_stats
-  - Git tag live: https://github.com/openclawlaurent/FiberAgent/releases/tag/openclaw-skill-v1.0.1
-  - **INSTALLABLE NOW:** `npm install github:openclawlaurent/FiberAgent#v1.0.1`
+  - Git tag live: https://github.com/fibershop/FiberAgent/releases/tag/openclaw-skill-v1.0.1
+  - **INSTALLABLE NOW:** `npm install github:fibershop/FiberAgent#v1.0.1`
   - **ALL 4 INSTALLATION PATHS WORKING:**
     1. GitHub release (live NOW) ✅
     2. Local workspace (`~/.openclaw/workspace/skills/`) ✅
@@ -631,8 +631,8 @@ Fiber just released three stats endpoints:
 ### Final Status: PHASE 1 COMPLETE + ALL DELIVERABLES SHIPPED ✅
 
 **OpenClaw Skill v1.0.1:**
-- ✅ Published to GitHub (tag: https://github.com/openclawlaurent/FiberAgent/releases/tag/openclaw-skill-v1.0.1)
-- ✅ Installable via: `npm install github:openclawlaurent/FiberAgent#v1.0.1`
+- ✅ Published to GitHub (tag: https://github.com/fibershop/FiberAgent/releases/tag/openclaw-skill-v1.0.1)
+- ✅ Installable via: `npm install github:fibershop/FiberAgent#v1.0.1`
 - ✅ All 4 distribution channels documented & tested:
   1. GitHub release (LIVE NOW) ✅
   2. Local workspace copy (LIVE NOW) ✅
@@ -704,7 +704,7 @@ Fiber just released three stats endpoints:
 ### Installation Verification (All Working)
 ```bash
 # GitHub (recommended, LIVE NOW)
-npm install github:openclawlaurent/FiberAgent#v1.0.1
+npm install github:fibershop/FiberAgent#v1.0.1
 
 # Local workspace (copy skill folder)
 cp -r /Users/laurentsalou/.openclaw/workspace-fiber/skills/fiberagent \
@@ -732,7 +732,7 @@ cd skills/fiberagent && npm publish --access public
 ### Distribution Channel Status (Final)
 | Channel | Status | Note |
 |---------|--------|------|
-| GitHub Release | ✅ LIVE | Install: `npm install github:openclawlaurent/FiberAgent#v1.0.1` |
+| GitHub Release | ✅ LIVE | Install: `npm install github:fibershop/FiberAgent#v1.0.1` |
 | Local Workspace | ✅ LIVE | Copy to `~/.openclaw/workspace/skills/` |
 | npm Registry | ⏳ BLOCKED | 2FA required (documented workaround in place) |
 | ClawHub | ⏳ READY | Manual upload needed (24-48h approval) |

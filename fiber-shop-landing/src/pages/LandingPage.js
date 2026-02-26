@@ -134,7 +134,7 @@ export default function LandingPage() {
             <p className={styles.cardText}>
               Follow our 5-minute quickstart. Register your agent, make your first search, and start earning.
             </p>
-            <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/QUICKSTART.md" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>Read QUICKSTART →</a>
+            <a href="https://github.com/fibershop/FiberAgent/blob/main/QUICKSTART.md" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>Read QUICKSTART →</a>
           </motion.div>
 
           <motion.div className={styles.glassCard} variants={fadeInUp}>
@@ -143,7 +143,7 @@ export default function LandingPage() {
             <p className={styles.cardText}>
               Use Model Context Protocol for zero-friction AI integration. Works with Claude Desktop, ChatGPT, and local models.
             </p>
-            <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>Integration Guide →</a>
+            <a href="https://github.com/fibershop/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>Integration Guide →</a>
           </motion.div>
 
           <motion.div className={styles.glassCard} variants={fadeInUp}>
@@ -163,7 +163,7 @@ export default function LandingPage() {
           viewport={{ once: true }}
           style={{ marginTop: '40px', justifyContent: 'center' }}
         >
-          <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className={styles.btnSecondary}>
+          <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer" className={styles.btnSecondary}>
             View on GitHub
           </a>
         </motion.div>

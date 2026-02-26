@@ -71,7 +71,7 @@
   "trustModels": ["on-chain-reputation", "erc-8004"],
   
   "metadata": {
-    "github": "https://github.com/openclawlaurent/FiberAgent",
+    "github": "https://github.com/fibershop/FiberAgent",
     "website": "https://fiberagent.shop",
     "documentation": "https://fiberagent.shop",
     "hackathon": "Moltiverse 2026 - Agent Track"

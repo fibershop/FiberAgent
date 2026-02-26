@@ -263,7 +263,7 @@ function OnePagerPage() {
             </p>
             <div className="cta-links">
               <a href="https://fiberagent.shop/visual-demo">See Demo</a>
-              <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer">GitHub</a>
               <a href="https://fiberagent.shop" target="_blank" rel="noopener noreferrer">Live Site</a>
             </div>
           </section>

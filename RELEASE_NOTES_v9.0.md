@@ -267,7 +267,7 @@ curl https://fiberagent.shop/api/stats/platform | jq .
 ## Support & Issues
 
 - **Documentation:** https://fiberagent.shop/capabilities
-- **GitHub Issues:** https://github.com/openclawlaurent/FiberAgent/issues
+- **GitHub Issues:** https://github.com/fibershop/FiberAgent/issues
 - **Email:** support@fiber.shop
 - **Discord:** Join our community (link on website)
 

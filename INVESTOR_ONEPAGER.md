@@ -98,7 +98,7 @@ Split three ways:
 
 📊 **Demo Available**
 - Interactive HTML: `INVESTOR_DEMO.html`
-- GitHub: https://github.com/openclawlaurent/FiberAgent
+- GitHub: https://github.com/fibershop/FiberAgent
 - CLI demo: `node demo-agent.js`
 
 ---
@@ -169,7 +169,7 @@ Seeking: Technical co-founder (agent systems), Growth lead
 | Resource | Link |
 |----------|------|
 | **Website** | https://fiberagent.shop |
-| **GitHub** | https://github.com/openclawlaurent/FiberAgent |
+| **GitHub** | https://github.com/fibershop/FiberAgent |
 | **Docs** | https://fiberagent.shop/docs |
 | **Discord** | https://discord.com/invite/clawd |
 | **Interactive Demo** | `INVESTOR_DEMO.html` (open in browser) |

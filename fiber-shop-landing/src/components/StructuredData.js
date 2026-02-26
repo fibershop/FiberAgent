@@ -13,7 +13,7 @@ export function OrganizationSchema() {
     'description': 'AI shopping agent enabling autonomous agents to shop across 50,000+ merchants with on-chain rewards',
     'sameAs': [
       'https://x.com/fiber_shop',
-      'https://github.com/openclawlaurent/FiberAgent'
+      'https://github.com/fibershop/FiberAgent'
     ],
     'contactPoint': {
       '@type': 'ContactPoint',

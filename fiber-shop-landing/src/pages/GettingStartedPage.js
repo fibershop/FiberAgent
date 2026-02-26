@@ -184,7 +184,7 @@ function GettingStartedPage() {
                     </div>
                     <div className="option">
                       <strong>⚙️ OpenClaw Skill</strong>
-                      <code>npm install github:openclawlaurent/FiberAgent</code>
+                      <code>npm install github:fibershop/FiberAgent</code>
                       <p>Local AI integration, auto-discovery.</p>
                     </div>
                   </div>
@@ -307,7 +307,7 @@ function GettingStartedPage() {
               <h3>API Reference</h3>
               <p>Complete tool schemas, resources, and technical specs</p>
             </a>
-            <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer" className="next-step">
+            <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer" className="next-step">
               <div className="step-icon">🔧</div>
               <h3>GitHub</h3>
               <p>Source code, skills, and community discussions</p>

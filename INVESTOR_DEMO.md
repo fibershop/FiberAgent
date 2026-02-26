@@ -119,7 +119,7 @@ Split three ways:
 
 ```bash
 # Option 1: Direct from GitHub
-npm install github:openclawlaurent/FiberAgent#v1.0.1
+npm install github:fibershop/FiberAgent#v1.0.1
 
 # Option 2: Local workspace (if you have OpenClaw)
 npm install ~/path/to/skills/fiberagent
@@ -143,7 +143,7 @@ node demo-agent.js
 ## Key Files
 
 - **Live API:** https://fiberagent.shop
-- **GitHub:** https://github.com/openclawlaurent/FiberAgent
+- **GitHub:** https://github.com/fibershop/FiberAgent
 - **Skill Source:** `/skills/fiberagent/` (4 files, 10KB)
 - **OpenAPI Spec:** https://fiberagent.shop/docs
 - **Demo:** Run `node /tmp/demo-agent.js`
@@ -206,7 +206,7 @@ Together = **Decentralized agent commerce** (no middleman)
 ## Contact
 
 - Website: https://fiberagent.shop
-- GitHub: https://github.com/openclawlaurent/FiberAgent
+- GitHub: https://github.com/fibershop/FiberAgent
 - Discord: https://discord.com/invite/clawd
 
 **Built for Moltiverse Hackathon 2026 - Agent Track**

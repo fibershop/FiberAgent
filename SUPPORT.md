@@ -5,13 +5,13 @@
 Complete documentation is available at:
 
 - **MCP Docs Page:** https://fiberagent.shop/docs/mcp
-- **Full Integration Guide:** https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md (13KB)
-- **Quick Start Guide:** https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_QUICKSTART.md (5 min setup)
+- **Full Integration Guide:** https://github.com/fibershop/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md (13KB)
+- **Quick Start Guide:** https://github.com/fibershop/FiberAgent/blob/main/MCP_QUICKSTART.md (5 min setup)
 - **Developer Portal:** https://fiberagent.shop/developers (OpenAPI, endpoints, examples)
 
 ## 🐛 Recommended Support Channel
 
-**Primary:** [GitHub Issues](https://github.com/openclawlaurent/FiberAgent/issues)
+**Primary:** [GitHub Issues](https://github.com/fibershop/FiberAgent/issues)
 
 ### How to Report Issues
 
@@ -30,8 +30,8 @@ search_products returns missing_wallet error even with wallet_address provided
 
 ## 💬 Alternative Channels
 
-- **Discussions:** [GitHub Discussions](https://github.com/openclawlaurent/FiberAgent/discussions) for general questions
-- **Pull Requests:** [GitHub PRs](https://github.com/openclawlaurent/FiberAgent/pulls) for contributions/fixes
+- **Discussions:** [GitHub Discussions](https://github.com/fibershop/FiberAgent/discussions) for general questions
+- **Pull Requests:** [GitHub PRs](https://github.com/fibershop/FiberAgent/pulls) for contributions/fixes
 
 ## ⏱️ Response Times (SLA)
 
@@ -45,25 +45,25 @@ search_products returns missing_wallet error even with wallet_address provided
 ## FAQ
 
 **Q: Can I use FiberAgent without Claude Desktop?**
-A: Yes! The MCP server is a standard HTTP endpoint. Use cURL, Python, Node.js, or any HTTP client. See examples in the [Quick Start Guide](https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_QUICKSTART.md).
+A: Yes! The MCP server is a standard HTTP endpoint. Use cURL, Python, Node.js, or any HTTP client. See examples in the [Quick Start Guide](https://github.com/fibershop/FiberAgent/blob/main/MCP_QUICKSTART.md).
 
 **Q: Do I need API keys or authentication?**
 A: No. The endpoint is public and requires no credentials.
 
 **Q: What if the endpoint is down?**
-A: Check [GitHub Issues](https://github.com/openclawlaurent/FiberAgent/issues) or open a new issue. We monitor uptime 24/7.
+A: Check [GitHub Issues](https://github.com/fibershop/FiberAgent/issues) or open a new issue. We monitor uptime 24/7.
 
 **Q: How do I report a security issue?**
 A: Please do NOT open a public issue. Contact the maintainers privately through GitHub (use Security Advisory feature if available).
 
 **Q: Can I self-host the MCP server?**
-A: Yes! The source code is on GitHub. Clone, modify, deploy. See [README](https://github.com/openclawlaurent/FiberAgent#readme).
+A: Yes! The source code is on GitHub. Clone, modify, deploy. See [README](https://github.com/fibershop/FiberAgent#readme).
 
 ## Status & Monitoring
 
 - **Live Endpoint:** https://fiberagent.shop/api/mcp
 - **Status Page:** Coming soon
-- **GitHub Status:** Open issues on [GitHub](https://github.com/openclawlaurent/FiberAgent/issues)
+- **GitHub Status:** Open issues on [GitHub](https://github.com/fibershop/FiberAgent/issues)
 
 ## Contributing
 
@@ -74,7 +74,7 @@ Found a bug? Have an improvement? Contributions welcome!
 3. Make your changes
 4. Open a PR
 
-See [GitHub](https://github.com/openclawlaurent/FiberAgent) for details.
+See [GitHub](https://github.com/fibershop/FiberAgent) for details.
 
 ---
 

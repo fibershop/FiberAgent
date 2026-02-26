@@ -336,7 +336,7 @@ If judges ask something you don't know:
 
 **Better answer:** "We're actually building that in Phase 2. Here's our timeline..."
 
-**Best answer:** "Look at the code. It's all on GitHub at https://github.com/openclawlaurent/FiberAgent"
+**Best answer:** "Look at the code. It's all on GitHub at https://github.com/fibershop/FiberAgent"
 
 ---
 

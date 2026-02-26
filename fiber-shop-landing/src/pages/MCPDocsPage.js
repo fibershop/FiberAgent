@@ -265,15 +265,15 @@ console.log(data);`}</code></pre>
       <motion.section className="doc-section resources" variants={itemVariants}>
         <h2>Resources</h2>
         <div className="resources-grid">
-          <a href="https://github.com/openclawlaurent/FiberAgent" className="resource-card" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/fibershop/FiberAgent" className="resource-card" target="_blank" rel="noopener noreferrer">
             <h3>📦 GitHub Repository</h3>
             <p>Source code, skill files, full implementation</p>
           </a>
-          <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" className="resource-card" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/fibershop/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" className="resource-card" target="_blank" rel="noopener noreferrer">
             <h3>📖 Full Integration Guide</h3>
             <p>Complete documentation with detailed API specs</p>
           </a>
-          <a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_QUICKSTART.md" className="resource-card" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/fibershop/FiberAgent/blob/main/MCP_QUICKSTART.md" className="resource-card" target="_blank" rel="noopener noreferrer">
             <h3>⚡ Quick Start Repo</h3>
             <p>5-minute setup guide for developers</p>
           </a>
@@ -296,7 +296,7 @@ console.log(data);`}</code></pre>
           <div className="channel">
             <h3>🐛 Bug Reports & Issues</h3>
             <p><strong>Primary support channel:</strong></p>
-            <a href="https://github.com/openclawlaurent/FiberAgent/issues" target="_blank" rel="noopener noreferrer" className="support-link">
+            <a href="https://github.com/fibershop/FiberAgent/issues" target="_blank" rel="noopener noreferrer" className="support-link">
               GitHub Issues
             </a>
             <p>Open an issue for bugs, feature requests, or integration problems. Include MCP method, request body, and error message.</p>
@@ -306,8 +306,8 @@ console.log(data);`}</code></pre>
             <h3>📚 Documentation</h3>
             <p><strong>Complete guides available:</strong></p>
             <ul className="doc-links">
-              <li><a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer">Full MCP Integration Guide</a> (13KB, all tools & examples)</li>
-              <li><a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_QUICKSTART.md" target="_blank" rel="noopener noreferrer">Quick Start Guide</a> (5 minutes to integration)</li>
+              <li><a href="https://github.com/fibershop/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer">Full MCP Integration Guide</a> (13KB, all tools & examples)</li>
+              <li><a href="https://github.com/fibershop/FiberAgent/blob/main/MCP_QUICKSTART.md" target="_blank" rel="noopener noreferrer">Quick Start Guide</a> (5 minutes to integration)</li>
               <li><a href="https://fiberagent.shop/docs/mcp">This page</a> (overview & code examples)</li>
               <li><a href="https://fiberagent.shop/developers">Developer Portal</a> (API specs, OpenAPI, more)</li>
             </ul>
@@ -316,7 +316,7 @@ console.log(data);`}</code></pre>
           <div className="channel">
             <h3>💬 Questions & Feedback</h3>
             <p><strong>General questions?</strong></p>
-            <p>Check <a href="https://github.com/openclawlaurent/FiberAgent/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a> or open an issue on <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+            <p>Check <a href="https://github.com/fibershop/FiberAgent/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a> or open an issue on <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
           </div>
         </div>
 

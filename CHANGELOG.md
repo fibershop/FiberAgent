@@ -165,7 +165,7 @@ None. All changes are additive (new endpoints, new headers, better error message
 ## Installation & Usage
 
 ### For Developers
-1. Clone repo: `git clone https://github.com/openclawlaurent/FiberAgent.git`
+1. Clone repo: `git clone https://github.com/fibershop/FiberAgent.git`
 2. Install deps: `npm install`
 3. Start dev: `npm run dev`
 4. Visit: `http://localhost:3000`
@@ -186,7 +186,7 @@ None. All changes are additive (new endpoints, new headers, better error message
 
 - **Docs:** https://fiberagent.shop/capabilities
 - **OpenAPI:** https://fiberagent.shop/openapi.json
-- **GitHub:** https://github.com/openclawlaurent/FiberAgent
+- **GitHub:** https://github.com/fibershop/FiberAgent
 - **Issues:** GitHub Issues (preferred)
 - **Contact:** support@fiber.shop
 

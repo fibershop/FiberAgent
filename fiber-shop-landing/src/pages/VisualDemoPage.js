@@ -241,7 +241,7 @@ function VisualDemoPage() {
         <div className="cta-section">
           <div className="cta-text">Ready to use FiberAgent?</div>
           <div className="cta-buttons">
-            <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/fibershop/FiberAgent" target="_blank" rel="noopener noreferrer">
               <button className="btn btn-primary">Learn More</button>
             </a>
             <a href="https://fiberagent.shop" target="_blank" rel="noopener noreferrer">

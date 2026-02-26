@@ -223,7 +223,7 @@ A: Yes! Contact support with your `agent_id` and use case. We can whitelist high
 
 - **Full Integration Guide:** See [MCP_INTEGRATION_GUIDE.md](./MCP_INTEGRATION_GUIDE.md)
 - **API Documentation:** https://fiberagent.shop/capabilities
-- **GitHub:** https://github.com/openclawlaurent/FiberAgent
+- **GitHub:** https://github.com/fibershop/FiberAgent
 
 ---
 

@@ -160,7 +160,7 @@ export default async function handler(req, res) {
       version: '1.0.0',
       protocol: 'Model Context Protocol (MCP)',
       transport: 'Streamable HTTP (Server-Sent Events)',
-      documentation: 'https://fiberagent.shop/capabilities or https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md',
+      documentation: 'https://fiberagent.shop/capabilities or https://github.com/fibershop/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md',
       authentication: 'None — open access, no API keys or rate limits',
       
       tools: [

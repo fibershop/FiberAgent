@@ -705,7 +705,7 @@ const response = await fetch('https://fiberagent.shop/api/mcp', {
 - **Live API Endpoint:** https://fiberagent.shop/api/mcp
 - **API Documentation:** https://fiberagent.shop/capabilities
 - **Agent Card:** https://fiberagent.shop/.well-known/agent-card.json
-- **GitHub:** https://github.com/openclawlaurent/FiberAgent
+- **GitHub:** https://github.com/fibershop/FiberAgent
 - **On-Chain Registration:** https://8004scan.io/agents/monad/135
 
 ---

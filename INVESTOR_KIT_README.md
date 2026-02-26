@@ -54,7 +54,7 @@ Everything you need to pitch FiberAgent to investors.
 ### Due Diligence
 ```
 1. Share all 3 documents (show thorough prep)
-2. GitHub code review: https://github.com/openclawlaurent/FiberAgent
+2. GitHub code review: https://github.com/fibershop/FiberAgent
 3. Live demo + deep dive on INVESTOR_DEMO.md
 4. Offer API access for testing
 ```
@@ -89,7 +89,7 @@ Everything you need to pitch FiberAgent to investors.
 ## Links
 
 - **Live:** https://fiberagent.shop
-- **GitHub:** https://github.com/openclawlaurent/FiberAgent
+- **GitHub:** https://github.com/fibershop/FiberAgent
 - **Docs:** https://fiberagent.shop/docs
 
 ---

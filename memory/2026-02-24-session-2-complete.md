@@ -212,7 +212,45 @@ Claude: 📊 Earnings: 5 pending searches, $12.50 pending earnings
 **Files Modified:**
 - `/api/mcp.js` — Complete agent lifecycle implementation
 
-**Status:** ✅ READY FOR TESTING
+**Status:** ✅ DEPLOYED — Awaiting Vercel rebuild
+
+### 6. CRITICAL FIX: MCP Direct Fiber API Calls (Commit bac4434)
+
+**Problem Identified:**
+Laurent reported: "Claude still gives me the old links"
+- MCP was calling our backend `/api/agent/search` via HTTP proxy
+- This was timing out or failing silently  
+- MCP fell back to mock catalog with hardcoded bad links
+
+**Root Cause:**
+- searchViaBackend was proxying to `${BASE_URL}/api/agent/search`
+- Network latency or CORS issues caused timeouts
+- Fallback logic kicked in and returned broken demo links
+
+**Solution Implemented:**
+- MCP now calls Fiber API DIRECTLY: `https://api.fiber.shop/v1/agent/search`
+- No HTTP proxy layer between MCP and Fiber
+- Filters results to only type='product' (excludes merchants)
+- Maps Fiber response directly to MCP format
+- Returns proper affiliate_link with c+d tracking params
+
+**Testing Confirmed:**
+```bash
+$ curl https://api.fiber.shop/v1/agent/search?keywords=nike&agent_id=agent_b7dd0c9d797c731bb1e7786a&limit=5
+Results:
+- Nike Pegasus 41 → https://api.fiber.shop/r/w?c=3922888&d=39090871&url=...  ✅
+- Nike Diamond Cleats → https://api.fiber.shop/r/w?c=3918988&d=39090871&url=...  ✅
+- Nike Zoom Vomero 5 → https://api.fiber.shop/r/w?c=5517209&d=39090871&url=...  ✅
+```
+
+All links include proper device_id (`d=39090871`) and tracking_id (`c=XXXXX`).
+
+**Files Changed:**
+- `/api/mcp.js` — searchViaBackend now calls Fiber API directly
+
+**Status:** ✅ CODE DEPLOYED (Git: bac4434) — Waiting for Vercel ~rebuilding
+**ETA:** ~2-3 minutes for deployment to be live
+**Next Test:** After Vercel finishes, run Claude Desktop MCP again
 
 ### 3. Blockchain-Agnostic Messaging (Commit 41dfcfa)
 

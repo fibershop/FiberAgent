@@ -1,0 +1,24 @@
+NO SETUP REQUIRED — Endpoint is completely public.
+
+Test Agent (Ready Immediately):
+  Agent ID: agent_375fe785219e94cf5f2f060e
+  Wallet: 0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d
+
+3 Copy-Paste Commands:
+
+1. Verify endpoint:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+2. Search products:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_products","arguments":{"keywords":"shoes","agent_id":"agent_375fe785219e94cf5f2f060e","limit":5}}}'
+
+3. Get earnings:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_agent_stats","arguments":{"agent_id":"agent_375fe785219e94cf5f2f060e"}}}'
+
+Each command takes <1 second and returns real data:
+- Command 1: Lists 3 tools (search_products, register_agent, get_agent_stats)
+- Command 2: Returns 5 real products from 50,000+ merchants with prices, cashback, affiliate links
+- Command 3: Returns agent earnings, conversions, reputation score
+
+Full guide: https://github.com/fibershop/FiberAgent/blob/main/FORM_SETUP_INSTRUCTIONS.txt
+Support: https://github.com/fibershop/FiberAgent/issues (24h response)

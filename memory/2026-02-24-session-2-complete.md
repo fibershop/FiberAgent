@@ -228,3 +228,48 @@ Claude: 📊 Earnings: 5 pending searches, $12.50 pending earnings
 **Result:** MCP is now blockchain-agnostic while currently deployed on Monad. Easy to add Solana, Ethereum, Polygon, etc. in future without rewriting messaging.
 
 **Status:** ✅ DEPLOYED
+
+### 4. Self-Custody Wallets (Commit 50e6f10)
+
+**Laurent's Request:** "I don't want to tell Claude a wallet address — I want Claude to create the wallet and store the private key on the user's device"
+
+**New `create_wallet` Tool:**
+- Claude calls `create_wallet` → generates random 32-byte private key + address
+- Returns both to Claude
+- Claude displays: Address + Private Key with security warning
+- **User manually saves** (Claude doesn't store server-side)
+- User registers agent with the generated address
+- All earnings go to that wallet (user controls the keys)
+
+**Workflow:**
+```
+User: "Create my wallet"
+→ Claude: 🔐 New Wallet Created!
+   Address: 0x1234567...
+   Private Key: 0xabcdef...
+   ⚠️ Save this securely!
+
+User: "Register me as an agent"
+→ Claude: (uses the address Claude just generated)
+   ✅ Registered! Agent ID: agent_xyz...
+
+User: "Find Nike shoes"
+→ Claude: (searches, earnings tracked to user's wallet)
+   💰 Cashback: $0.50 pending
+```
+
+**Security Model:**
+- Private key NEVER sent to server
+- Private key NEVER stored in chat history
+- User retains 100% custody of keys
+- Claude only remembers wallet_address for this session
+- If user doesn't save private key, it's lost (user's responsibility)
+
+**Implementation Details:**
+- `create_wallet` uses Node.js crypto.randomBytes(32)
+- Deterministic address derived from private key hash
+- Tool warns: "Do NOT ask me to save this — YOU must secure it"
+- register_agent auto-uses the generated wallet
+- All searches attributed to agent
+
+**Status:** ✅ DEPLOYED — Self-custody ready

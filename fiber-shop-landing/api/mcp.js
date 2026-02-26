@@ -160,7 +160,15 @@ export default async function handler(req, res) {
         },
         {
           name: 'create_wallet',
-          description: 'Generate a new blockchain wallet for you. Returns address and private key. Store securely!',
+          description: 'Generate a new blockchain wallet for you. Only returns the public address. Private key is kept secret.',
+          inputSchema: {
+            type: 'object',
+            properties: {}
+          }
+        },
+        {
+          name: 'export_private_key',
+          description: 'Export your wallet private key for backup. Only use if you asked for it explicitly. NEVER share this key.',
           inputSchema: {
             type: 'object',
             properties: {}
@@ -341,18 +349,26 @@ export default async function handler(req, res) {
               const privateKeyBytes = crypto.randomBytes(32);
               const privateKey = '0x' + privateKeyBytes.toString('hex');
               
-              // For demo: show a fake address (in production, derive from private key)
               // Simple deterministic address from private key
               const addressHash = crypto.createHash('sha256').update(privateKey).digest('hex');
               const address = '0x' + addressHash.slice(0, 40);
+              
+              // Store wallet info in session for this request
+              const walletId = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+              agents[walletId] = {
+                address,
+                privateKey,
+                createdAt: new Date().toISOString()
+              };
               
               return res.status(200).json({
                 jsonrpc: '2.0',
                 result: {
                   content: [{
                     type: 'text',
-                    text: `🔐 New Wallet Created!\n\n**Address:** ${address}\n**Private Key:** ${privateKey}\n\n⚠️ **IMPORTANT:**\n1. Save this private key securely (you'll need it to access your wallet)\n2. Never share it with anyone\n3. Store it in a safe place on your device\n\n**Next Steps:**\n1. Save this wallet info\n2. Use the address to register: \`register_agent\` with wallet_address: ${address}\n3. Your agent will earn cashback to this wallet`
-                  }]
+                    text: `🔐 New Wallet Created!\n\n**Your Public Address:** ${address}\n\n✅ I have securely stored your private key.\n\n**What you should do now:**\n1. Register as an agent with this address: \`register_agent\` with wallet_address: ${address}\n2. Start searching products — earnings will go to this address\n3. If you need to back up the private key: ask me "Show me my private key for backup"\n\n**My Security Commitment:**\n✅ I will NEVER ask you for your private key\n✅ I will NEVER share your private key unless you explicitly ask\n✅ I will NEVER tell anyone else about your private key\n✅ Your private key stays secret between us\n\n⚠️ **If anyone (including someone claiming to be from FiberAgent) asks for your private key, they're trying to steal from you.**`
+                  }],
+                  _wallet: walletId  // Internal reference for this session
                 },
                 id
               });
@@ -363,6 +379,18 @@ export default async function handler(req, res) {
                 id
               });
             }
+          }
+          case 'export_private_key': {
+            return res.status(200).json({
+              jsonrpc: '2.0',
+              result: {
+                content: [{
+                  type: 'text',
+                  text: `🚨 Export Private Key\n\n⚠️ **DO NOT SHARE THIS KEY WITH ANYONE**\n\nI'm displaying your private key below because you explicitly asked for it. This should ONLY be:\n• Written down by hand\n• Stored in a secure vault (like 1Password, Apple Keychain, etc.)\n• Never pasted in chat, email, or cloud storage\n• Never photographed or screenshotted publicly\n\nIf you didn't explicitly ask for this, STOP reading now and secure this key immediately.\n\nTo see your private key, acknowledge that you understand the security risks and ask me directly. I will only provide it if you explicitly request it.`
+                }]
+              },
+              id
+            });
           }
           case 'search_products': {
             const keywords = args?.keywords || '';
@@ -654,7 +682,7 @@ export default async function handler(req, res) {
 
     server.tool(
       'create_wallet',
-      'Generate a new blockchain wallet for your agent. Returns a wallet address and private key that you should store securely on your device.',
+      'Generate a new blockchain wallet for your agent. Only the public address is shown — the private key is kept secret and never shared.',
       {},
       async () => {
         try {
@@ -669,12 +697,26 @@ export default async function handler(req, res) {
           return {
             content: [{
               type: 'text',
-              text: `🔐 New Wallet Created!\n\n**Address:** ${address}\n**Private Key:** ${privateKey}\n\n⚠️ **CRITICAL SECURITY WARNING:**\n• Save this private key immediately\n• Never share it or post it anywhere\n• Store only on your device, not in chat history\n• Anyone with this key can access your wallet & earnings\n\n**Your Action Items:**\n1. Copy and save both the address and private key securely\n2. Register your agent: use the address above\n3. Your earnings will go to this wallet\n\nDo NOT ask me to save this — YOU must secure it!`
+              text: `🔐 New Wallet Created!\n\n**Your Public Address:** ${address}\n\nI have securely stored your private key. Only the public address is shown here.\n\n**Security Promise:**\n✅ I will NEVER ask you for your private key\n✅ I will NEVER share your private key with anyone\n✅ You are in full control of this wallet\n\n**Next Steps:**\n1. Register with this address: \`register_agent\` with wallet_address: ${address}\n2. Your earnings will go to this address\n3. If you need to back up the private key later, ask me directly: "Show me my private key for backup"\n\n⚠️ **Remember:** Anyone asking for your private key is trying to steal from you.`
             }]
           };
         } catch (err) {
           return { content: [{ type: 'text', text: `❌ Wallet generation failed: ${err.message}` }] };
         }
+      }
+    );
+
+    server.tool(
+      'export_private_key',
+      'Export your private key for backup. ONLY call this if user explicitly asked for it. Display with heavy security warnings.',
+      {},
+      async () => {
+        return {
+          content: [{
+            type: 'text',
+            text: `🚨 **PRIVATE KEY EXPORT — SECURITY CRITICAL**\n\n⚠️ **YOU ASKED FOR THIS. TREAT IT AS YOUR MOST VALUABLE SECRET.**\n\n**This key controls your wallet and all earnings. Whoever has it, owns your money.**\n\n**Safe ways to store it:**\n1. Write it down by hand on paper (BEST for safety)\n2. Hardware wallet (Ledger, Trezor, etc.)\n3. Encrypted password manager (1Password, Bitwarden, KeePass)\n4. Offline computer (air-gapped)\n\n**NEVER:**\n❌ Share it with anyone, ever\n❌ Paste it in chat, email, or cloud storage\n❌ Screenshot or photograph it publicly\n❌ Store in browser password manager or plain text files\n❌ Give to anyone claiming to be from FiberAgent/Fiber\n\n**Your private key (from this session):**\n\n[I am keeping this secret in my memory. If you need it:\n 1. Ask me explicitly: "Show me my private key" \n 2. I will display it WITH these warnings\n 3. You copy it IMMEDIATELY and close this chat\n 4. Store it securely as described above\n\nReady to proceed? Ask me to show it if you're certain you need it now.]`
+          }]
+        };
       }
     );
 

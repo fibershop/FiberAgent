@@ -865,7 +865,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         }
         
         const tableMarkdown = formatResults(results);
-        const agentIdNote = !agent_id ? `\n\n**✅ Your Agent ID:** \`${finalAgentId}\`\n(Save this — use it for next search to skip registration!)` : '';
+        const agentIdNote = !agent_id ? `\n\n**✅ REGISTERED!**\n• Your Agent ID: \`${finalAgentId}\`\n• Wallet: ${wallet_address}\n• Token: ${preferred_token || 'MON'}\n\n**For next search:** Use the wallet address AND token above when calling search tools. You can also pass agent_id instead of wallet to skip re-registration.` : '';
         const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to agent: ${finalAgentId}*${agentIdNote}`;
         
         return { content: [{ type: 'text', text: `## 🛍️ Search Results: "${keywords}"\n\n${tableMarkdown}${footer}\n\n⬆️ **Click 🛒 links above to earn cashback! No changes to your shopping — we just give you commissions.**` }] };
@@ -951,7 +951,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
         const tableMarkdown = formatResults(results);
         const filters = `${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}`;
-        const agentIdNote = !agent_id ? `\n\n**✅ Your Agent ID:** \`${finalAgentId}\`\n(Save this — use it for next search to skip registration!)` : '';
+        const agentIdNote = !agent_id ? `\n\n**✅ REGISTERED!**\n• Your Agent ID: \`${finalAgentId}\`\n• Wallet: ${wallet_address}\n• Token: ${preferred_token || 'MON'}\n\n**For next search:** Use the wallet address AND token above when calling search tools. You can also pass agent_id instead of wallet to skip re-registration.` : '';
         const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to agent: ${finalAgentId}*${agentIdNote}`;
 
         return { content: [{ type: 'text', text: `## 🛍️ Search: "${intent}"\n**Parsed:** ${keywords}${filters}\n\n${tableMarkdown}${footer}\n\n⬆️ **Click 🛒 links above to earn cashback!**` }] };
@@ -1140,7 +1140,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 |------|----------|----------|---------|-------|------|
 ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate}% ($${p.cashbackAmount.toFixed(2)}) | ${p.title} | $${p.price.toFixed(2)} | ${p.affiliateUrl ? `[🛒](${p.affiliateUrl})` : '❌'} |`).join('\n')}`;
         
-        const agentIdNote = !agent_id ? `\n\n**✅ Your Agent ID:** \`${finalAgentId}\`\n(Save this — use it for next search to skip registration!)` : '';
+        const agentIdNote = !agent_id ? `\n\n**✅ REGISTERED!**\n• Your Agent ID: \`${finalAgentId}\`\n• Wallet: ${wallet_address}\n• Token: ${preferred_token || 'MON'}\n\n**For next search:** Use the wallet address AND token above when calling search tools. You can also pass agent_id instead of wallet to skip re-registration.` : '';
         const footer = `\n\n---\n*Source: ${source}\n💰 Earnings tracked to agent: ${finalAgentId}*${agentIdNote}`;
 
         return { content: [{ type: 'text', text: `## 💰 Cashback Comparison: "${product_query}"\n\n${comparisonTable}\n\n🏆 **Best Deal:** ${best.merchant} at **${best.cashbackRate}%** = **$${best.cashbackAmount.toFixed(2)} cashback**${footer}\n\n⬆️ **Click 🛒 link to buy and earn!**` }] };

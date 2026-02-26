@@ -109,6 +109,7 @@ function formatResults(results) {
 }
 
 // ─── In-memory store (session-scoped, per MCP client) ───
+// LIVE: Calls Fiber API directly for registration, backend for searches
 const agents = {};
 
 // ─── Handler ───

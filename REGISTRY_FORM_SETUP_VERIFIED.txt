@@ -1,0 +1,59 @@
+Test Account Setup Instructions
+
+═══════════════════════════════════════════════════════════════════════════════
+
+NO SETUP REQUIRED — Use this verified test account.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+VERIFIED TEST ACCOUNT (Live on Fiber API):
+
+Agent ID:  agent_c47922c509c79292144d4701
+Wallet:    0x0000000000000000000000000000000000000002
+Status:    ✅ Works across sessions, earnings properly tracked
+
+═══════════════════════════════════════════════════════════════════════════════
+
+3 COPY-PASTE COMMANDS (each takes <1 second):
+
+1. Verify endpoint is live:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+→ Returns list of 5 tools with full schemas
+
+───────────────────────────────────────────────────────────────────────────────
+
+2. Search 50,000+ merchants for products:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_products","arguments":{"keywords":"shoes","agent_id":"agent_c47922c509c79292144d4701","max_results":5}}}'
+
+→ Returns 5 real products with prices, cashback, affiliate links
+→ Earnings tracked to wallet 0x0000...0002
+
+───────────────────────────────────────────────────────────────────────────────
+
+3. Retrieve agent earnings and stats:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_agent_stats","arguments":{"agent_id":"agent_c47922c509c79292144d4701"}}}'
+
+→ Returns agent name, registration date, wallet, total searches, earnings
+
+═══════════════════════════════════════════════════════════════════════════════
+
+WHAT THIS PROVES:
+
+✓ Agent IDs work across fresh sessions (no registration needed)
+✓ Wallet associations are permanent (earnings properly tracked)
+✓ Real product data from 50,000+ merchants
+✓ Real cashback calculations
+✓ Real affiliate link tracking with device ID
+✓ No authentication or setup required
+
+═══════════════════════════════════════════════════════════════════════════════
+
+THAT'S IT.
+
+Just copy-paste the 3 commands. No login, no setup, real data from real merchants.
+
+Full testing guide: https://github.com/fibershop/FiberAgent/blob/main/SIMPLE_TEST_COMMANDS.txt
+Support: https://github.com/fibershop/FiberAgent/issues (24h response)
+
+═══════════════════════════════════════════════════════════════════════════════

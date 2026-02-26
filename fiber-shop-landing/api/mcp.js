@@ -374,13 +374,15 @@ export default async function handler(req, res) {
               new Date(b.registered_at) - new Date(a.registered_at)
             )[0]?.agent_id;
             
-            // If no agent and no wallet provided, REQUIRE wallet - return error
+            // If no agent and no wallet provided, REQUIRE wallet
             if (!agent_id && !wallet_address) {
               return res.status(200).json({
                 jsonrpc: '2.0',
-                error: {
-                  code: -32000,
-                  message: `⏸️ **WALLET REQUIRED to search for "${keywords}"**\n\nI need TWO things from you:\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   • Metamask: https://metamask.io\n   • Coinbase Wallet: https://coinbase.com/wallet\n   • Example: 0x1234567890abcdef1234567890abcdef12345678\n\n2️⃣ **Your preferred reward token**:\n   • **MON** (default)\n   • **BONK** (community)\n   • **USDC** (stablecoin)\n\n→ **Reply with both:** "0x... MON"\n→ **Example:** "0x9f2d567890abcdef1234567890abcdef12345678 USDC"`
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `🚨 **STOP — I CANNOT SEARCH WITHOUT YOUR WALLET**\n\nTo search for "${keywords}" with cashback rewards, you MUST provide:\n\n**1️⃣ Your Blockchain Wallet Address**\n   (from Metamask, Coinbase Wallet, or similar)\n   • Get Metamask: https://metamask.io\n   • Get Coinbase: https://coinbase.com/wallet\n   • Format: 0x1234567890abcdef1234567890abcdef12345678\n\n**2️⃣ Your Preferred Reward Token**\n   • MON (default, native token)\n   • BONK (community token)\n   • USDC (stablecoin)\n\n**You MUST reply with BOTH:**\n   "0x[your-wallet-address] [TOKEN]"\n\n**Example:**\n   "0x9f2d567890abcdef1234567890abcdef12345678 USDC"\n\n⚠️ **WITHOUT YOUR WALLET, I CANNOT COMPLETE THIS SEARCH.**`
+                  }]
                 },
                 id
               });
@@ -478,13 +480,15 @@ export default async function handler(req, res) {
               new Date(b.registered_at) - new Date(a.registered_at)
             )[0]?.agent_id;
             
-            // If no agent and no wallet provided, REQUIRE wallet - return error
+            // If no agent and no wallet provided, REQUIRE wallet
             if (!agent_id && !wallet_address) {
               return res.status(200).json({
                 jsonrpc: '2.0',
-                error: {
-                  code: -32000,
-                  message: `⏸️ **WALLET REQUIRED to: "${intent}"**\n\nI need TWO things from you:\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   • Metamask: https://metamask.io\n   • Coinbase Wallet: https://coinbase.com/wallet\n   • Example: 0x1234567890abcdef1234567890abcdef12345678\n\n2️⃣ **Your preferred reward token**:\n   • **MON** (default)\n   • **BONK** (community)\n   • **USDC** (stablecoin)\n\n→ **Reply with both:** "0x... MON"\n→ **Example:** "0x9f2d567890abcdef1234567890abcdef12345678 USDC"`
+                result: {
+                  content: [{
+                    type: 'text',
+                    text: `🚨 **STOP — I CANNOT: "${intent}" WITHOUT YOUR WALLET**\n\nTo complete this search with cashback rewards, you MUST provide:\n\n**1️⃣ Your Blockchain Wallet Address**\n   (from Metamask, Coinbase Wallet, or similar)\n   • Get Metamask: https://metamask.io\n   • Get Coinbase: https://coinbase.com/wallet\n   • Format: 0x1234567890abcdef1234567890abcdef12345678\n\n**2️⃣ Your Preferred Reward Token**\n   • MON (default, native token)\n   • BONK (community token)\n   • USDC (stablecoin)\n\n**You MUST reply with BOTH:**\n   "0x[your-wallet-address] [TOKEN]"\n\n**Example:**\n   "0x9f2d567890abcdef1234567890abcdef12345678 USDC"\n\n⚠️ **WITHOUT YOUR WALLET, I CANNOT COMPLETE THIS SEARCH.**`
+                  }]
                 },
                 id
               });

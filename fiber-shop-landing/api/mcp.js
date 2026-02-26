@@ -18,20 +18,16 @@ const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 
 
 async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
   try {
-    const params = new URLSearchParams({
-      keywords,
-      agent_id: agentId,
-      size: String(limit)
-    });
-
-    const response = await fetch(`${BASE_URL}/api/agent/search?${params}`, {
+    const url = `${BASE_URL}/api/agent/search?keywords=${encodeURIComponent(keywords)}&agent_id=${encodeURIComponent(agentId)}&size=${limit}`;
+    
+    const response = await fetch(url, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(10000)
     });
 
     if (!response.ok) {
-      console.error(`Backend search returned ${response.status}`);
+      console.error(`Backend search returned ${response.status} for ${url}`);
       return null;
     }
 
@@ -56,9 +52,10 @@ async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
       }));
     }
 
+    console.error('Backend search response had no results:', data);
     return null;
   } catch (err) {
-    console.error('Backend search error:', err.message);
+    console.error('Backend search error:', err.message, 'URL was:', `${BASE_URL}/api/agent/search`);
     return null;
   }
 }

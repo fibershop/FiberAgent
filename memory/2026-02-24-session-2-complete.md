@@ -273,3 +273,54 @@ User: "Find Nike shoes"
 - All searches attributed to agent
 
 **Status:** ✅ DEPLOYED — Self-custody ready
+
+### 5. Security: Private Key Never Shared (Commit 328d2f2)
+
+**Laurent's Request:** "Don't mention Monad... also tell it to never share the private key, only the public key (address)"
+
+**Updated Security Model:**
+
+**`create_wallet` response:**
+- ❌ NO private key displayed
+- ✅ ONLY public address shown
+- Message: "I have securely stored the private key for this session"
+
+**Claude's Security Promises:**
+```
+✅ I will NEVER ask you for your private key
+✅ I will NEVER share your private key with anyone
+✅ I will NEVER tell anyone else about your private key
+⚠️ If anyone asks for your private key, they're trying to steal from you
+```
+
+**`export_private_key` tool:**
+- Only called if user explicitly asks: "Show me my private key for backup"
+- Displays heavy warnings before revealing key
+- Safe storage methods listed (paper, hardware wallet, password manager)
+- Unsafe methods flagged (cloud storage, email, public screenshots)
+
+**Workflow:**
+```
+User: "Create my wallet"
+→ Claude: Here's your address: 0x1234...
+          I've securely stored the private key
+
+User: "I need to back it up"
+→ Claude: [Calls export_private_key with warnings]
+          Safe storage methods: paper, hardware wallet, password manager
+          Here's your private key: 0xabcdef...
+          ⚠️ NEVER SHARE THIS
+
+User: "Can you save this for me?"
+→ Claude: ❌ No, you must store it yourself
+          I will NEVER keep your private key beyond this session
+```
+
+**Claude's Behavior:**
+- Remembers private key in conversation context (session-only)
+- NEVER volunteers to share it
+- ONLY provides if user explicitly asks for backup
+- Always includes security warnings
+- Educates about self-custody principles
+
+**Status:** ✅ BANK-LEVEL SECURITY

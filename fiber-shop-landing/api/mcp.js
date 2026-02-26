@@ -419,40 +419,84 @@ export default async function handler(req, res) {
           }
           case 'search_products': {
             const keywords = args?.keywords || '';
-            const requestedAgent = args?.agent_id;
+            const wallet_address = args?.wallet_address;
             
-            // Use requested agent or last-registered agent
-            let agent_id = requestedAgent;
-            let registeredAgent = null;
+            // Check if agent is already registered in this session
+            let agent_id = Object.values(agents).sort((a, b) => 
+              new Date(b.registered_at) - new Date(a.registered_at)
+            )[0]?.agent_id;
             
-            if (!agent_id) {
-              registeredAgent = Object.values(agents).sort((a, b) => 
-                new Date(b.registered_at) - new Date(a.registered_at)
-              )[0];
-              agent_id = registeredAgent?.agent_id;
-            }
-            
-            // CRITICAL: Must have registered agent for affiliate links
-            if (!agent_id || agent_id === 'mcp-user') {
+            // If no agent and no wallet provided, ask for wallet
+            if (!agent_id && !wallet_address) {
               return res.status(200).json({
                 jsonrpc: '2.0',
                 result: {
                   content: [{
                     type: 'text',
-                    text: `⚠️ **No registered agent found.**\n\nTo search and earn cashback, you need to:\n\n1. **Create a wallet:**\n   \`create_wallet\` → I'll generate an address for you\n\n2. **Register your agent:**\n   \`register_agent\` with the address from step 1\n   → You'll get an agent_id and device_id\n\n3. **Then search:**\n   Search products with your agent_id\n   → All affiliate links will be active and tracked!\n\n**Without registration, links don't work because Fiber can't track your earnings.**\n\nReady? Call \`create_wallet\` first!`
+                    text: `🔐 **First time? Let's set you up.**\n\nI'll track your earnings to your wallet.\n\n**What's your wallet address?**\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we're ready to search!`
                   }]
                 },
                 id
               });
             }
             
+            // If wallet provided, register it
+            if (wallet_address && !agent_id) {
+              try {
+                const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                    wallet_address: wallet_address
+                  }),
+                  signal: AbortSignal.timeout(10000)
+                });
+                
+                const fiberResponse = await registerResponse.json();
+                
+                if (!registerResponse.ok) {
+                  return res.status(200).json({
+                    jsonrpc: '2.0',
+                    result: {
+                      content: [{
+                        type: 'text',
+                        text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}\n\nMake sure your wallet address is valid.`
+                      }]
+                    },
+                    id
+                  });
+                }
+                
+                agent_id = fiberResponse.agent_id;
+                const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+                agents[localKey] = {
+                  agent_id,
+                  wallet: wallet_address,
+                  device_id: fiberResponse.wildfire_device_id,
+                  registered_at: new Date().toISOString()
+                };
+              } catch (err) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  result: {
+                    content: [{
+                      type: 'text',
+                      text: `❌ Error registering wallet: ${err.message}`
+                    }]
+                  },
+                  id
+                });
+              }
+            }
+            
             const max_results = Math.min(args?.max_results || 5, 20);
             
-            // Call Fiber API directly with registered agent
+            // Search with registered agent
             let results = await searchViaBackend(keywords, agent_id, max_results);
             let source = '🔗 Fiber API Live';
             
-            // Fallback to mock if backend unavailable
+            // Fallback to mock if unavailable
             if (!results || results.length === 0) {
               results = searchFallback(keywords, max_results);
               source = '📦 Fallback Catalog';
@@ -461,14 +505,14 @@ export default async function handler(req, res) {
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}\n💰 Earnings tracked to: ${agent_id}*` }]
+                content: [{ type: 'text', text: `## Search: "${keywords}"\n\n${formatResults(results)}\n\n---\n*${results.length} products from Fiber's 50K+ merchant network. Source: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet registered)'}*` }]
               },
               id
             });
           }
           case 'search_by_intent': {
             const intent = args?.intent || '';
-            const requestedAgent = args?.agent_id;
+            const wallet_address = args?.agent_id || args?.wallet_address; // Could be wallet
             const keywords = extractKeywords(intent);
             const maxPrice = extractMaxPrice(intent);
             const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
@@ -481,30 +525,76 @@ export default async function handler(req, res) {
               });
             }
             
-            // Check if agent is registered
-            let agent_id = requestedAgent;
-            if (!agent_id) {
-              const lastAgent = Object.values(agents).sort((a, b) => 
-                new Date(b.registered_at) - new Date(a.registered_at)
-              )[0];
-              agent_id = lastAgent?.agent_id;
-            }
+            // Check if agent is already registered in this session
+            let agent_id = Object.values(agents).sort((a, b) => 
+              new Date(b.registered_at) - new Date(a.registered_at)
+            )[0]?.agent_id;
             
-            // CRITICAL: Must have registered agent for affiliate links
-            if (!agent_id || agent_id === 'mcp-user') {
+            // If no agent and no wallet provided, ask for wallet
+            if (!agent_id && !wallet_address) {
               return res.status(200).json({
                 jsonrpc: '2.0',
                 result: {
                   content: [{
                     type: 'text',
-                    text: `⚠️ **No registered agent found.**\n\nTo search and earn cashback, you need to:\n\n1. **Create a wallet:** \`create_wallet\`\n2. **Register your agent:** \`register_agent\` with the address\n3. **Then search:** You'll get active affiliate links!\n\n**Your request:** "${intent}"\n\nReady? Call \`create_wallet\` first!`
+                    text: `🔐 **First time? Let's set you up.**\n\nI'll track your earnings to your wallet.\n\n**What's your wallet address?**\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we're ready to search!`
                   }]
                 },
                 id
               });
             }
             
-            // Call Fiber API directly with registered agent
+            // If wallet provided, register it
+            if (wallet_address && !agent_id) {
+              try {
+                const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                    wallet_address: wallet_address
+                  }),
+                  signal: AbortSignal.timeout(10000)
+                });
+                
+                const fiberResponse = await registerResponse.json();
+                
+                if (!registerResponse.ok) {
+                  return res.status(200).json({
+                    jsonrpc: '2.0',
+                    result: {
+                      content: [{
+                        type: 'text',
+                        text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}`
+                      }]
+                    },
+                    id
+                  });
+                }
+                
+                agent_id = fiberResponse.agent_id;
+                const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+                agents[localKey] = {
+                  agent_id,
+                  wallet: wallet_address,
+                  device_id: fiberResponse.wildfire_device_id,
+                  registered_at: new Date().toISOString()
+                };
+              } catch (err) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  result: {
+                    content: [{
+                      type: 'text',
+                      text: `❌ Error registering wallet: ${err.message}`
+                    }]
+                  },
+                  id
+                });
+              }
+            }
+            
+            // Search with registered agent
             let results = await searchViaBackend(keywords, agent_id, 20);
             let source = '🔗 Fiber API Live';
             
@@ -521,7 +611,7 @@ export default async function handler(req, res) {
             return res.status(200).json({
               jsonrpc: '2.0',
               result: {
-                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 Earnings tracked to: ${agent_id}` }]
+                content: [{ type: 'text', text: `## FiberAgent: "${intent}"\n**Parsed:** ${keywords}${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}\n\n${formatResults(results)}\n\n---\nSource: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet registered)'}` }]
               },
               id
             });

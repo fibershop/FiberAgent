@@ -141,6 +141,35 @@ All commits pushed to `origin/main` ✅
 
 ## Critical Notes
 - **Wallet Rotation Still Pending:** Exposed key from previous sessions needs rotation
-- **Affiliate Links:** Temporary fix in place; Fiber backend issue needs server-side correction
 - **Rate Limiting:** Ready to integrate into remaining endpoints (8 total coverage planned)
 - **Data Integrity:** NEVER show demo data — policy enforced across all pages
+
+## 🔧 Session 2 Post-Launch Fix (Feb 26) — MCP Affiliate Link Bug
+
+**Issue Identified:**
+- Laurent tested MCP in Claude Desktop, got 🛒 emoji with empty affiliate URLs
+- JSON response showed: `"link": "🛒"` (no actual URL)
+- User tried hardcoded fallback link: `https://api.fiber.shop/r/w?c=nike_af1_fl`
+- Got Fiber error: "Missing required parameters: c (tracking ID) and d (device ID)"
+
+**Root Cause:**
+- MCP was hardcoded with demo product catalog (empty `affiliateUrl` fields)
+- MCP tried calling Fiber API directly with non-existent 'mcp-client' agent ID
+- Fiber API requires registered agent to return real affiliate links with device ID
+
+**Solution Implemented (Commit 5be6a1f):**
+- MCP now calls our backend `/api/agent/search` instead of Fiber directly
+- Backend handles Fiber integration properly (registered agent, proper auth)
+- Real affiliate URLs returned with proper format:
+  ```
+  https://api.fiber.shop/r/w?c=3922888&d=39090631&url=https%3A%2F%2Fwww.nike.com
+  ```
+  Where:
+  - `c` = tracking ID from Fiber
+  - `d` = device ID (wildfire_device_id from agent registration)
+  - `url` = product URL (URL-encoded)
+
+**Files Modified:**
+- `/api/mcp.js` — All search tools now use `searchViaBackend()` instead of hardcoded catalog
+
+**Status:** ✅ FIXED — MCP now returns proper affiliate links with full Fiber integration

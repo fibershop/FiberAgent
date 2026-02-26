@@ -1209,16 +1209,44 @@ git push origin main  # Will succeed once fibershop org membership active
 - ✅ **Code Deployed** — All changes on Vercel (commits in main branch)
 - ⏳ **Pending:** fibershop org push access (7 commits ready)
 
-### Next Step (When Org Access Available)
-```bash
-git push origin main
-git status  # Verify: "Your branch is up to date with 'origin/main'"
+### Session 3.2 Final (Feb 26 Evening) - CRITICAL BUGS FIXED ✅
+
+**Major Bug:** Tools were ignoring `agent_id` parameter passed in arguments, always checking local session instead.
+
+**Fixed Tools:**
+1. `search_products` — Now accepts `agent_id` parameter, skips wallet prompt
+2. `search_by_intent` — Now accepts `agent_id` parameter, skips wallet prompt
+3. `get_agent_stats` — Now accepts `agent_id` without requiring local session registration
+
+**Pattern Applied to All Handlers:**
+```javascript
+// Accept parameters FIRST, then check session as fallback
+let agent_id = args?.agent_id || Object.values(agents).sort(...)[0]?.agent_id;
 ```
-Then immediately submit to Anthropic MCP registry with:
-- Real test agent: `agent_c56b31fd2bd952ed214c7452`
-- Working test commands: All verified with Accept header (Feb 26)
-- Documentation URLs: All live on Vercel
-- Expected approval timeline: 1-2 weeks
+
+**Commits (All Pushed):**
+- `66c26da` — CLEANUP: openclawlaurent → fibershop
+- `611c40b` — FIX: search_products + search_by_intent agent_id acceptance
+- `9fe81ee` — FIX: get_agent_stats agent_id acceptance
+- `fb22213` — ADD: REGISTRY_TESTING_FIXED.md with verified commands
+- `8ab87f2` — MEMORY: Document critical fixes
+
+**Status:** ✅ **PRODUCTION READY FOR REGISTRY SUBMISSION**
+
+### Ready to Submit to Anthropic MCP Registry
+```bash
+# All commits already on origin/main
+git status  # Shows: "Your branch is up to date with 'origin/main'"
+```
+
+**Submission Details:**
+- Repository: https://github.com/fibershop/FiberAgent
+- Test Agent: `agent_c47922c509c79292144d4701` (pre-registered, works across sessions)
+- Endpoint: https://fiberagent.shop/api/mcp (stateless, no auth required)
+- All Tools: Accept agent_id parameter without registration
+- Documentation: https://fiberagent.shop/docs/mcp (live + tested)
+- Testing Guide: REGISTRY_TESTING_FIXED.md (all commands verified Feb 26)
+- Expected approval: 1-2 weeks
 
 ### Git History (Session 3.2 - All Commits)
 ```

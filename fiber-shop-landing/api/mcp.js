@@ -124,7 +124,8 @@ ${rows.join('\n')}`;
 }
 
 // ─── In-memory store (session-scoped, per MCP client) ───
-// LIVE: Calls Fiber API directly for registration, backend for searches
+// LIVE: Calls Fiber API directly for registration AND searches
+// Returns affiliate links in markdown table format with images
 const agents = {};
 
 // ─── Handler ───

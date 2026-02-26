@@ -815,7 +815,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **I need two things to search for "${keywords}" with cashback:**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 USDC"` }] };
+          return { content: [{ type: 'text', text: `To search for "${keywords}" with cashback rewards, I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)
@@ -885,7 +885,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ intent, agent_id, wallet_address, preferred_token, preferences }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **I need two things to: "${intent}"**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 BONK"` }] };
+          return { content: [{ type: 'text', text: `To help with "${intent}" and earn cashback, I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).` }] };
         }
         
         const keywords = extractKeywords(intent);
@@ -1083,7 +1083,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ product_query, agent_id, wallet_address, preferred_token }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **I need two things to compare: "${product_query}"**\n\n1️⃣ **Your blockchain wallet address** (from Metamask, Coinbase Wallet, etc.)\n   Examples: 0x1234567890abcdef...\n   Get one for free: https://metamask.io or https://coinbase.com/wallet\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 USDC"` }] };
+          return { content: [{ type: 'text', text: `To compare prices and cashback for "${product_query}", I'll need your blockchain wallet address (format: 0x...). Do you have one?\n\nIf not, get one free from:\n• **Metamask:** https://metamask.io\n• **Coinbase Wallet:** https://coinbase.com/wallet\n\nOnce you have it, just give me your address like: **0x9f2d567890abcdef...**\n\nI'll also ask which token you'd like to earn in (MON, BONK, or USDC).` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)

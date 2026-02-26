@@ -170,10 +170,12 @@ export default async function handler(req, res) {
           inputSchema: {
             type: 'object',
             properties: {
-              query: { type: 'string', description: 'Product search terms (e.g., "running shoes", "wireless headphones")' },
+              keywords: { type: 'string', description: 'Product search terms (e.g., "running shoes", "wireless headphones")' },
+              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
+              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
-            required: ['query']
+            required: ['keywords']
           }
         },
         {
@@ -183,6 +185,8 @@ export default async function handler(req, res) {
             type: 'object',
             properties: {
               intent: { type: 'string', description: 'Natural language description (e.g., "find running shoes under $150 with good reviews")' },
+              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
+              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
             required: ['intent']
@@ -234,10 +238,11 @@ export default async function handler(req, res) {
           inputSchema: {
             type: 'object',
             properties: {
-              product_name: { type: 'string', description: 'Product name or title to compare (e.g., "Nike Pegasus 41")' },
-              max_merchants: { type: 'integer', description: 'Number of merchants to compare', default: 5, maximum: 10 }
+              product_query: { type: 'string', description: 'Product name or title to compare (e.g., "Nike Pegasus 41")' },
+              agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
+              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' }
             },
-            required: ['product_name']
+            required: ['product_query']
           }
         }
       ],
@@ -898,52 +903,57 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'search_products',
-      'Search for products across 50,000+ merchants with real-time cashback. IMPORTANT: Include wallet_address every time (system is stateless). All earnings go to your wallet.',
+      'Search for products across 50,000+ merchants with real-time cashback. Use agent_id if you have it (faster). Otherwise provide wallet_address to register.',
       {
         keywords: z.string().describe('Product search terms (e.g., "nike running shoes")'),
-        wallet_address: z.string().describe('Your blockchain wallet (0x...). REQUIRED every search — the system is stateless.'),
+        agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
+        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
         max_results: z.number().optional().default(5).describe('Max results (1-20)'),
       },
-      async ({ keywords, wallet_address, max_results }) => {
-        // Wallet address is REQUIRED (stateless system - no memory between requests)
-        if (!wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Wallet address required.**\n\nThe system is stateless. I need your wallet to search: "${keywords}"\n\n**Provide your wallet:** 0x1234567890123456789012345678901234567890` }] };
+      async ({ keywords, agent_id, wallet_address, max_results }) => {
+        // Need either agent_id OR wallet_address
+        if (!agent_id && !wallet_address) {
+          return { content: [{ type: 'text', text: `🔐 **Need agent_id or wallet address.**\n\nEither provide your existing **agent_id** (fastest) or your **wallet_address** (0x...) to register new.` }] };
         }
         
-        // Register with provided wallet
-        let agent_id;
-        try {
-          const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-              wallet_address: wallet_address
-            }),
-            signal: AbortSignal.timeout(10000)
-          });
-          
-          const fiberResponse = await registerResponse.json();
-          if (!registerResponse.ok) {
-            return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+        // If we have agent_id, use it directly (no re-registration)
+        let finalAgentId = agent_id;
+        
+        // If no agent_id, register with wallet_address
+        if (!finalAgentId && wallet_address) {
+          try {
+            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                wallet_address: wallet_address
+              }),
+              signal: AbortSignal.timeout(10000)
+            });
+            
+            const fiberResponse = await registerResponse.json();
+            if (!registerResponse.ok) {
+              return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+            }
+            
+            finalAgentId = fiberResponse.agent_id;
+            const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+            agents[localKey] = {
+              agent_id: finalAgentId,
+              wallet: wallet_address,
+              device_id: fiberResponse.wildfire_device_id,
+              registered_at: new Date().toISOString()
+            };
+          } catch (err) {
+            return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
           }
-          
-          agent_id = fiberResponse.agent_id;
-          const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
-          agents[localKey] = {
-            agent_id,
-            wallet: wallet_address,
-            device_id: fiberResponse.wildfire_device_id,
-            registered_at: new Date().toISOString()
-          };
-        } catch (err) {
-          return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
         }
         
         const limit = Math.min(max_results || 5, 20);
         
         // Search with registered agent
-        let results = await searchViaBackend(keywords, agent_id, limit);
+        let results = await searchViaBackend(keywords, finalAgentId, limit);
         let source = '🔗 Fiber API Live';
         
         if (!results || results.length === 0) {
@@ -952,7 +962,8 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         }
         
         const tableMarkdown = formatResults(results);
-        const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet not set)'}*`;
+        const agentIdNote = !agent_id ? `\n\n**✅ Your Agent ID:** \`${finalAgentId}\`\n(Save this — use it for next search to skip registration!)` : '';
+        const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to agent: ${finalAgentId}*${agentIdNote}`;
         
         return { content: [{ type: 'text', text: `## 🛍️ Search Results: "${keywords}"\n\n${tableMarkdown}${footer}\n\n⬆️ **Click 🛒 links above to earn cashback! No changes to your shopping — we just give you commissions.**` }] };
       }
@@ -960,56 +971,61 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'search_by_intent',
-      'Natural language shopping — describe what you want. IMPORTANT: Include wallet_address every time (system is stateless). Supports price limits ("under $30") and cashback optimization.',
+      'Natural language shopping — describe what you want. Use agent_id if you have it (faster). Otherwise provide wallet_address to register.',
       {
         intent: z.string().describe('Natural language request (e.g., "Find Nike shoes under $150, best cashback")'),
-        wallet_address: z.string().describe('Your blockchain wallet (0x...). REQUIRED every search — the system is stateless.'),
+        agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
+        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
         preferences: z.array(z.string()).optional().describe('Preferences (e.g., ["running", "lightweight"])'),
       },
-      async ({ intent, wallet_address, preferences }) => {
-        // Wallet address is REQUIRED (stateless system - no memory between requests)
-        if (!wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Wallet address required.**\n\nThe system is stateless. I need your wallet for: "${intent}"\n\n**Provide your wallet:** 0x1234567890123456789012345678901234567890` }] };
+      async ({ intent, agent_id, wallet_address, preferences }) => {
+        // Need either agent_id OR wallet_address
+        if (!agent_id && !wallet_address) {
+          return { content: [{ type: 'text', text: `🔐 **Need agent_id or wallet address.**\n\nEither provide your existing **agent_id** (fastest) or your **wallet_address** (0x...) to register new.` }] };
         }
         
         const keywords = extractKeywords(intent);
         const maxPrice = extractMaxPrice(intent);
         const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
         
-        // Register with provided wallet
-        let agent_id;
-        try {
-          const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-              wallet_address: wallet_address
-            }),
-            signal: AbortSignal.timeout(10000)
-          });
-          
-          const fiberResponse = await registerResponse.json();
-          if (!registerResponse.ok) {
-            return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+        // If we have agent_id, use it directly (no re-registration)
+        let finalAgentId = agent_id;
+        
+        // If no agent_id, register with wallet_address
+        if (!finalAgentId && wallet_address) {
+          try {
+            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                wallet_address: wallet_address
+              }),
+              signal: AbortSignal.timeout(10000)
+            });
+            
+            const fiberResponse = await registerResponse.json();
+            if (!registerResponse.ok) {
+              return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+            }
+            
+            finalAgentId = fiberResponse.agent_id;
+            const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+            agents[localKey] = {
+              agent_id: finalAgentId,
+              wallet: wallet_address,
+              device_id: fiberResponse.wildfire_device_id,
+              registered_at: new Date().toISOString()
+            };
+          } catch (err) {
+            return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
           }
-          
-          agent_id = fiberResponse.agent_id;
-          const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
-          agents[localKey] = {
-            agent_id,
-            wallet: wallet_address,
-            device_id: fiberResponse.wildfire_device_id,
-            registered_at: new Date().toISOString()
-          };
-        } catch (err) {
-          return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
         }
 
         if (!keywords) return { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150, best cashback"' }] };
 
         // Search with registered agent
-        let results = await searchViaBackend(keywords, agent_id, 20);
+        let results = await searchViaBackend(keywords, finalAgentId, 20);
         let source = '🔗 Fiber API Live';
         
         if (!results || results.length === 0) {
@@ -1030,7 +1046,8 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
         const tableMarkdown = formatResults(results);
         const filters = `${maxPrice ? ` | max $${maxPrice}` : ''}${wantsCashback ? ' | best cashback' : ''}`;
-        const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet not set)'}*`;
+        const agentIdNote = !agent_id ? `\n\n**✅ Your Agent ID:** \`${finalAgentId}\`\n(Save this — use it for next search to skip registration!)` : '';
+        const footer = `\n\n---\n*Source: ${source}\n${results.length} products found\n💰 Earnings tracked to agent: ${finalAgentId}*${agentIdNote}`;
 
         return { content: [{ type: 'text', text: `## 🛍️ Search: "${intent}"\n**Parsed:** ${keywords}${filters}\n\n${tableMarkdown}${footer}\n\n⬆️ **Click 🛒 links above to earn cashback!**` }] };
       }
@@ -1151,49 +1168,54 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'compare_cashback',
-      'Compare the same product across different merchants to find the highest cashback. IMPORTANT: Include wallet_address every time (system is stateless). All earnings go to your wallet.',
+      'Compare the same product across different merchants to find the highest cashback. Use agent_id if you have it (faster). Otherwise provide wallet_address to register.',
       {
         product_query: z.string().describe('Product to compare (e.g., "nike air force 1")'),
-        wallet_address: z.string().describe('Your blockchain wallet (0x...). REQUIRED every search — the system is stateless.'),
+        agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
+        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
       },
-      async ({ product_query, wallet_address }) => {
-        // Wallet address is REQUIRED (stateless system - no memory between requests)
-        if (!wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Wallet address required.**\n\nThe system is stateless. I need your wallet to compare: "${product_query}"\n\n**Provide your wallet:** 0x1234567890123456789012345678901234567890` }] };
+      async ({ product_query, agent_id, wallet_address }) => {
+        // Need either agent_id OR wallet_address
+        if (!agent_id && !wallet_address) {
+          return { content: [{ type: 'text', text: `🔐 **Need agent_id or wallet address.**\n\nEither provide your existing **agent_id** (fastest) or your **wallet_address** (0x...) to register new.` }] };
         }
         
-        // Register with provided wallet
-        let agent_id;
-        try {
-          const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-              wallet_address: wallet_address
-            }),
-            signal: AbortSignal.timeout(10000)
-          });
-          
-          const fiberResponse = await registerResponse.json();
-          if (!registerResponse.ok) {
-            return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+        // If we have agent_id, use it directly (no re-registration)
+        let finalAgentId = agent_id;
+        
+        // If no agent_id, register with wallet_address
+        if (!finalAgentId && wallet_address) {
+          try {
+            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                wallet_address: wallet_address
+              }),
+              signal: AbortSignal.timeout(10000)
+            });
+            
+            const fiberResponse = await registerResponse.json();
+            if (!registerResponse.ok) {
+              return { content: [{ type: 'text', text: `❌ Registration failed: ${fiberResponse.error || fiberResponse.message}` }] };
+            }
+            
+            finalAgentId = fiberResponse.agent_id;
+            const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+            agents[localKey] = {
+              agent_id: finalAgentId,
+              wallet: wallet_address,
+              device_id: fiberResponse.wildfire_device_id,
+              registered_at: new Date().toISOString()
+            };
+          } catch (err) {
+            return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
           }
-          
-          agent_id = fiberResponse.agent_id;
-          const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
-          agents[localKey] = {
-            agent_id,
-            wallet: wallet_address,
-            device_id: fiberResponse.wildfire_device_id,
-            registered_at: new Date().toISOString()
-          };
-        } catch (err) {
-          return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
         }
         
         // Search with registered agent
-        let results = await searchViaBackend(product_query, agent_id, 20);
+        let results = await searchViaBackend(product_query, finalAgentId, 20);
         let source = '🔗 Fiber API Live';
         
         // Fallback
@@ -1211,7 +1233,8 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 |------|----------|----------|---------|-------|------|
 ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate}% ($${p.cashbackAmount.toFixed(2)}) | ${p.title} | $${p.price.toFixed(2)} | ${p.affiliateUrl ? `[🛒](${p.affiliateUrl})` : '❌'} |`).join('\n')}`;
         
-        const footer = `\n\n---\n*Source: ${source}\n💰 Earnings tracked to: ${agents[Object.keys(agents)[0]]?.wallet || '(wallet not set)'}*`;
+        const agentIdNote = !agent_id ? `\n\n**✅ Your Agent ID:** \`${finalAgentId}\`\n(Save this — use it for next search to skip registration!)` : '';
+        const footer = `\n\n---\n*Source: ${source}\n💰 Earnings tracked to agent: ${finalAgentId}*${agentIdNote}`;
 
         return { content: [{ type: 'text', text: `## 💰 Cashback Comparison: "${product_query}"\n\n${comparisonTable}\n\n🏆 **Best Deal:** ${best.merchant} at **${best.cashbackRate}%** = **$${best.cashbackAmount.toFixed(2)} cashback**${footer}\n\n⬆️ **Click 🛒 link to buy and earn!**` }] };
       }

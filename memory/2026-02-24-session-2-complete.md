@@ -248,7 +248,59 @@ All links include proper device_id (`d=39090871`) and tracking_id (`c=XXXXX`).
 **Files Changed:**
 - `/api/mcp.js` — searchViaBackend now calls Fiber API directly
 
-**Status:** ✅ CODE DEPLOYED (Git: bac4434) — Waiting for Vercel ~rebuilding
+### 8. CRITICAL FIX: Require Registration Before Searching (Commit db347b1)
+
+**Problem Identified (by Laurent):**
+Claude could search but all affiliate links showed ❌ (empty/null).
+
+**Root Cause:**
+- Claude was calling search_products WITHOUT registering first
+- MCP had no agent_id to pass to Fiber
+- MCP defaulted to `agent_id='mcp-user'` (doesn't exist on Fiber)
+- Fiber returns empty `affiliate_link` fields for unknown agents
+- Result: Empty links in response
+
+**Solution Implemented:**
+All search tools NOW REQUIRE registered agent_id:
+- ❌ Can't search without registering
+- ✅ Clear guided flow: create_wallet → register_agent → search
+- ✅ Error message explains the 3-step process
+
+**Updated Tools:**
+1. **search_products** JSON-RPC handler
+2. **search_by_intent** JSON-RPC handler  
+3. **compare_cashback** JSON-RPC handler
+4. **search_products** SDK tool (server.tool)
+5. **search_by_intent** SDK tool
+
+**Error Message (if searching without registration):**
+```
+⚠️ No registered agent found.
+
+To search and earn cashback, you need to:
+1. create_wallet → generates address
+2. register_agent → registers with Fiber, gets agent_id
+3. Then search → active affiliate links!
+
+Ready? Call create_wallet first!
+```
+
+**Verified Workflow:**
+```
+User: "Create my wallet"
+→ Claude: Address: 0x1234...
+
+User: "Register me"
+→ Claude: Agent ID: agent_xyz..., Device ID: 39090871
+
+User: "Find Nike shoes"
+→ Claude: [Table with real affiliate links including c+d tracking params] ✅
+```
+
+**Files Changed:**
+- `/api/mcp.js` — All search tools require registration check
+
+**Status:** ✅ CODE DEPLOYED (Git: db347b1) — Vercel building now
 **ETA:** ~2-3 minutes for deployment to be live
 **Next Test:** After Vercel finishes, run Claude Desktop MCP again
 

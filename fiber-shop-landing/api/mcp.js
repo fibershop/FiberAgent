@@ -173,6 +173,7 @@ export default async function handler(req, res) {
               keywords: { type: 'string', description: 'Product search terms (e.g., "running shoes", "wireless headphones")' },
               agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
               wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
+              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'Preferred reward token (optional, defaults to MON)' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
             required: ['keywords']
@@ -187,6 +188,7 @@ export default async function handler(req, res) {
               intent: { type: 'string', description: 'Natural language description (e.g., "find running shoes under $150 with good reviews")' },
               agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
               wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
+              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'Preferred reward token (optional, defaults to MON)' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
             required: ['intent']
@@ -240,7 +242,8 @@ export default async function handler(req, res) {
             properties: {
               product_query: { type: 'string', description: 'Product name or title to compare (e.g., "Nike Pegasus 41")' },
               agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse)' },
-              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' }
+              wallet_address: { type: 'string', description: 'Your wallet (0x...) if you don\'t have agent_id yet' },
+              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'Preferred reward token (optional, defaults to MON)' }
             },
             required: ['product_query']
           }
@@ -908,12 +911,13 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         keywords: z.string().describe('Product search terms (e.g., "nike running shoes")'),
         agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
         wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
+        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('Preferred reward token (MON, BONK, or USDC). Defaults to MON if not specified.'),
         max_results: z.number().optional().default(5).describe('Max results (1-20)'),
       },
-      async ({ keywords, agent_id, wallet_address, max_results }) => {
+      async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Need agent_id or wallet address.**\n\nEither provide your existing **agent_id** (fastest) or your **wallet_address** (0x...) to register new.` }] };
+          return { content: [{ type: 'text', text: `🔐 **Wallet & Token Setup**\n\nWhat's your wallet address (0x...)?\n\n**Optional:** What's your preferred reward token?\n- **MON** (default, recommended)\n- **BONK** (community token)\n- **USDC** (stablecoin)\n\nIf you don't specify, MON will be used.` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)
@@ -927,7 +931,8 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                wallet_address: wallet_address
+                wallet_address: wallet_address,
+                preferred_token: preferred_token || 'MON'
               }),
               signal: AbortSignal.timeout(10000)
             });
@@ -976,12 +981,13 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         intent: z.string().describe('Natural language request (e.g., "Find Nike shoes under $150, best cashback")'),
         agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
         wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
+        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('Preferred reward token (MON, BONK, or USDC). Defaults to MON if not specified.'),
         preferences: z.array(z.string()).optional().describe('Preferences (e.g., ["running", "lightweight"])'),
       },
-      async ({ intent, agent_id, wallet_address, preferences }) => {
+      async ({ intent, agent_id, wallet_address, preferred_token, preferences }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Need agent_id or wallet address.**\n\nEither provide your existing **agent_id** (fastest) or your **wallet_address** (0x...) to register new.` }] };
+          return { content: [{ type: 'text', text: `🔐 **Wallet & Token Setup**\n\nWhat's your wallet address (0x...)?\n\n**Optional:** What's your preferred reward token?\n- **MON** (default, recommended)\n- **BONK** (community token)\n- **USDC** (stablecoin)\n\nIf you don't specify, MON will be used.` }] };
         }
         
         const keywords = extractKeywords(intent);
@@ -999,7 +1005,8 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                wallet_address: wallet_address
+                wallet_address: wallet_address,
+                preferred_token: preferred_token || 'MON'
               }),
               signal: AbortSignal.timeout(10000)
             });
@@ -1173,11 +1180,12 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
         product_query: z.string().describe('Product to compare (e.g., "nike air force 1")'),
         agent_id: z.string().optional().describe('Your agent ID (if already registered). Use this to skip re-registration.'),
         wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Only needed if you don\'t have agent_id yet.'),
+        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('Preferred reward token (MON, BONK, or USDC). Defaults to MON if not specified.'),
       },
-      async ({ product_query, agent_id, wallet_address }) => {
+      async ({ product_query, agent_id, wallet_address, preferred_token }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Need agent_id or wallet address.**\n\nEither provide your existing **agent_id** (fastest) or your **wallet_address** (0x...) to register new.` }] };
+          return { content: [{ type: 'text', text: `🔐 **Wallet & Token Setup**\n\nWhat's your wallet address (0x...)?\n\n**Optional:** What's your preferred reward token?\n- **MON** (default, recommended)\n- **BONK** (community token)\n- **USDC** (stablecoin)\n\nIf you don't specify, MON will be used.` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)
@@ -1191,7 +1199,8 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
-                wallet_address: wallet_address
+                wallet_address: wallet_address,
+                preferred_token: preferred_token || 'MON'
               }),
               signal: AbortSignal.timeout(10000)
             });

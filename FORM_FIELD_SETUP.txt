@@ -1,24 +1,30 @@
 NO SETUP REQUIRED — Endpoint is completely public.
 
-Test Agent (Ready Immediately):
-  Agent ID: agent_375fe785219e94cf5f2f060e
-  Wallet: 0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d
+4 Working Commands (Copy-Paste):
 
-3 Copy-Paste Commands:
+1. List tools:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 
-1. Verify endpoint:
-curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+2. Register test agent (saves agent_id for next commands):
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"register_agent","arguments":{"agent_name":"Test Agent","wallet_address":"0x0000000000000000000000000000000000000099"}}}'
 
-2. Search products:
-curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_products","arguments":{"keywords":"shoes","agent_id":"agent_375fe785219e94cf5f2f060e","limit":5}}}'
+(Note: Uses test wallet 0x000...099 — if already registered, change last digit)
 
-3. Get earnings:
-curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_agent_stats","arguments":{"agent_id":"agent_375fe785219e94cf5f2f060e"}}}'
+After Command 2, you'll get an agent_id. Use it in Commands 3-4 (replace AGENT_ID):
 
-Each command takes <1 second and returns real data:
-- Command 1: Lists 3 tools (search_products, register_agent, get_agent_stats)
-- Command 2: Returns 5 real products from 50,000+ merchants with prices, cashback, affiliate links
-- Command 3: Returns agent earnings, conversions, reputation score
+3. Search products:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_products","arguments":{"keywords":"shoes","agent_id":"AGENT_ID","limit":5}}}'
 
-Full guide: https://github.com/fibershop/FiberAgent/blob/main/FORM_SETUP_INSTRUCTIONS.txt
+4. Get agent stats:
+curl -X POST https://fiberagent.shop/api/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_agent_stats","arguments":{"agent_id":"AGENT_ID"}}}'
+
+Each command returns real data in <1 second:
+- Command 1: Lists 5 tools with full schemas (search_products, search_by_intent, register_agent, get_agent_stats, compare_cashback)
+- Command 2: Returns agent_id and device_id (use agent_id in next commands)
+- Command 3: Returns real products from 50,000+ merchants with prices, cashback, affiliate links
+- Command 4: Returns agent earnings, searches completed, wallet details
+
+All commands verified working (Feb 26, 2026)
+
+Full guide: https://github.com/fibershop/FiberAgent/blob/main/WORKING_TEST_COMMANDS.txt
 Support: https://github.com/fibershop/FiberAgent/issues (24h response)

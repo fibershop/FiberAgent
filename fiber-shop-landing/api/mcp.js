@@ -917,7 +917,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Wallet & Token Setup**\n\nWhat's your wallet address (0x...)?\n\n**Optional:** What's your preferred reward token?\n- **MON** (default, recommended)\n- **BONK** (community token)\n- **USDC** (stablecoin)\n\nIf you don't specify, MON will be used.` }] };
+          return { content: [{ type: 'text', text: `⏸️ **HOLD ON — I need your wallet to search!**\n\nI want to find "${keywords}" for you with cashback tracking, but I need:\n\n**Your wallet address** (e.g., 0x1234567890...)\n**Optional:** Preferred token (MON, BONK, or USDC)\n\n→ Just reply with your wallet address (and token if you have a preference)\n\nExample: "0x9f2d... MON"` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)
@@ -987,7 +987,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ intent, agent_id, wallet_address, preferred_token, preferences }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Wallet & Token Setup**\n\nWhat's your wallet address (0x...)?\n\n**Optional:** What's your preferred reward token?\n- **MON** (default, recommended)\n- **BONK** (community token)\n- **USDC** (stablecoin)\n\nIf you don't specify, MON will be used.` }] };
+          return { content: [{ type: 'text', text: `⏸️ **HOLD ON — I need your wallet to search!**\n\nI want to: "${intent}"\n\nBut I need:\n**Your wallet address** (e.g., 0x1234567890...)\n**Optional:** Preferred token (MON, BONK, or USDC)\n\n→ Just reply with your wallet address (and token if you have a preference)\n\nExample: "0x9f2d... MON"` }] };
         }
         
         const keywords = extractKeywords(intent);
@@ -1185,7 +1185,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ product_query, agent_id, wallet_address, preferred_token }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `🔐 **Wallet & Token Setup**\n\nWhat's your wallet address (0x...)?\n\n**Optional:** What's your preferred reward token?\n- **MON** (default, recommended)\n- **BONK** (community token)\n- **USDC** (stablecoin)\n\nIf you don't specify, MON will be used.` }] };
+          return { content: [{ type: 'text', text: `⏸️ **HOLD ON — I need your wallet to search!**\n\nI want to compare: "${product_query}"\n\nBut I need:\n**Your wallet address** (e.g., 0x1234567890...)\n**Optional:** Preferred token (MON, BONK, or USDC)\n\n→ Just reply with your wallet address (and token if you have a preference)\n\nExample: "0x9f2d... MON"` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)

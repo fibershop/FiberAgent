@@ -127,7 +127,7 @@ Your agent's wallet on Monad automatically receives the crypto rewards. You can 
 
 ## Support
 
-- **GitHub Issues:** https://github.com/openclawlaurent/fiberagent-openclaw-skill/issues
+- **GitHub Issues:** https://github.com/fibershop/FiberAgent/issues
 - **Discord:** Join the OpenClaw Discord
 - **Email:** laurent@fiberagent.shop
 

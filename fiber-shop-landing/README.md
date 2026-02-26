@@ -164,8 +164,8 @@ Comes pre-loaded with:
 
 ### Install
 ```bash
-git clone https://github.com/openclawlaurent/fetch.git
-cd fetch/fiber-shop-landing
+git clone https://github.com/fibershop/FiberAgent.git
+cd FiberAgent/fiber-shop-landing
 npm install
 ```
 
@@ -217,9 +217,9 @@ FiberAgent was built for the [Moltiverse Hackathon](https://moltiverse.moltivers
 
 ## 🔗 Links
 
-- **GitHub**: https://github.com/openclawlaurent/fetch
-- **Demo**: http://192.168.1.39:3000
-- **API Health**: http://localhost:5000/api/health
+- **GitHub**: https://github.com/fibershop/FiberAgent
+- **Website**: https://fiberagent.shop
+- **API Endpoint**: https://fiberagent.shop/api/mcp
 - **Whitepaper**: See `/docs/WHITEPAPER.md` for full vision
 
 ---

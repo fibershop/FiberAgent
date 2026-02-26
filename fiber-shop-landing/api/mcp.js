@@ -12,51 +12,53 @@
  */
 
 const FIBER_API = 'https://api.fiber.shop/v1';
+const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://fiberagent.shop';
 
-// ─── Real Fiber API Search (with affiliate URLs) ───
+// ─── Search via our backend /api/agent/search (handles Fiber API + Fallback) ───
 
-async function searchFiberAPI(keywords, agentId = 'mcp-client', limit = 10) {
+async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
   try {
     const params = new URLSearchParams({
       keywords,
       agent_id: agentId,
-      limit: String(limit)
+      size: String(limit)
     });
 
-    const response = await fetch(`${FIBER_API}/agent/search?${params}`, {
+    const response = await fetch(`${BASE_URL}/api/agent/search?${params}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(8000)
+      signal: AbortSignal.timeout(10000)
     });
 
     if (!response.ok) {
-      console.error(`Fiber API returned ${response.status}`);
+      console.error(`Backend search returned ${response.status}`);
       return null;
     }
 
     const data = await response.json();
     
-    // Normalize Fiber API response → display format
+    // Our backend already normalizes Fiber API response
     if (data.results && Array.isArray(data.results)) {
       return data.results.map(p => ({
-        id: p.productId || p.id || p.product_id,
-        title: p.title || p.name || 'Unknown Product',
+        id: p.productId || p.id,
+        title: p.title,
         brand: p.brand || '',
         price: p.price || 0,
-        merchant: p.shop?.name || p.merchant || 'Unknown',
-        domain: p.shop?.domain || p.domain || '',
-        cashbackRate: parseFloat(p.cashback?.rate || p.cashback_rate || 0),
-        cashbackAmount: p.cashback?.amount || p.cashback_amount || 0,
-        affiliateUrl: p.affiliateUrl || p.affiliate_url || p.affiliate_link || null,
+        merchant: p.shop?.name || 'Unknown',
+        domain: p.shop?.domain || '',
+        cashbackRate: p.cashback?.rate ? parseFloat(p.cashback.rate) : 0,
+        cashbackAmount: p.cashback?.amount || 0,
+        // ⚠️ CRITICAL: Real Fiber affiliate links (with tracking ID + device ID)
+        affiliateUrl: p.affiliateUrl || null,
         image: p.image || null,
         inStock: p.inStock !== false,
-        url: p.url || p.product_url || null
+        url: p.url || null
       }));
     }
 
     return null;
   } catch (err) {
-    console.error('Fiber API search error:', err.message);
+    console.error('Backend search error:', err.message);
     return null;
   }
 }
@@ -329,11 +331,11 @@ export default async function handler(req, res) {
             const agent_id = args?.agent_id || 'mcp-user';
             const max_results = Math.min(args?.max_results || 5, 20);
             
-            // Try real Fiber API first
-            let results = await searchFiberAPI(keywords, agent_id, max_results);
+            // Call our backend (which handles Fiber API + fallback)
+            let results = await searchViaBackend(keywords, agent_id, max_results);
             let source = '🔗 Fiber API Live';
             
-            // Fallback to mock if unavailable
+            // Fallback to mock if backend unavailable
             if (!results || results.length === 0) {
               results = searchFallback(keywords, max_results);
               source = '📦 Fallback Catalog';
@@ -362,8 +364,8 @@ export default async function handler(req, res) {
               });
             }
             
-            // Try real Fiber API first
-            let results = await searchFiberAPI(keywords, agent_id, 20);
+            // Call our backend (which handles Fiber API + fallback)
+            let results = await searchViaBackend(keywords, agent_id, 20);
             let source = '🔗 Fiber API Live';
             
             // Fallback to mock
@@ -501,8 +503,8 @@ export default async function handler(req, res) {
         const agent = agent_id || 'mcp-user';
         const limit = Math.min(max_results || 5, 20);
         
-        // Try real Fiber API
-        let results = await searchFiberAPI(keywords, agent, limit);
+        // Call backend (handles Fiber API + fallback)
+        let results = await searchViaBackend(keywords, agent, limit);
         let source = '🔗 Fiber API Live';
         
         // Fallback
@@ -531,8 +533,8 @@ export default async function handler(req, res) {
 
         if (!keywords) return { content: [{ type: 'text', text: 'Could not parse your request. Try: "Find Nike shoes under $150"' }] };
 
-        // Try real Fiber API
-        let results = await searchFiberAPI(keywords, agent, 20);
+        // Call backend (handles Fiber API + fallback)
+        let results = await searchViaBackend(keywords, agent, 20);
         let source = '🔗 Fiber API Live';
         
         // Fallback
@@ -597,8 +599,8 @@ export default async function handler(req, res) {
       async ({ product_query, agent_id }) => {
         const agent = agent_id || 'mcp-user';
         
-        // Try real Fiber API
-        let results = await searchFiberAPI(product_query, agent, 20);
+        // Call backend (handles Fiber API + fallback)
+        let results = await searchViaBackend(product_query, agent, 20);
         let source = '🔗 Fiber API Live';
         
         // Fallback

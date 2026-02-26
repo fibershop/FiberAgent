@@ -15,6 +15,7 @@ import CapabilitiesPage from './pages/CapabilitiesPage';
 import DevelopersPage from './pages/DevelopersPage';
 import GettingStartedPage from './pages/GettingStartedPage';
 import MCPDocsPage from './pages/MCPDocsPage';
+import PrivacyPage from './pages/PrivacyPage';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/developers" element={<DevelopersPage />} />
         <Route path="/getting-started" element={<GettingStartedPage />} />
         <Route path="/docs/mcp" element={<MCPDocsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
       </Routes>
     </Router>
   );

@@ -301,6 +301,38 @@ User: "Find Nike shoes"
 - `/api/mcp.js` — All search tools require registration check
 
 **Status:** ✅ CODE DEPLOYED (Git: db347b1) — Vercel building now
+
+### 9. Fix: create_wallet Zod Schema (Commit b403ff8)
+
+**Issue:**
+Claude reported: "There's no create_wallet tool available to me"
+- Tool was listed in MCP GET endpoint
+- But didn't show up in Claude Desktop's available tools
+
+**Root Cause:**
+Zod schema was plain object `{}` instead of proper Zod schema `z.object({})`
+- MCP SDK requires: `z.object({})` for empty input parameters
+- Plain `{}` was not a valid Zod schema
+- SDK validation failed silently, tool wasn't registered properly
+
+**Fix:**
+```javascript
+// Before (broken):
+server.tool('create_wallet', desc, {}, async () => { ... })
+
+// After (fixed):
+server.tool('create_wallet', desc, z.object({}), async () => { ... })
+```
+
+**Files Fixed:**
+- `create_wallet` — `z.object({})` instead of `{}`
+- `export_private_key` — `z.object({})` instead of `{}`
+
+**Result:**
+Both tools now properly registered in MCP SDK and visible to Claude Desktop
+
+**Status:** ✅ CODE DEPLOYED (Git: b403ff8) — Vercel rebuilding
+**ETA:** 2-3 minutes for tools to appear in Claude Desktop
 **ETA:** ~2-3 minutes for deployment to be live
 **Next Test:** After Vercel finishes, run Claude Desktop MCP again
 

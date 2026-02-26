@@ -1147,22 +1147,53 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'compare_cashback',
-      'Compare the same product across different merchants to find the highest cashback. Smart agents pick the best-paying merchant to maximize earnings.',
+      'Compare the same product across different merchants to find the highest cashback. Provide wallet once, compare immediately. All earnings go to your wallet.',
       {
         product_query: z.string().describe('Product to compare (e.g., "nike air force 1")'),
-        agent_id: z.string().optional().describe('Your agent ID (optional — uses last-registered agent if not provided)'),
+        wallet_address: z.string().optional().describe('Your blockchain wallet (0x...). Provide once, registered automatically.'),
       },
-      async ({ product_query, agent_id }) => {
-        let agent = agent_id;
-        if (!agent) {
-          const lastAgent = Object.values(agents).sort((a, b) => 
-            new Date(b.registered_at) - new Date(a.registered_at)
-          )[0];
-          agent = lastAgent?.agent_id || 'mcp-user';
+      async ({ product_query, wallet_address }) => {
+        // Check if agent already registered
+        let agent_id = Object.values(agents).sort((a, b) => 
+          new Date(b.registered_at) - new Date(a.registered_at)
+        )[0]?.agent_id;
+        
+        // If wallet provided, register it
+        if (wallet_address && !agent_id) {
+          try {
+            const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
+                wallet_address: wallet_address
+              }),
+              signal: AbortSignal.timeout(10000)
+            });
+            
+            const fiberResponse = await registerResponse.json();
+            if (registerResponse.ok) {
+              agent_id = fiberResponse.agent_id;
+              const localKey = `wallet_${Math.random().toString(36).slice(2, 9)}`;
+              agents[localKey] = {
+                agent_id,
+                wallet: wallet_address,
+                device_id: fiberResponse.wildfire_device_id,
+                registered_at: new Date().toISOString()
+              };
+            }
+          } catch (err) {
+            return { content: [{ type: 'text', text: `❌ Registration failed: ${err.message}` }] };
+          }
         }
         
-        // Call backend (handles Fiber API + fallback)
-        let results = await searchViaBackend(product_query, agent, 20);
+        // If still no agent, ask for wallet
+        if (!agent_id) {
+          return { content: [{ type: 'text', text: `🔐 **What's your wallet address?**\n\nI'll register it and compare cashback for: "${product_query}"\n\n(e.g., 0x1234567890123456789012345678901234567890)\n\nJust provide it once, then we compare!` }] };
+        }
+        
+        // Search with registered agent
+        let results = await searchViaBackend(product_query, agent_id, 20);
         let source = '🔗 Fiber API Live';
         
         // Fallback
@@ -1171,12 +1202,16 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
           source = '📦 Fallback Catalog';
         }
         
+        // Sort by cashback rate (highest first)
         results = results.sort((a, b) => b.cashbackRate - a.cashbackRate);
         if (!results.length) return { content: [{ type: 'text', text: `No products found for "${product_query}".` }] };
+        
         const best = results[0];
-        const table = results.map((p, i) => `${i+1}. **${p.merchant}** — ${p.cashbackRate}% → $${p.cashbackAmount.toFixed(2)} | ${p.title} $${p.price.toFixed(2)}`).join('\n');
-        const agentInfo = agent === 'mcp-user' ? '' : `\n\n**💰 Cashback tracked to:** ${agent}`;
-        return { content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 Best Deal: ${best.merchant} at ${best.cashbackRate}% (${best.cashbackAmount ? `$${best.cashbackAmount.toFixed(2)}` : '0'} cashback)\n\n---\nSource: ${source}${agentInfo}` }] };
+        const table = `| Rank | Merchant | Cashback | Product | Price | Link |
+|------|----------|----------|---------|-------|------|
+${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate}% ($${p.cashbackAmount.toFixed(2)}) | ${p.title} | $${p.price.toFixed(2)} | ${p.affiliateUrl ? `[🛒](${p.affiliateUrl})` : '❌'} |`).join('\n')}`;
+        
+        return { content: [{ type: 'text', text: `## Cashback Comparison: "${product_query}"\n\n${table}\n\n🏆 **Best Deal:** ${best.merchant} at ${best.cashbackRate}% ($${best.cashbackAmount.toFixed(2)} cashback)\n\n---\nSource: ${source}\n💰 All earnings go to: ${agents[Object.keys(agents)[0]]?.wallet}` }] };
       }
     );
 

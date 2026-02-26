@@ -806,3 +806,66 @@ cd skills/fiberagent && npm publish --access public
    - Modern design (all pages cohesive)
    - Security: Wallet rotation needed
 4. **Next Session:** Monitor Vercel completion, wallet rotation, Session 1 blockers
+
+---
+
+## 🚀 Session 3 In Progress (Feb 26, 2026) — Simplified Wallet Flow
+
+**STATUS: 🟡 IN PROGRESS — Removing Registration Friction**
+
+**Goal:** Eliminate 3-step wallet setup (create → register → search). Replace with single wallet address prompt on first search, auto-register, lifetime earnings tracking.
+
+**Completed:**
+1. ✅ **Identified friction**: Old UX required `create_wallet` → `register_agent` → `search` (3 separate steps)
+2. ✅ **User approval**: "ok let's do that" (simplified flow greenlit)
+3. ✅ **Refactored `search_products` handler** in `/api/mcp.js`:
+   - Checks if wallet registered in session (`agents` object)
+   - If not: Prompts user for wallet address (friendly message)
+   - On address input: Auto-calls Fiber `/v1/agent/register`
+   - Stores `agent_id` + `device_id` in session context
+   - Proceeds with search using registered agent
+   - Displays confirmation + results table
+
+**In Progress:**
+- [ ] Complete `search_by_intent` handler (same pattern as `search_products`)
+- [ ] Complete `compare_cashback` handler (same pattern)
+- [ ] End-to-end testing: "Find Nike shoes" → wallet prompt → auto-register → results table
+- [ ] Verify Vercel deployment
+
+**Key Pattern (for remaining handlers):**
+```javascript
+// 1. Check if agent registered
+if (!session.agents || !session.agents.current) {
+  return { text: "What's your wallet address?" };
+}
+
+// 2. Register when address provided (first search only)
+if (!session.agents.current.registered) {
+  const reg = await registerWithFiber(walletAddress);
+  session.agents.current = { 
+    agent_id: reg.agent_id,
+    device_id: reg.wildfire_device_id,
+    wallet: walletAddress,
+    registered: true
+  };
+}
+
+// 3. Search with registered agent
+const results = await searchViaBackend(query, session.agents.current.agent_id);
+return { text: formatResults(results) };
+```
+
+**UX Flow (Simplified):**
+1. User: "Find Nike shoes"
+2. Claude: "What's your wallet address?" (e.g., `0x1234...`)
+3. User: "0x1234..."
+4. Claude: "✅ Set up! [search results]"
+5. User: Clicks link → buys → earnings auto-tracked
+6. (Optional) User: "Check my earnings" → Claude shows stats from Fiber API
+
+**Session 3 Notes:**
+- Wallet address stored in session only (volatile, per-conversation)
+- No private keys generated (users can bring own wallets later)
+- Earnings automatically tracked to provided address (no claiming needed)
+- All affiliate links include `d` (device_id) parameter for Fiber tracking
+- Next: Complete remaining handlers, test, deploy

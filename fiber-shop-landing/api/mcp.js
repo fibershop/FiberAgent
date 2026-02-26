@@ -18,59 +18,63 @@ const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 
 
 async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
   try {
-    const url = `${BASE_URL}/api/agent/search?keywords=${encodeURIComponent(keywords)}&agent_id=${encodeURIComponent(agentId)}&size=${limit}`;
-    
-    const response = await fetch(url, {
+    const params = new URLSearchParams({
+      keywords,
+      agent_id: agentId,
+      limit: String(limit)
+    });
+
+    // Call Fiber API DIRECTLY (not our backend proxy - simpler and faster)
+    const response = await fetch(`${FIBER_API}/agent/search?${params}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(10000)
     });
 
     if (!response.ok) {
-      console.error(`Backend search returned ${response.status} for ${url}`);
+      console.error(`Fiber API search returned ${response.status}`);
       return null;
     }
 
     const data = await response.json();
     
-    // Our backend already normalizes Fiber API response
+    // Normalize Fiber API response directly
     if (data.results && Array.isArray(data.results)) {
-      return data.results.map(p => ({
-        id: p.productId || p.id,
-        title: p.title,
-        brand: p.brand || '',
-        price: p.price || 0,
-        merchant: p.shop?.name || 'Unknown',
-        domain: p.shop?.domain || '',
-        cashbackRate: p.cashback?.rate ? parseFloat(p.cashback.rate) : 0,
-        cashbackAmount: p.cashback?.amount || 0,
-        // ⚠️ CRITICAL: Real Fiber affiliate links (with tracking ID + device ID)
-        affiliateUrl: p.affiliateUrl || null,
-        image: p.image || null,
-        inStock: p.inStock !== false,
-        url: p.url || null
-      }));
+      return data.results
+        .filter(p => p.type === 'product') // Only products, not merchants
+        .map(p => ({
+          id: p.id || `fiber_${Math.random()}`,
+          title: p.title || 'Unknown',
+          brand: p.brand || '',
+          price: p.price || 0,
+          merchant: p.merchant_name || 'Unknown',
+          domain: p.merchant_domain || '',
+          cashbackRate: p.cashback?.rate_percent || 0,
+          cashbackAmount: p.cashback?.amount_usd || 0,
+          // ⚠️ CRITICAL: Real Fiber affiliate links (with tracking ID + device ID)
+          affiliateUrl: p.affiliate_link || null,
+          image: p.image_url || null,
+          inStock: p.in_stock !== false,
+          url: p.product_url || null
+        }));
     }
 
-    console.error('Backend search response had no results:', data);
     return null;
   } catch (err) {
-    console.error('Backend search error:', err.message, 'URL was:', `${BASE_URL}/api/agent/search`);
+    console.error('Fiber API search error:', err.message);
     return null;
   }
 }
 
-// ─── Fallback Mock Catalog (for demo when API unavailable) ───
-
+// ─── Fallback Mock Catalog (ONLY for development/demo) ───
+// NOTE: All fallback links are DEMO ONLY and will fail at Fiber
+// Always prefer real Fiber API results
 const FALLBACK_PRODUCTS = [
-  { id: 'nike_pegasus_41', title: "Nike Pegasus 41 — Men's Road Running Shoes", brand: 'Nike', price: 145.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 0.94, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_pegasus_41' },
-  { id: 'nike_vomero_premium', title: "Nike Vomero Premium — Men's Road Running Shoes", brand: 'Nike', price: 230.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.50, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_vomero_premium' },
-  { id: 'nike_vomero5_fl', title: "Women's Nike Zoom Vomero 5 — Casual Shoes", brand: 'Nike', price: 170.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 5.53, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_vomero5_fl' },
-  { id: 'nike_airmax270', title: 'Nike Air Max 270', brand: 'Nike', price: 170.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.11, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_airmax270' },
-  { id: 'nike_af1_fl', title: "Men's Nike Air Force 1 '07 LV8 — Casual Shoes", brand: 'Nike', price: 115.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 3.74, affiliateUrl: 'https://api.fiber.shop/r/w?c=nike_af1_fl' },
-  { id: 'adidas_ultraboost', title: 'Adidas Ultraboost 5 Running Shoes', brand: 'Adidas', price: 190.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 6.65, affiliateUrl: 'https://api.fiber.shop/r/w?c=adidas_ultraboost' },
-  { id: 'adidas_samba', title: 'Adidas Samba OG Shoes', brand: 'Adidas', price: 110.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 3.85, affiliateUrl: 'https://api.fiber.shop/r/w?c=adidas_samba' },
-  { id: 'adidas_gazelle', title: 'Adidas Gazelle Indoor Shoes', brand: 'Adidas', price: 120.00, merchant: 'Adidas', domain: 'adidas.com', cashbackRate: 3.5, cashbackAmount: 4.20, affiliateUrl: 'https://api.fiber.shop/r/w?c=adidas_gazelle' },
+  { id: 'nike_pegasus_41', title: "Nike Pegasus 41 — Men's Road Running Shoes", brand: 'Nike', price: 145.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 0.94, affiliateUrl: null },
+  { id: 'nike_vomero_premium', title: "Nike Vomero Premium — Men's Road Running Shoes", brand: 'Nike', price: 230.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.50, affiliateUrl: null },
+  { id: 'nike_vomero5_fl', title: "Women's Nike Zoom Vomero 5 — Casual Shoes", brand: 'Nike', price: 170.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 5.53, affiliateUrl: null },
+  { id: 'nike_airmax270', title: 'Nike Air Max 270', brand: 'Nike', price: 170.00, merchant: 'NIKE', domain: 'nike.com', cashbackRate: 0.65, cashbackAmount: 1.11, affiliateUrl: null },
+  { id: 'nike_af1_fl', title: "Men's Nike Air Force 1 '07 LV8 — Casual Shoes", brand: 'Nike', price: 115.00, merchant: 'Finish Line', domain: 'finishline.com', cashbackRate: 3.25, cashbackAmount: 3.74, affiliateUrl: null },
 ];
 
 function searchFallback(query, max = 5) {

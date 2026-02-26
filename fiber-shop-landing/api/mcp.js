@@ -369,8 +369,8 @@ export default async function handler(req, res) {
             const wallet_address = args?.wallet_address;
             const preferred_token = args?.preferred_token || 'MON';
             
-            // Check if agent is already registered in this session
-            let agent_id = Object.values(agents).sort((a, b) => 
+            // Check if agent_id was passed in arguments first, then check session
+            let agent_id = args?.agent_id || Object.values(agents).sort((a, b) => 
               new Date(b.registered_at) - new Date(a.registered_at)
             )[0]?.agent_id;
             
@@ -508,8 +508,8 @@ export default async function handler(req, res) {
               });
             }
             
-            // Check if agent is already registered in this session
-            let agent_id = Object.values(agents).sort((a, b) => 
+            // Check if agent_id was passed in arguments first, then check session
+            let agent_id = args?.agent_id || Object.values(agents).sort((a, b) => 
               new Date(b.registered_at) - new Date(a.registered_at)
             )[0]?.agent_id;
             

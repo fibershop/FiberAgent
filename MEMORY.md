@@ -1081,3 +1081,69 @@ Claude: (reuses Agent ID, no prompts) → Results instantly
 
 ### Status: 🟢 9.6/10 READY FOR E2E TESTING
 All code deployed, prompts optimized for Claude's behavior. Ready for Laurent to test in Claude Desktop.
+
+---
+
+## 🔄 Session 3.2 - Organization Migration & Registry Submission (Feb 26, 2026)
+
+**Status: ✅ COMPLETE — Ready for MCP Registry Submission**
+
+### Tasks Completed
+
+1. ✅ **Repository Migration** — All URLs updated from `openclawlaurent/FiberAgent` → `fibershop/FiberAgent`
+   - **Files Updated:** 31 files across codebase
+   - **Commit:** `dd40e05` — "Update repository references: openclawlaurent → fibershop (org migration)"
+   - **Git Remote:** Updated to `https://github.com/fibershop/FiberAgent.git`
+   - **Status:** Committed locally, ready to push once fibershop org access granted
+
+2. ✅ **Testing Credentials Documentation** — Created `MCP_TESTING_CREDENTIALS.md` for Anthropic reviewers
+   - **Key Point:** No credentials required (public HTTP endpoint)
+   - **Demo Agent ID:** `claude-demo-agent-001` (pre-registered, ready to test)
+   - **Test Wallet:** `0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d` (demo, no funds needed)
+   - **Sample Test Queries:** 5+ verified queries with expected responses
+   - **Integration Verification Checklist:** 10-point testing list
+   - **Troubleshooting Guide:** Common issues + solutions
+   - **Commit:** `5a0f123` — "Add comprehensive MCP testing credentials for registry submission (Anthropic review)"
+
+### Registry Submission Readiness Checklist
+- ✅ **Documentation:** https://fiberagent.shop/docs/mcp (live, comprehensive)
+- ✅ **Support:** GitHub Issues + SLA (24h critical, 24-48h integration, weekly features)
+- ✅ **Privacy Policy:** https://fiberagent.shop/privacy (GDPR/CCPA compliant)
+- ✅ **Testing Credentials:** MCP_TESTING_CREDENTIALS.md (detailed for Anthropic reviewers)
+- ✅ **Code Quality:** No auth required (public endpoint), rate limits (100/min), error handling
+- ✅ **MCP Specification:** Full JSON-RPC 2.0 implementation, all tools documented
+- ✅ **Affiliate Network:** 50,000+ real merchants, Fiber API integration verified
+- ✅ **Security:** No API keys, no user data stored, stateless architecture
+
+### Pending: Push to fibershop Organization
+**Current status:** Both commits created locally
+- `dd40e05` — Repository reference updates
+- `5a0f123` — Testing credentials file
+
+**Blocker:** Need fibershop organization push access
+**Workaround:** Commits are in local git history, can be pushed once access granted:
+```bash
+cd /Users/laurentsalou/.openclaw/workspace-fiber
+git push origin main  # Will succeed once fibershop org membership active
+```
+
+### For Anthropic Registry Review
+**Tell them:**
+- No credentials needed — endpoint is completely public
+- Use demo agent ID: `claude-demo-agent-001`
+- Use test wallet: `0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d`
+- See `MCP_TESTING_CREDENTIALS.md` in repo for all sample queries
+- Endpoint: `https://fiberagent.shop/api/mcp` (live, no auth required)
+
+**Critical URLs for submission:**
+- Documentation: https://fiberagent.shop/docs/mcp
+- Testing Guide: https://github.com/fibershop/FiberAgent/blob/main/MCP_TESTING_CREDENTIALS.md
+- Privacy: https://fiberagent.shop/privacy
+- Support: https://github.com/fibershop/FiberAgent/issues
+
+### Git History (This Session)
+```
+5a0f123 Add comprehensive MCP testing credentials for registry submission (Anthropic review)
+dd40e05 Update repository references: openclawlaurent → fibershop (org migration)
+606b10d Link Privacy Policy from MCP docs
+```

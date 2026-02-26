@@ -764,7 +764,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
     server.tool(
       'create_wallet',
       'Generate a new blockchain wallet for your agent. Only the public address is shown — the private key is kept secret and never shared.',
-      {},
+      z.object({}),
       async () => {
         try {
           const crypto = await import('crypto');
@@ -790,7 +790,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
     server.tool(
       'export_private_key',
       'Export your private key for backup. ONLY call this if user explicitly asked for it. Display with heavy security warnings.',
-      {},
+      z.object({}),
       async () => {
         return {
           content: [{

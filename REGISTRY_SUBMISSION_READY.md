@@ -20,19 +20,19 @@ Commits Ready: **3** (pending push to fibershop organization)
 All GitHub URLs, npm install commands, and references updated.
 
 ### 2. ✅ Testing Credentials for Anthropic
-**File:** `MCP_TESTING_CREDENTIALS.md` (272 lines, comprehensive)
+**Files:** `REGISTRY_TEST_CREDENTIALS.txt` + `MCP_TESTING_CREDENTIALS.md`
 
 Contains:
 - ✅ No credentials required (public endpoint)
-- ✅ Demo agent ID: `claude-demo-agent-001` (pre-registered)
-- ✅ Test wallet: `0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d`
+- ✅ REAL registered test agent: `agent_375fe785219e94cf5f2f060e` (live on Fiber API)
+- ✅ Test wallet: `0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d` (earnings tracked)
+- ✅ Copy-paste curl commands for instant testing
 - ✅ 5+ sample test queries with expected responses
 - ✅ Integration verification checklist (10-point)
 - ✅ Troubleshooting guide for common issues
-- ✅ Test scenarios (user asks for shoes, agent registers, trending query)
 - ✅ Contact & support information
 
-**Commit:** `5a0f123`
+**Commits:** `5a0f123` + `4f70099`
 
 ### 3. ✅ Registry Documentation (Already Live)
 - **MCP Docs:** https://fiberagent.shop/docs/mcp
@@ -79,13 +79,14 @@ Use these exact values:
 ```
 NO AUTHENTICATION REQUIRED — Endpoint is completely public.
 
-Pre-Registered Demo Agent (Ready Immediately):
-  Agent ID:       claude-demo-agent-001
+Real Registered Test Agent (Ready Immediately):
+  Agent ID:       agent_375fe785219e94cf5f2f060e
   Wallet Address: 0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d
+  Device ID:      39106401
   Blockchain:     Monad
   Token:          MON
 
-Quick Test:
+Quick Test (List all tools):
   curl -X POST https://fiberagent.shop/api/mcp \
     -H "Content-Type: application/json" \
     -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
@@ -96,7 +97,17 @@ Search Products:
     -d '{
       "jsonrpc":"2.0","id":1,"method":"tools/call",
       "params":{"name":"search_products","arguments":{
-        "keywords":"running shoes","agent_id":"claude-demo-agent-001","limit":5
+        "keywords":"running shoes","agent_id":"agent_375fe785219e94cf5f2f060e","limit":5
+      }}
+    }'
+
+Get Agent Stats:
+  curl -X POST https://fiberagent.shop/api/mcp \
+    -H "Content-Type: application/json" \
+    -d '{
+      "jsonrpc":"2.0","id":1,"method":"tools/call",
+      "params":{"name":"get_agent_stats","arguments":{
+        "agent_id":"agent_375fe785219e94cf5f2f060e"
       }}
     }'
 
@@ -168,9 +179,9 @@ git push origin main
 - [ ] **Verify fibershop organization access** (needed to push commits)
 - [ ] **Push commits** to update all references and testing docs
 - [ ] **Submit to MCP Registry** with URLs above
-- [ ] **Point Anthropic to:** `MCP_TESTING_CREDENTIALS.md` for testing guide
-- [ ] **Provide demo agent:** `claude-demo-agent-001` (ready to test immediately)
-- [ ] **Mention:** No credentials needed, no auth required, endpoint is public
+- [ ] **Point Anthropic to:** `REGISTRY_TEST_CREDENTIALS.txt` for instant testing
+- [ ] **Provide real test agent:** `agent_375fe785219e94cf5f2f060e` (already registered on Fiber API)
+- [ ] **Mention:** No credentials needed, real agent ready, copy-paste curl commands work immediately
 
 ---
 

@@ -917,7 +917,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **HOLD ON — I need your wallet to search!**\n\nI want to find "${keywords}" for you with cashback tracking, but I need:\n\n**Your wallet address** (e.g., 0x1234567890...)\n**Optional:** Preferred token (MON, BONK, or USDC)\n\n→ Just reply with your wallet address (and token if you have a preference)\n\nExample: "0x9f2d... MON"` }] };
+          return { content: [{ type: 'text', text: `⏸️ **I need two things to search for "${keywords}" with cashback:**\n\n1️⃣ **Your wallet address** (e.g., 0x1234567890abcdef...)\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 MON"` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)
@@ -987,7 +987,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ intent, agent_id, wallet_address, preferred_token, preferences }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **HOLD ON — I need your wallet to search!**\n\nI want to: "${intent}"\n\nBut I need:\n**Your wallet address** (e.g., 0x1234567890...)\n**Optional:** Preferred token (MON, BONK, or USDC)\n\n→ Just reply with your wallet address (and token if you have a preference)\n\nExample: "0x9f2d... MON"` }] };
+          return { content: [{ type: 'text', text: `⏸️ **I need two things to: "${intent}"**\n\n1️⃣ **Your wallet address** (e.g., 0x1234567890abcdef...)\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 USDC"` }] };
         }
         
         const keywords = extractKeywords(intent);
@@ -1185,7 +1185,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ product_query, agent_id, wallet_address, preferred_token }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `⏸️ **HOLD ON — I need your wallet to search!**\n\nI want to compare: "${product_query}"\n\nBut I need:\n**Your wallet address** (e.g., 0x1234567890...)\n**Optional:** Preferred token (MON, BONK, or USDC)\n\n→ Just reply with your wallet address (and token if you have a preference)\n\nExample: "0x9f2d... MON"` }] };
+          return { content: [{ type: 'text', text: `⏸️ **I need two things to compare: "${product_query}"**\n\n1️⃣ **Your wallet address** (e.g., 0x1234567890abcdef...)\n\n2️⃣ **Your preferred reward token** — which would you like to earn in?\n   • **MON** — Default, Monad native token\n   • **BONK** — Community token\n   • **USDC** — Stablecoin (no price volatility)\n\n→ Reply with both: "0x... MON" or "0x... USDC"\n\nExample: "0x9f2d567890abcdef1234567890abcdef12345678 BONK"` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)

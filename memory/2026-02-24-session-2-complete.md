@@ -252,6 +252,33 @@ All links include proper device_id (`d=39090871`) and tracking_id (`c=XXXXX`).
 **ETA:** ~2-3 minutes for deployment to be live
 **Next Test:** After Vercel finishes, run Claude Desktop MCP again
 
+### 7. MCP Results Format: Markdown Table with Images (Commit a0621d6)
+
+**Format Changed:**
+From list format:
+```
+1. Nike Pegasus 41
+   $145.00 at NIKE | 0.65% cashback → $0.94
+   [🛒 Shop now](link)
+```
+
+To comparison table:
+```
+| Image | Product | Price | Merchant | Cashback | Link |
+|-------|---------|-------|----------|----------|------|
+| ![](img) | Nike Pegasus 41 | $145 | NIKE | 0.65% ($0.94) | [🛒](link) |
+| ![](img) | Nike Vomero 5 | $170 | Finish Line | 3.25% ($5.53) | [🛒](link) |
+```
+
+**Benefits:**
+- ✅ Images render inline
+- ✅ Perfect for side-by-side comparison
+- ✅ Shows both percentage and dollar cashback
+- ✅ Links always visible in last column
+- ✅ Compact but professional
+
+**Status:** ✅ DEPLOYED (Git: a0621d6)
+
 ### 3. Blockchain-Agnostic Messaging (Commit 41dfcfa)
 
 **Laurent's Request:** "Don't mention Monad — we want to support many blockchains in the future"

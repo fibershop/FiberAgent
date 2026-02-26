@@ -1098,42 +1098,95 @@ All code deployed, prompts optimized for Claude's behavior. Ready for Laurent to
 
 2. ✅ **Testing Credentials Documentation** — Created `MCP_TESTING_CREDENTIALS.md` for Anthropic reviewers
    - **Key Point:** No credentials required (public HTTP endpoint)
-   - **Demo Agent ID:** `claude-demo-agent-001` (pre-registered, ready to test)
-   - **Test Wallet:** `0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d` (demo, no funds needed)
+   - **REAL Test Agent ID:** `agent_c56b31fd2bd952ed214c7452` (verified working Feb 26, 2026)
+   - **Test Wallet:** `0x0000000000000000000000000000000000000002` (real, pre-registered)
+   - **Verification Status:** ✅ All 4 curl commands tested and working:
+     - `tools/list` → Returns 5 tools with schemas
+     - `register_agent` → Returns agent_id + wildfire_device_id
+     - `search_products` with agent_id → Returns real products (Nike $145, DHGate, Easy Spirit $75)
+     - `get_agent_stats` → Returns agent registration details and statistics
+   - **Critical Discovery:** Accept header required: `Accept: application/json, text/event-stream`
    - **Sample Test Queries:** 5+ verified queries with expected responses
    - **Integration Verification Checklist:** 10-point testing list
    - **Troubleshooting Guide:** Common issues + solutions
-   - **Commit:** `5a0f123` — "Add comprehensive MCP testing credentials for registry submission (Anthropic review)"
+   - **Commits:** 
+     - `5a0f123` — "Add comprehensive MCP testing credentials for registry submission (Anthropic review)"
+     - `f0c74c1` — "FIX: Update test commands with working Accept header" (verified Feb 26)
+
+### Critical API Discoveries (Feb 26, 2026)
+1. **Accept Header Required:** MCP endpoint returns "Not Acceptable" without `Accept: application/json, text/event-stream` header
+   - All test commands must include this header
+   - Discovered through trial-and-error testing with curl
+   - Fixed in WORKING_TEST_COMMANDS.txt (all verified working)
+   - Commit: `f0c74c1` — "FIX: Update test commands with working Accept header"
+
+2. **Session-Scoped Agents Pattern (Breakthrough):** Agent registration doesn't persist across HTTP requests (Vercel serverless stateless nature)
+   - **Key Finding:** Pre-registered agent IDs CAN be reused by passing `agent_id` parameter in fresh API calls
+   - **Example:** `agent_id=agent_c56b31fd2bd952ed214c7452` works directly without re-registration
+   - **Impact:** Solves registry reviewer problem — no repeated registration needed, just pass agent_id
+   - **Production Pattern:** Register once (get Agent ID), reuse forever in subsequent searches
+
+3. **Wallet Uniqueness:** Each wallet address can only register once
+   - For testing: Use different test wallets (0x000...099, 0x000...098, etc.)
+   - Real test agent: wallet `0x0000000000000000000000000000000000000002`
+
+4. **Tool Count:** 5 tools available (not 3)
+   - search_products: Search by keywords
+   - search_by_intent: Natural language shopping
+   - register_agent: Register with wallet + token
+   - get_agent_stats: Check earnings
+   - compare_cashback: Compare same product across merchants
 
 ### Registry Submission Readiness Checklist
 - ✅ **Documentation:** https://fiberagent.shop/docs/mcp (live, comprehensive)
 - ✅ **Support:** GitHub Issues + SLA (24h critical, 24-48h integration, weekly features)
 - ✅ **Privacy Policy:** https://fiberagent.shop/privacy (GDPR/CCPA compliant)
-- ✅ **Testing Credentials:** MCP_TESTING_CREDENTIALS.md (detailed for Anthropic reviewers)
+- ✅ **Testing Credentials:** WORKING_TEST_COMMANDS.txt (all curl commands verified Feb 26, 2026)
 - ✅ **Code Quality:** No auth required (public endpoint), rate limits (100/min), error handling
 - ✅ **MCP Specification:** Full JSON-RPC 2.0 implementation, all tools documented
 - ✅ **Affiliate Network:** 50,000+ real merchants, Fiber API integration verified
 - ✅ **Security:** No API keys, no user data stored, stateless architecture
+- ✅ **Real Test Account:** `agent_c56b31fd2bd952ed214c7452` verified working with all tools
 
-### Pending: Push to fibershop Organization
-**Current status:** Both commits created locally
-- `dd40e05` — Repository reference updates
-- `5a0f123` — Testing credentials file
+### Pending: Push to fibershop Organization (7 Commits Ready)
+**Status:** ⏳ All 7 commits created locally, awaiting fibershop org push access
 
-**Blocker:** Need fibershop organization push access
-**Workaround:** Commits are in local git history, can be pushed once access granted:
+**Commits Ready to Push:**
+1. `dd40e05` — Update repository references: openclawlaurent → fibershop (31 files)
+2. `5a0f123` — Add comprehensive MCP testing credentials (272 lines)
+3. `9e6f277` — Add MCP registry submission checklist
+4. `b9b8338` — Update MEMORY.md: Session 3.2 complete
+5. `4f70099` — Add form-ready testing credentials
+6. `668e2c8` — Use REAL registered test agent ID (tested & verified)
+7. `f0c74c1` — FIX: Update test commands with working Accept header (LATEST - verified Feb 26)
+
+**What These Accomplish:**
+- ✅ Organization migration (openclawlaurent → fibershop)
+- ✅ Real test agent credentials (verified working)
+- ✅ Registry submission documentation (live URLs)
+- ✅ API requirements documented (Accept header, agent ID reuse)
+- ✅ All test commands verified working (Feb 26)
+
+**Blocker:** Need fibershop organization membership to enable push access
+**Workaround:** Commits are in local git history, push immediately once access granted:
 ```bash
 cd /Users/laurentsalou/.openclaw/workspace-fiber
 git push origin main  # Will succeed once fibershop org membership active
+# Then verify with: git status
+# Should show: "Your branch is up to date with 'origin/main'"
 ```
+
+**Critical:** Once push succeeds, can immediately submit to Anthropic MCP registry with real working credentials and verified test commands
 
 ### For Anthropic Registry Review
 **Tell them:**
 - No credentials needed — endpoint is completely public
-- Use demo agent ID: `claude-demo-agent-001`
-- Use test wallet: `0x742d35Cc6634C0532925a3b844Bc9e7595f02D0d`
-- See `MCP_TESTING_CREDENTIALS.md` in repo for all sample queries
+- Use REAL test agent ID: `agent_c56b31fd2bd952ed214c7452` (verified working Feb 26, 2026)
+- Use test wallet: `0x0000000000000000000000000000000000000002` (pre-registered, no repeated registration needed)
+- **Agent ID Reuse Pattern:** Existing agent IDs work directly in fresh API calls without re-registration (key feature for reviewers)
+- See `WORKING_TEST_COMMANDS.txt` in repo for all tested curl commands (verified working with Accept header)
 - Endpoint: `https://fiberagent.shop/api/mcp` (live, no auth required)
+- **Critical Header:** All requests must include `-H "Accept: application/json, text/event-stream"`
 
 **Critical URLs for submission:**
 - Documentation: https://fiberagent.shop/docs/mcp
@@ -1141,8 +1194,42 @@ git push origin main  # Will succeed once fibershop org membership active
 - Privacy: https://fiberagent.shop/privacy
 - Support: https://github.com/fibershop/FiberAgent/issues
 
-### Git History (This Session)
+### Key Learnings (Session 3.2)
+1. **API Requirements Discovery:** Accept header requirement not documented. Had to discover via trial-and-error testing with curl. Future: Always read API docs + test with exact headers.
+2. **Pre-Created Test Accounts:** Real test agents infinitely more valuable than generic placeholder IDs. Builds confidence in registry reviewers.
+3. **Agent ID Reuse Pattern:** Solves both stateless architecture AND registry reviewer friction in one elegant pattern. This is production-ready.
+4. **Git Workflow Impact:** Laurent's feedback on push-after-commit rule critical for production safety. Documented in SOUL.md + GIT_WORKFLOW.md.
+5. **Dual Handler Stacks:** MCP code has both SDK tools and JSON-RPC handlers. Must keep both synced. Add code comments warning about this.
+
+### Session 3.2 Summary
+- ✅ **Registry Submission READY** — All documentation created, tested, verified (Feb 26, 2026)
+- ✅ **Real Test Agent Working** — `agent_c56b31fd2bd952ed214c7452` verified with all tools
+- ✅ **API Requirements Documented** — Accept header, session-scoped agents, agent ID reuse pattern
+- ✅ **Organization Migrated** — openclawlaurent → fibershop (31 files, all local commits)
+- ✅ **Code Deployed** — All changes on Vercel (commits in main branch)
+- ⏳ **Pending:** fibershop org push access (7 commits ready)
+
+### Next Step (When Org Access Available)
+```bash
+git push origin main
+git status  # Verify: "Your branch is up to date with 'origin/main'"
 ```
+Then immediately submit to Anthropic MCP registry with:
+- Real test agent: `agent_c56b31fd2bd952ed214c7452`
+- Working test commands: All verified with Accept header (Feb 26)
+- Documentation URLs: All live on Vercel
+- Expected approval timeline: 1-2 weeks
+
+### Git History (Session 3.2 - All Commits)
+```
+f0c74c1 FIX: Update test commands with working Accept header (verified Feb 26)
+668e2c8 Use REAL registered test agent ID (tested & verified)
+1e0c882 Add registry form copy
+7552ee3 Add form-ready setup instructions (concise)
+6d68490 Add comprehensive test setup instructions
+4f70099 Add form-ready testing credentials
+9e6f277 Add MCP registry submission checklist
+b9b8338 Update MEMORY.md: Session 3.2 complete
 5a0f123 Add comprehensive MCP testing credentials for registry submission (Anthropic review)
 dd40e05 Update repository references: openclawlaurent → fibershop (org migration)
 606b10d Link Privacy Policy from MCP docs

@@ -892,12 +892,12 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `Please ask the user for their blockchain wallet address (format: 0x...) to search for "${keywords}" with cashback rewards. Also ask for their preferred reward token (MON, BONK, or USDC). Provide wallet links if needed: Metamask (https://metamask.io) or Coinbase Wallet (https://coinbase.com/wallet).` }] };
+          return { content: [{ type: 'text', text: `❌ Missing wallet address. To search for "${keywords}", provide your blockchain wallet address (0x...) and preferred token (MON/BONK/USDC).` }] };
         }
         
-        // If wallet provided but no token preference, ask for it
+        // If wallet provided but no token preference, error
         if (wallet_address && !preferred_token && !agent_id) {
-          return { content: [{ type: 'text', text: `Please ask the user which reward token they'd like to earn in: MON (default Monad native), BONK (community), or USDC (stablecoin). This is required to proceed with the search.` }] };
+          return { content: [{ type: 'text', text: `❌ Missing token preference. Provide preferred token: MON (default), BONK, or USDC.` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)

@@ -286,16 +286,44 @@ console.log(data);`}</code></pre>
 
       {/* Support */}
       <motion.section className="doc-section support" variants={itemVariants}>
-        <h2>Need Help?</h2>
-        <p>
-          <strong>Issues with the MCP server?</strong> Open an issue on <a href="https://github.com/openclawlaurent/FiberAgent/issues" target="_blank" rel="noopener noreferrer">GitHub</a>.
-        </p>
-        <p>
-          <strong>Want to integrate with Claude?</strong> Add the MCP config to Claude Desktop and start using FiberAgent tools immediately.
-        </p>
-        <p>
-          <strong>Questions about cashback?</strong> Check the <a href="/getting-started">Getting Started guide</a>.
-        </p>
+        <h2>📞 Support & Documentation</h2>
+        
+        <div className="support-channels">
+          <div className="channel">
+            <h3>🐛 Bug Reports & Issues</h3>
+            <p><strong>Primary support channel:</strong></p>
+            <a href="https://github.com/openclawlaurent/FiberAgent/issues" target="_blank" rel="noopener noreferrer" className="support-link">
+              GitHub Issues
+            </a>
+            <p>Open an issue for bugs, feature requests, or integration problems. Include MCP method, request body, and error message.</p>
+          </div>
+
+          <div className="channel">
+            <h3>📚 Documentation</h3>
+            <p><strong>Complete guides available:</strong></p>
+            <ul className="doc-links">
+              <li><a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_INTEGRATION_GUIDE.md" target="_blank" rel="noopener noreferrer">Full MCP Integration Guide</a> (13KB, all tools & examples)</li>
+              <li><a href="https://github.com/openclawlaurent/FiberAgent/blob/main/MCP_QUICKSTART.md" target="_blank" rel="noopener noreferrer">Quick Start Guide</a> (5 minutes to integration)</li>
+              <li><a href="https://fiberagent.shop/docs/mcp">This page</a> (overview & code examples)</li>
+              <li><a href="https://fiberagent.shop/developers">Developer Portal</a> (API specs, OpenAPI, more)</li>
+            </ul>
+          </div>
+
+          <div className="channel">
+            <h3>💬 Questions & Feedback</h3>
+            <p><strong>General questions?</strong></p>
+            <p>Check <a href="https://github.com/openclawlaurent/FiberAgent/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a> or open an issue on <a href="https://github.com/openclawlaurent/FiberAgent" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+          </div>
+        </div>
+
+        <div className="sla-info">
+          <h3>Response Times</h3>
+          <ul>
+            <li><strong>Bug reports:</strong> Response within 24 hours</li>
+            <li><strong>Integration help:</strong> Response within 24-48 hours</li>
+            <li><strong>Feature requests:</strong> Reviewed weekly</li>
+          </ul>
+        </div>
       </motion.section>
     </motion.div>
   );

@@ -16,6 +16,7 @@ import DevelopersPage from './pages/DevelopersPage';
 import GettingStartedPage from './pages/GettingStartedPage';
 import MCPDocsPage from './pages/MCPDocsPage';
 import PrivacyPage from './pages/PrivacyPage';
+import ChatPage from './pages/ChatPage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/user" element={<UserPage />} />
         <Route path="/stats" element={<StatisticsPage />} />
         <Route path="/compare" element={<ComparePage />} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/visual-demo" element={<VisualDemoPage />} />
         <Route path="/onepager" element={<OnePagerPage />} />
         <Route path="/capabilities" element={<CapabilitiesPage />} />

@@ -14,7 +14,7 @@ export default function ChatPage() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [walletConnected, setWalletConnected] = useState(false);
+  const [walletConnected, setWalletConnected] = useState(true); // Enable by default for testing
   const [showDisclaimer, setShowDisclaimer] = useState(!localStorage.getItem('fiberagent_disclaimer_accepted'));
   const messagesEndRef = useRef(null);
 
@@ -281,23 +281,19 @@ export default function ChatPage() {
             <div className={styles.inputWrapper}>
               <textarea
                 className={styles.input}
-                placeholder={
-                  walletConnected
-                    ? 'Ask me anything about shopping... e.g., "Find me gaming laptop under $2000"'
-                    : 'Connect your wallet first to start earning cashback!'
-                }
+                placeholder="Ask me anything about shopping... e.g., 'Find me gaming laptop under $2000'"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                disabled={!walletConnected || loading}
+                disabled={loading}
                 rows={3}
               />
               <motion.button
-                className={`${styles.btnSend} ${!walletConnected || loading ? styles.btnDisabled : ''}`}
+                className={`${styles.btnSend} ${loading ? styles.btnDisabled : ''}`}
                 onClick={handleSendMessage}
-                disabled={!walletConnected || loading || !input.trim()}
-                whileHover={walletConnected && !loading ? { scale: 1.05 } : {}}
-                whileTap={walletConnected && !loading ? { scale: 0.95 } : {}}
+                disabled={loading || !input.trim()}
+                whileHover={!loading ? { scale: 1.05 } : {}}
+                whileTap={!loading ? { scale: 0.95 } : {}}
               >
                 {loading ? '⏳' : '📤 Send'}
               </motion.button>

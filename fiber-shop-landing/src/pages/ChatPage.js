@@ -53,43 +53,51 @@ export default function ChatPage() {
 
     // Add user message
     addMessage('user', input);
+    const searchQuery = input;
     setInput('');
     setLoading(true);
 
-    // Simulate API call (replace with real Claude API call)
-    setTimeout(() => {
-      // Mock response
-      const mockProducts = [
-        {
-          title: 'ASUS TUF Gaming A16',
-          price: 1899,
-          cashback_rate: 0.18,
-          cashback_amount: 342,
-          merchant: 'Best Buy',
-          image: '🎮',
-        },
-        {
-          title: 'Lenovo Legion Pro 7i',
-          price: 1799,
-          cashback_rate: 0.15,
-          cashback_amount: 270,
-          merchant: 'Amazon',
-          image: '💻',
-        },
-        {
-          title: 'Dell XPS 15',
-          price: 1599,
-          cashback_rate: 0.12,
-          cashback_amount: 192,
-          merchant: 'Dell.com',
-          image: '⚡',
-        },
-      ];
+    try {
+      // Call real backend API
+      const res = await fetch('/api/fiber-proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          method: 'GET',
+          endpoint: 'agent/search',
+          queryParams: { keywords: searchQuery, agent_id: 'chat-demo', limit: 6 }
+        })
+      });
 
-      const responseText = `Found 3 great gaming laptops matching your search:\n\n`;
-      addMessage('assistant', responseText, mockProducts);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        addMessage('assistant', `❌ Search failed: ${data.error || 'Unknown error'}`);
+        setLoading(false);
+        return;
+      }
+
+      // Transform Fiber API response to product cards
+      const products = data.results?.slice(0, 6).map(m => ({
+        title: m.product_name || m.merchant_name || 'Product',
+        price: m.price || 'N/A',
+        cashback_rate: (m.cashback_rate || 0.05),
+        cashback_amount: m.cashback_amount || Math.round((m.price || 0) * (m.cashback_rate || 0.05)),
+        merchant: m.merchant_name || 'Unknown',
+        image: '🛍️',
+      })) || [];
+
+      if (products.length === 0) {
+        addMessage('assistant', `Sorry, no products found for "${searchQuery}". Try different keywords!`);
+      } else {
+        const responseText = `Found ${data.results_count || products.length} merchants with "${searchQuery}":\n\n`;
+        addMessage('assistant', responseText, products);
+      }
+    } catch (err) {
+      addMessage('assistant', `❌ Error: ${err.message}`);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handleKeyPress = (e) => {

@@ -78,14 +78,21 @@ export default function ChatPage() {
       }
 
       // Transform Fiber API response to product cards
-      const products = data.results?.slice(0, 6).map(m => ({
-        title: m.product_name || m.merchant_name || 'Product',
-        price: m.price || 'N/A',
-        cashback_rate: (m.cashback_rate || 0.05),
-        cashback_amount: m.cashback_amount || Math.round((m.price || 0) * (m.cashback_rate || 0.05)),
-        merchant: m.merchant_name || 'Unknown',
-        image: '🛍️',
-      })) || [];
+      const products = data.results?.slice(0, 6).map(m => {
+        // Fiber returns merchant data with cashback object
+        const cashbackDisplay = m.cashback?.display || '5%';
+        const cashbackPercent = parseFloat(cashbackDisplay) || 5;
+        
+        return {
+          title: m.merchant_name || 'Shop',
+          price: m.price ? `$${m.price}` : 'View Store',
+          cashback_rate: cashbackPercent / 100,
+          cashback_amount: m.cashback_amount || 0,
+          merchant: m.merchant_domain || m.merchant_name,
+          image: m.image_url ? m.image_url : '🛍️',
+          affiliate_link: m.affiliate_link,
+        };
+      }) || [];
 
       if (products.length === 0) {
         addMessage('assistant', `Sorry, no products found for "${searchQuery}". Try different keywords!`);
@@ -223,20 +230,28 @@ export default function ChatPage() {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3, delay: pidx * 0.1 }}
                         >
-                          <div className={styles.productImage}>{product.image}</div>
+                          <div className={styles.productImage}>
+                            {typeof product.image === 'string' && product.image.startsWith('http') ? (
+                              <img src={product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                              product.image
+                            )}
+                          </div>
 
                           <div className={styles.productDetails}>
                             <div className={styles.productTitle}>{product.title}</div>
 
                             <div className={styles.productPrice}>
                               <span className={styles.priceLabel}>Price:</span>
-                              <span className={styles.priceValue}>${product.price.toLocaleString()}</span>
+                              <span className={styles.priceValue}>
+                                {typeof product.price === 'number' ? `$${product.price.toLocaleString()}` : product.price}
+                              </span>
                             </div>
 
                             <div className={styles.productCashback}>
                               <span className={styles.cashbackLabel}>Cashback:</span>
                               <span className={styles.cashbackValue}>
-                                {Math.round(product.cashback_rate * 100)}% (${product.cashback_amount})
+                                {Math.round(product.cashback_rate * 100)}% {product.cashback_amount > 0 ? `($${product.cashback_amount})` : ''}
                               </span>
                             </div>
 
@@ -245,13 +260,17 @@ export default function ChatPage() {
                               <span className={styles.merchantName}>{product.merchant}</span>
                             </div>
 
-                            <motion.button
+                            <motion.a
+                              href={product.affiliate_link || '#'}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className={styles.btnShopNow}
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
+                              style={{ display: 'inline-block', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
                             >
                               🛒 Shop Now
-                            </motion.button>
+                            </motion.a>
                           </div>
                         </motion.div>
                       ))}

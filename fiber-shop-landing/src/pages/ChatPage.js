@@ -58,14 +58,14 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      // Call real backend API
+      // Call real backend API using verified test agent
       const res = await fetch('/api/fiber-proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           method: 'GET',
           endpoint: 'agent/search',
-          queryParams: { keywords: searchQuery, agent_id: 'chat-demo', limit: 6 }
+          queryParams: { keywords: searchQuery, agent_id: 'agent_c56b31fd2bd952ed214c7452', limit: 6 }
         })
       });
 

@@ -196,7 +196,7 @@ export default function ChatPage() {
             {messages.map((message, idx) => (
               <motion.div
                 key={message.id}
-                className={`${styles.message} ${styles[`message${message.type === 'user' ? 'User' : 'Assistant'}']}`}
+                className={`${styles.message} ${styles[message.type === 'user' ? 'messageUser' : 'messageAssistant']}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: idx * 0.05 }}

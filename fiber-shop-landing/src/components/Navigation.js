@@ -23,9 +23,6 @@ export default function Navigation() {
           <li className={`nav-item ${isActive('/demo')}`}>
             <Link to="/demo" className="nav-link" aria-current={isActive('/demo') ? 'page' : undefined}>Demo</Link>
           </li>
-          <li className={`nav-item ${isActive('/chat')}`}>
-            <Link to="/chat" className="nav-link" aria-current={isActive('/chat') ? 'page' : undefined}>Chat</Link>
-          </li>
           <li className={`nav-item ${isActive('/agent')}`}>
             <Link to="/agent" className="nav-link" aria-current={isActive('/agent') ? 'page' : undefined}>For Agents</Link>
           </li>

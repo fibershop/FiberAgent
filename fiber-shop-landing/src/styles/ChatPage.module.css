@@ -426,14 +426,15 @@
 }
 
 .disclaimerModal {
-  background: rgba(20, 20, 40, 0.95);
-  border: 1px solid var(--border-glass);
+  background: rgba(10, 10, 25, 0.98);
+  border: 2px solid rgba(0, 208, 132, 0.3);
   border-radius: 16px;
   padding: 32px;
   max-width: 500px;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .disclaimerHeader {
@@ -443,12 +444,13 @@
 .disclaimerHeader h2 {
   margin: 0 0 8px 0;
   font-size: 1.5rem;
-  color: var(--accent-secondary);
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .disclaimerHeader p {
   margin: 0;
-  color: var(--text-main);
+  color: #e0e0e0;
   font-size: 0.9rem;
 }
 
@@ -460,23 +462,26 @@
 }
 
 .disclaimerItem {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 208, 132, 0.08);
   padding: 16px;
   border-radius: 8px;
-  border-left: 3px solid var(--accent);
+  border-left: 4px solid var(--accent);
 }
 
 .disclaimerItem strong {
   color: #ffffff;
   display: block;
   margin-bottom: 6px;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .disclaimerItem p {
   margin: 0;
-  color: var(--text-main);
+  color: #f0f0f0;
   font-size: 0.9rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 .disclaimerActions {
@@ -490,11 +495,16 @@
   background: linear-gradient(135deg, var(--accent) 0%, #00a86b 100%);
   border: none;
   border-radius: 8px;
-  color: #000;
-  font-weight: 600;
+  color: #000000;
+  font-weight: 700;
   cursor: pointer;
   font-size: 0.95rem;
   transition: all 0.2s ease;
+}
+
+.btnAccept:hover {
+  box-shadow: 0 0 20px rgba(0, 208, 132, 0.6);
+  transform: translateY(-2px);
 }
 
 .btnAccept:hover {

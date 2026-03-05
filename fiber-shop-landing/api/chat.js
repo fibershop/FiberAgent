@@ -71,7 +71,7 @@ Focus on being helpful and conversational first. Product listings are secondary.
       },
     ];
 
-    // Call Claude API
+    // Call Claude API (using Haiku for faster, cheaper responses)
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -80,7 +80,7 @@ Focus on being helpful and conversational first. Product listings are secondary.
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-3-5-haiku-20241022',
         max_tokens: 500,
         system: systemPrompt,
         messages,

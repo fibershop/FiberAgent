@@ -17,6 +17,7 @@ export default function ChatPage() {
   const [walletConnected, setWalletConnected] = useState(true); // Enable by default for testing
   const [showDisclaimer, setShowDisclaimer] = useState(!localStorage.getItem('fiberagent_disclaimer_accepted'));
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,8 +91,22 @@ export default function ChatPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        addMessage('assistant', `❌ Error: ${data.error || 'Unknown error'}`);
+        const errorMsg = data.error || 'Unknown error';
+        const friendlyError = errorMsg.includes('overload') 
+          ? '⏳ API is busy right now. Try again in a moment!'
+          : `❌ Error: ${errorMsg}`;
+        
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            id: prevMessages.length + 1,
+            type: 'assistant',
+            text: friendlyError,
+            timestamp: new Date(),
+          },
+        ]);
         setLoading(false);
+        setTimeout(() => inputRef.current?.focus(), 100);
         return;
       }
 
@@ -129,6 +144,8 @@ export default function ChatPage() {
       ]);
     } finally {
       setLoading(false);
+      // Auto-focus input for next message
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
@@ -342,6 +359,7 @@ export default function ChatPage() {
           <div className={styles.inputArea}>
             <div className={styles.inputWrapper}>
               <textarea
+                ref={inputRef}
                 className={styles.input}
                 placeholder="Ask me anything about shopping... e.g., 'Find me gaming laptop under $2000'"
                 value={input}
@@ -349,6 +367,7 @@ export default function ChatPage() {
                 onKeyPress={handleKeyPress}
                 disabled={loading}
                 rows={3}
+                autoFocus
               />
               <motion.button
                 className={`${styles.btnSend} ${loading ? styles.btnDisabled : ''}`}

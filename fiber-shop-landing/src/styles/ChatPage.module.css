@@ -417,24 +417,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
+  z-index: 9999;
+  backdrop-filter: blur(8px);
 }
 
 .disclaimerModal {
-  background: rgba(10, 10, 25, 0.98);
-  border: 2px solid rgba(0, 208, 132, 0.3);
+  background: rgba(5, 5, 20, 0.99);
+  border: 2px solid rgba(0, 208, 132, 0.5);
   border-radius: 16px;
-  padding: 32px;
-  max-width: 500px;
-  max-height: 80vh;
+  padding: 40px;
+  max-width: 520px;
+  max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 208, 132, 0.2);
+  backdrop-filter: blur(20px);
+  z-index: 10000;
 }
 
 .disclaimerHeader {
@@ -487,28 +488,33 @@
 .disclaimerActions {
   display: flex;
   gap: 12px;
+  margin-top: 24px;
 }
 
 .btnAccept {
   flex: 1;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, var(--accent) 0%, #00a86b 100%);
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #00d084 0%, #00ff99 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   color: #000000;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 208, 132, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btnAccept:hover {
-  box-shadow: 0 0 20px rgba(0, 208, 132, 0.6);
+  box-shadow: 0 8px 32px rgba(0, 208, 132, 0.8);
+  transform: translateY(-4px);
+  background: linear-gradient(135deg, #00ff99 0%, #00d084 100%);
+}
+
+.btnAccept:active {
   transform: translateY(-2px);
-}
-
-.btnAccept:hover {
-  box-shadow: 0 0 20px rgba(0, 208, 132, 0.5);
 }
 
 /* Footer */

@@ -53,61 +53,45 @@ export default function ChatPage() {
 
     // Add user message
     addMessage('user', input);
-    const searchQuery = input;
+    const userMessage = input;
     setInput('');
     setLoading(true);
 
     try {
-      // Call real backend API using verified test agent
-      const res = await fetch('/api/fiber-proxy', {
+      // Call conversational chat API
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          method: 'GET',
-          endpoint: 'agent/search',
-          queryParams: { keywords: searchQuery, agent_id: 'agent_c56b31fd2bd952ed214c7452', limit: 6 }
+          message: userMessage,
+          conversationHistory: messages.map(m => ({
+            type: m.type,
+            text: m.text,
+          })),
         })
       });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        addMessage('assistant', `❌ Search failed: ${data.error || 'Unknown error'}`);
+        addMessage('assistant', `❌ Error: ${data.error || 'Unknown error'}`);
         setLoading(false);
         return;
       }
 
-      // Transform Fiber API response to product cards
-      const products = data.results?.slice(0, 6).map(m => {
-        // Fiber returns merchant data with cashback object
-        const cashbackDisplay = m.cashback?.display || '5%';
-        const cashbackPercent = parseFloat(cashbackDisplay) || 5;
-        
-        // Construct affiliate link if not provided
-        let affiliateLink = m.affiliate_link;
-        if (!affiliateLink && m.merchant_domain) {
-          affiliateLink = `https://api.fiber.shop/r/w?c=agent_c56b31fd2bd952ed214c7452&d=chat&url=https://${m.merchant_domain}`;
-        }
-        
-        console.log('Product:', m.merchant_name, 'Link:', affiliateLink);
-        
-        return {
-          title: m.merchant_name || 'Shop',
-          price: m.price ? `$${m.price}` : 'View Store',
-          cashback_rate: cashbackPercent / 100,
-          cashback_amount: m.cashback_amount || 0,
-          merchant: m.merchant_domain || m.merchant_name,
-          image: m.image_url ? m.image_url : '🛍️',
-          affiliate_link: affiliateLink,
-        };
-      }) || [];
+      // Transform product results to cards
+      const products = data.products?.map(m => ({
+        title: m.merchant,
+        price: 'View Store',
+        cashback_rate: parseFloat(m.cashback) / 100,
+        cashback_amount: 0,
+        merchant: m.domain,
+        image: '🛍️',
+        affiliate_link: m.affiliate_link,
+      })) || [];
 
-      if (products.length === 0) {
-        addMessage('assistant', `Sorry, no products found for "${searchQuery}". Try different keywords!`);
-      } else {
-        const responseText = `Found ${data.results_count || products.length} merchants with "${searchQuery}":\n\n`;
-        addMessage('assistant', responseText, products);
-      }
+      // Add Claude's response
+      addMessage('assistant', data.response, products.length > 0 ? products : null);
     } catch (err) {
       addMessage('assistant', `❌ Error: ${err.message}`);
     } finally {

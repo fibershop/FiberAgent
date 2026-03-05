@@ -18,6 +18,7 @@ export default function ChatPage() {
   const [showDisclaimer, setShowDisclaimer] = useState(!localStorage.getItem('fiberagent_disclaimer_accepted'));
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const [imageErrors, setImageErrors] = useState({});
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -113,11 +114,11 @@ export default function ChatPage() {
       // Transform product results to cards
       const products = data.products?.map(m => ({
         title: m.merchant,
-        price: 'View Store',
+        price: 'Visit Store',
         cashback_rate: parseFloat(m.cashback) / 100,
         cashback_amount: 0,
         merchant: m.domain,
-        image: '🛍️',
+        image: m.image_url || '🛍️',
         affiliate_link: m.affiliate_link,
       })) || [];
 
@@ -273,10 +274,17 @@ export default function ChatPage() {
                           transition={{ duration: 0.3, delay: pidx * 0.1 }}
                         >
                           <div className={styles.productImage}>
-                            {typeof product.image === 'string' && product.image.startsWith('http') ? (
-                              <img src={product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            {typeof product.image === 'string' && product.image.startsWith('http') && !imageErrors[pidx] ? (
+                              <img 
+                                src={product.image} 
+                                alt={product.title} 
+                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }}
+                                onError={() => setImageErrors(prev => ({ ...prev, [pidx]: true }))}
+                              />
                             ) : (
-                              product.image
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', fontSize: '2.5rem', background: 'rgba(0, 208, 132, 0.1)' }}>
+                                {product.image.startsWith('http') ? '🛍️' : product.image}
+                              </div>
                             )}
                           </div>
 

@@ -34,6 +34,7 @@ export default async function handler(req, res) {
             merchant: m.merchant_name,
             domain: m.merchant_domain,
             cashback: m.cashback?.display || '5%',
+            image_url: m.image_url || getMerchantFavicon(m.merchant_domain),
             affiliate_link: m.affiliate_link || buildAffiliateLink(m.merchant_domain),
           }));
         }
@@ -149,4 +150,13 @@ function extractSearchKeywords(message) {
 function buildAffiliateLink(domain) {
   if (!domain) return null;
   return `https://api.fiber.shop/r/w?c=agent_c56b31fd2bd952ed214c7452&d=chat&url=https://${domain}`;
+}
+
+/**
+ * Get merchant favicon URL as fallback image
+ */
+function getMerchantFavicon(domain) {
+  if (!domain) return null;
+  // Use DuckDuckGo's favicon service (faster than Google's)
+  return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
 }

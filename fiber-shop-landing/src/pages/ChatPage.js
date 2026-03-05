@@ -83,6 +83,14 @@ export default function ChatPage() {
         const cashbackDisplay = m.cashback?.display || '5%';
         const cashbackPercent = parseFloat(cashbackDisplay) || 5;
         
+        // Construct affiliate link if not provided
+        let affiliateLink = m.affiliate_link;
+        if (!affiliateLink && m.merchant_domain) {
+          affiliateLink = `https://api.fiber.shop/r/w?c=agent_c56b31fd2bd952ed214c7452&d=chat&url=https://${m.merchant_domain}`;
+        }
+        
+        console.log('Product:', m.merchant_name, 'Link:', affiliateLink);
+        
         return {
           title: m.merchant_name || 'Shop',
           price: m.price ? `$${m.price}` : 'View Store',
@@ -90,7 +98,7 @@ export default function ChatPage() {
           cashback_amount: m.cashback_amount || 0,
           merchant: m.merchant_domain || m.merchant_name,
           image: m.image_url ? m.image_url : '🛍️',
-          affiliate_link: m.affiliate_link,
+          affiliate_link: affiliateLink,
         };
       }) || [];
 
@@ -260,17 +268,27 @@ export default function ChatPage() {
                               <span className={styles.merchantName}>{product.merchant}</span>
                             </div>
 
-                            <motion.a
-                              href={product.affiliate_link || '#'}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={styles.btnShopNow}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              style={{ display: 'inline-block', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-                            >
-                              🛒 Shop Now
-                            </motion.a>
+                            {product.affiliate_link ? (
+                              <motion.a
+                                href={product.affiliate_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.btnShopNow}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                style={{ display: 'inline-block', textDecoration: 'none', color: 'inherit' }}
+                              >
+                                🛒 Shop Now
+                              </motion.a>
+                            ) : (
+                              <button
+                                className={styles.btnShopNow}
+                                disabled
+                                style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                              >
+                                ⏳ Loading Link...
+                              </button>
+                            )}
                           </div>
                         </motion.div>
                       ))}

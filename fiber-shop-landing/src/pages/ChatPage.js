@@ -51,23 +51,39 @@ export default function ChatPage() {
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
-    // Add user message
-    addMessage('user', input);
     const userMessage = input;
     setInput('');
     setLoading(true);
 
+    // Add user message to state
+    const newUserMessage = {
+      id: messages.length + 1,
+      type: 'user',
+      text: userMessage,
+      timestamp: new Date(),
+    };
+    setMessages([...messages, newUserMessage]);
+
     try {
+      // Build conversation history including the message we just added
+      const conversationHistory = [
+        ...messages.map(m => ({
+          type: m.type,
+          text: m.text,
+        })),
+        {
+          type: 'user',
+          text: userMessage,
+        },
+      ];
+
       // Call conversational chat API
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userMessage,
-          conversationHistory: messages.map(m => ({
-            type: m.type,
-            text: m.text,
-          })),
+          conversationHistory,
         })
       });
 
@@ -91,9 +107,26 @@ export default function ChatPage() {
       })) || [];
 
       // Add Claude's response
-      addMessage('assistant', data.response, products.length > 0 ? products : null);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          id: prevMessages.length + 1,
+          type: 'assistant',
+          text: data.response,
+          products: products.length > 0 ? products : null,
+          timestamp: new Date(),
+        },
+      ]);
     } catch (err) {
-      addMessage('assistant', `❌ Error: ${err.message}`);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          id: prevMessages.length + 1,
+          type: 'assistant',
+          text: `❌ Error: ${err.message}`,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
       setLoading(false);
     }

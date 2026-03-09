@@ -301,7 +301,7 @@ export default function ChatPage() {
                             <div className={styles.productCashback}>
                               <span className={styles.cashbackLabel}>Cashback:</span>
                               <span className={styles.cashbackValue}>
-                                {Math.round(product.cashback_rate * 100)}% {product.cashback_amount > 0 ? `($${product.cashback_amount})` : ''}
+                                {(product.cashback_rate * 100).toFixed(1)}% {product.cashback_amount > 0 ? `($${product.cashback_amount})` : ''}
                               </span>
                             </div>
 

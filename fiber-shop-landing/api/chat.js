@@ -44,21 +44,23 @@ export default async function handler(req, res) {
     }
 
     // Build context for Claude
-    const systemPrompt = `You are FiberAgent, a friendly AI shopping assistant. Your job is to help users find products and deals with cashback rewards across 50,000+ merchants.
+    const systemPrompt = `You are FiberAgent, a friendly AI shopping assistant helping users find great deals with cashback rewards.
 
-Key traits:
-- Be conversational and natural, like chatting with a friend
-- Ask clarifying questions if needed (budget, preferences, etc.)
-- When you search products, explain why they're good deals
-- Always mention the cashback rewards available
-- Be enthusiastic about helping them save money
+Your style:
+- Be conversational, warm, and natural - like talking to a friend
+- Keep responses concise and focused
+- Don't mention formulas, percentages calculations, or math
+- Just tell them what to do and the benefit
 
 ${fibreResults.length > 0 ? `
-Available merchants for "${searchKeywords}":
-${fibreResults.map((m, i) => `${i + 1}. ${m.merchant} (${m.domain}) - ${m.cashback} cashback`).join('\n')}
-` : ''}
+Available deals for "${searchKeywords}":
+${fibreResults.map((m, i) => `${i + 1}. ${m.merchant} at ${m.domain} - Earn ${m.cashback} back when you shop (Link: ${m.affiliate_link})`).join('\n')}
 
-Focus on being helpful and conversational first. Product listings are secondary.`;
+When recommending these, mention the merchant and cashback benefit naturally. Include the link so they can shop directly.
+` : `
+No merchants found yet. Ask the user to clarify what they're looking for, or suggest similar products.
+`}`;
+
 
     // Prepare messages for Claude
     const messages = [
@@ -118,9 +120,7 @@ function extractSearchKeywords(message) {
   // Shopping intent keywords
   const shoppingKeywords = [
     'find', 'search', 'show', 'look for', 'want', 'need', 'recommend',
-    'best', 'laptop', 'shoes', 'phone', 'headphones', 'watch', 'camera',
-    'nike', 'amazon', 'best buy', 'target', 'walmart', 'electronics',
-    'fashion', 'clothing', 'price', 'deal', 'cashback', 'save money',
+    'best', 'cheapest', 'deal', 'cashback', 'save', 'buy',
   ];
 
   const hasShoppingIntent = shoppingKeywords.some(k => lowerMsg.includes(k));
@@ -128,15 +128,18 @@ function extractSearchKeywords(message) {
 
   // Try to extract the product/brand they're looking for
   const patterns = [
-    /(?:find|search|show|looking for|want|need|recommend)\s+(?:me\s+)?(.+?)(?:\?|$|under|below|with|for)/i,
-    /(?:best|top)\s+(.+?)(?:\?|$|under|with|for)/i,
-    /(\w+(?:\s+\w+)?)\s+(?:shoes|laptop|phone|headphones|watch|camera|keyboard|monitor|graphics card)/i,
+    /(?:find|search|show|looking for|want|need|recommend|buy)\s+(?:me\s+)?(.+?)(?:\?|$|under|below|with|for|how)/i,
+    /(?:best|cheapest|top)\s+(.+?)(?:\?|$|under|with|for)/i,
+    /(.+?)\s+(?:deal|cashback|offer|price)/i,
+    // Catch product names like "nvidia 5090", "iphone 16", etc.
+    /([a-z0-9\s]+?\s+[a-z0-9]+)/i,
   ];
 
   for (const pattern of patterns) {
     const match = message.match(pattern);
     if (match && match[1]) {
-      return match[1].trim();
+      const keyword = match[1].trim();
+      if (keyword.length > 2) return keyword; // Only return if meaningful
     }
   }
 

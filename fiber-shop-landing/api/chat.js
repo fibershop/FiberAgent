@@ -155,7 +155,26 @@ export default async function handler(req, res) {
     }
 
     // Format best deals prominently
-    const formattedProducts = products.map(formatProductForResponse).slice(0, 6);
+    let formattedProducts = [];
+    try {
+      if (Array.isArray(products) && products.length > 0) {
+        formattedProducts = products
+          .map((p, idx) => {
+            try {
+              return formatProductForResponse(p);
+            } catch (e) {
+              console.error(`[CHAT] Format error for product ${idx}:`, e.message);
+              return null;
+            }
+          })
+          .filter(p => p !== null)
+          .slice(0, 6);
+        console.log('[CHAT] Formatted', formattedProducts.length, 'products');
+      }
+    } catch (err) {
+      console.error('[CHAT] Formatting error:', err.message);
+      formattedProducts = [];
+    }
 
     return res.status(200).json({
       success: true,
@@ -280,6 +299,9 @@ async function searchFiber(keywords, filters) {
       });
 
     console.log('[FIBER] Returned', products.length, 'valid products');
+    if (products.length > 0) {
+      console.log('[FIBER] Sample:', products[0].title, '@', products[0].merchant, '$' + products[0].price);
+    }
     return products;
   } catch (err) {
     console.error('[FIBER] Exception:', err.message);
@@ -466,24 +488,30 @@ function sortByEffectivePrice(products) {
  * Format product for response
  */
 function formatProductForResponse(product) {
+  if (!product || !product.title) {
+    throw new Error('Invalid product: missing title');
+  }
+  
+  const effectivePrice = product.effective_price || (product.price - product.cashback_amount);
+  
   return {
-    id: product.id,
+    id: product.id || `prod_${Date.now()}`,
     title: product.title,
-    image_url: product.image_url,
+    image_url: product.image_url || '🛍️',
     best_deal: {
-      price: product.price,
-      merchant: product.merchant,
-      affiliate_link: product.affiliate_link,
-      cashback_rate: product.cashback_rate,
-      cashback_amount: product.cashback_amount,
-      effective_price: product.effective_price,
+      price: product.price || 0,
+      merchant: product.merchant || 'Unknown',
+      affiliate_link: product.affiliate_link || '#',
+      cashback_rate: product.cashback_rate || 0,
+      cashback_amount: product.cashback_amount || 0,
+      effective_price: effectivePrice,
       savings_note: product.cashback_rate > 0.05 
         ? `Save ${Math.round(product.cashback_rate * 100)}% with cashback`
         : `Best price available`,
     },
     alternatives: [],
-    rating: product.rating,
-    reviews: product.reviews_count,
+    rating: product.rating || 0,
+    reviews: product.reviews_count || 0,
     in_stock: product.availability === 'in_stock',
   };
 }

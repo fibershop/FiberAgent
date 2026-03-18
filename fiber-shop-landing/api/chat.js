@@ -126,14 +126,16 @@ export default async function handler(req, res) {
       }
     ];
 
-    // Simple response text
-    const responseText = `Great! I found ${mockProducts.length} Nike shoes with great cashback rewards. Here are the best deals:
+    // Simple response text - NO URLS, ONLY DESCRIPTION
+    const responseText = `Great! I found some excellent Nike shoes with cashback rewards. Here are my top picks:
 
-- **Nike Air Force 1** at Finish Line - $90 with 5% cashback
-- **Nike Air Max 270** at Nike.com - $150 with 3% cashback  
-- **Nike Pegasus 41** at Nike.com - $130 with 3% cashback
+🔥 **Best Value**: Nike Air Force 1 at Finish Line - earning 5% cashback on this classic!
 
-All prices include cashback rewards. Click on any product to shop and earn rewards!`;
+⚡ **Premium Pick**: Nike Air Max 270 with superior comfort - 3% cashback
+
+🏃 **Performance**: Nike Pegasus 41 - perfect for running with 3% cashback
+
+All of these have real cashback rewards. Just click "Shop Now" on any card to earn rewards on your purchase!`;
 
     return res.status(200).json({
       success: true,

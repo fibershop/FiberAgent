@@ -210,22 +210,30 @@ async function searchFiber(keywords, filters) {
       return [];
     }
 
-    return data.results.slice(0, 10).map((m, idx) => ({
-      id: `fiber_${idx}_${Date.now()}`,
-      title: m.product_name || m.merchant_name,
-      price: m.price || 0,
-      merchant: m.merchant_name,
-      domain: m.merchant_domain,
-      cashback_rate: parseCashbackRate(m.cashback?.display || '5%'),
-      cashback_amount: m.price ? (m.price * parseCashbackRate(m.cashback?.display || '5%')) : 0,
-      image_url: m.image_url || getMerchantFavicon(m.merchant_domain),
-      affiliate_link: m.affiliate_link || buildAffiliateLink(m.merchant_domain),
-      rating: m.rating || 4,
-      reviews_count: m.reviews_count || 0,
-      availability: m.availability || 'in_stock',
-      category: m.category || 'General',
-      source: 'fiber',
-    }));
+    return data.results
+      .filter(m => m.type === 'product' && m.price) // Only product results with prices
+      .slice(0, 10)
+      .map((m, idx) => {
+        const cashbackRate = m.cashback?.rate_percent ? m.cashback.rate_percent / 100 : 0.03;
+        const price = m.price || 0;
+        
+        return {
+          id: `fiber_${m.id || idx}_${Date.now()}`,
+          title: m.title || m.product_name || 'Unknown Product',
+          price: price,
+          merchant: m.merchant_name || 'Unknown',
+          domain: m.merchant_domain || 'unknown.com',
+          cashback_rate: cashbackRate,
+          cashback_amount: price * cashbackRate,
+          image_url: m.image_url || getMerchantFavicon(m.merchant_domain),
+          affiliate_link: m.affiliate_link || buildAffiliateLink(m.merchant_domain),
+          rating: m.rating || 4.0,
+          reviews_count: m.reviews_count || 0,
+          availability: m.in_stock ? 'in_stock' : 'out_of_stock',
+          category: m.category || 'General',
+          source: 'fiber',
+        };
+      });
   } catch (err) {
     console.error('searchFiber error:', err);
     return [];
@@ -333,7 +341,7 @@ function generateMockProducts(keywords, filters) {
 
   const products = [];
   const cashbackRates = [0.03, 0.05, 0.08, 0.1];
-  const baseKeyword = keywords.split(' ')[0];
+  const baseKeyword = keywords.split(' ')[0] || 'product';
 
   for (let i = 0; i < 6; i++) {
     const merchant = merchants[i % merchants.length];
@@ -342,7 +350,7 @@ function generateMockProducts(keywords, filters) {
 
     products.push({
       id: `mock_${i}_${Date.now()}`,
-      title: `${baseKeyword} ${i + 1}`,
+      title: `${baseKeyword} Option ${i + 1}`,
       price: Math.round(price * 100) / 100,
       merchant: merchant.name,
       domain: merchant.domain,
@@ -355,7 +363,6 @@ function generateMockProducts(keywords, filters) {
       availability: 'in_stock',
       category: extractCategoryFromKeywords(keywords),
       source: 'mock',
-      effective_price: 0, // Will be calculated later
     });
   }
 

@@ -60,45 +60,28 @@ export default async function handler(req, res) {
     let trendingInfo = null;
     let filterState = updateFilterState(message, filters);
 
+    // If we have search keywords, get products
     if (searchKeywords) {
-      // TEST: Try Fiber directly first
-      console.log(`[CHAT API] Searching for: "${searchKeywords}"`);
-      
       try {
-        const testUrl = `${FIBER_API}/agent/search?keywords=${encodeURIComponent(searchKeywords)}&agent_id=${AGENT_ID}&limit=10`;
-        console.log(`[CHAT API] TEST Fiber URL: ${testUrl}`);
-        
-        const testRes = await fetch(testUrl);
-        const testData = await testRes.json();
-        console.log(`[CHAT API] TEST Fiber returned:`, { success: testData.success, count: testData.results_count });
-        
-        if (testData.success && testData.results) {
-          const fiberProds = testData.results
-            .filter(m => m.type === 'product' && m.price)
-            .slice(0, 10);
-          console.log(`[CHAT API] TEST: Filtered to ${fiberProds.length} valid products`);
-        }
-      } catch (err) {
-        console.error('[CHAT API] TEST Fiber error:', err.message);
-      }
-      
-      // Multi-source product search
-      try {
-        products = await searchProducts(searchKeywords, filterState);
-        console.log(`[CHAT API] searchProducts returned ${products?.length || 0} products`);
-        
-        // If no products found, generate mock products
-        if (!products || products.length === 0) {
-          console.log('[CHAT API] No products found, falling back to mock data...');
+        // Try multi-source search
+        const searchResults = await searchProducts(searchKeywords, filterState);
+        if (Array.isArray(searchResults) && searchResults.length > 0) {
+          products = searchResults;
+          console.log(`[CHAT] Got ${products.length} real products`);
+        } else {
+          // Fallback to mock if search returns nothing
           products = generateMockProducts(searchKeywords, filterState);
-          console.log(`[CHAT API] Generated ${products?.length || 0} mock products`);
+          console.log(`[CHAT] Search empty, generated ${products.length} mock products`);
         }
-      } catch (err) {
-        console.error('[CHAT API] searchProducts error:', err.message, err.stack);
-        // Fallback to mock products if search fails
+      } catch (searchErr) {
+        // If search fails entirely, use mock products
+        console.error(`[CHAT] Search error: ${searchErr.message}`);
         products = generateMockProducts(searchKeywords, filterState);
-        console.log(`[CHAT API] Error fallback: Generated ${products?.length || 0} mock products`);
+        console.log(`[CHAT] Search failed, generated ${products.length} mock products`);
       }
+    } else {
+      // No search keywords detected, but respond with Claude anyway
+      console.log('[CHAT] No search keywords detected in message');
     }
 
     // Sort by effective price (best deal first)
@@ -114,13 +97,15 @@ export default async function handler(req, res) {
       }
     }
 
-    // CRITICAL: Ensure products array always exists and has data
+    // CRITICAL: Always ensure we have products
     if (!Array.isArray(products) || products.length === 0) {
-      console.log('[CHAT API] FINAL FALLBACK: Generating products because none found');
+      console.log('[CHAT] FINAL FALLBACK - Creating mock products');
       const keyword = searchKeywords?.split(' ')[0] || 'product';
       products = generateBasicMockProducts(keyword, 6);
-      console.log(`[CHAT API] Fallback: Generated ${products.length} mock products`);
+      console.log(`[CHAT] Created ${products.length} mock products for "${keyword}"`);
     }
+    
+    console.log(`[CHAT] Have ${products.length} products to format`);
 
     // Build enhanced system prompt with Claude integration
     const systemPrompt = buildSystemPrompt(products, searchKeywords, filterState, trendingInfo);
@@ -162,23 +147,27 @@ export default async function handler(req, res) {
     const claudeData = await claudeRes.json();
     const responseText = claudeData.content[0]?.text || 'I had trouble responding. Try again?';
 
-    // Format best deals prominently
+    // Format products for response
     let formattedProducts = [];
-    if (Array.isArray(products) && products.length > 0) {
-      try {
-        formattedProducts = products.map(formatProductForResponse);
-      } catch (formatErr) {
-        console.error('[CHAT API] Format error:', formatErr.message);
-        formattedProducts = [];
+    try {
+      if (Array.isArray(products)) {
+        formattedProducts = products
+          .filter(p => p && typeof p === 'object')
+          .map(p => formatProductForResponse(p))
+          .filter(p => p); // Remove any null/undefined
       }
+    } catch (formatErr) {
+      console.error(`[CHAT] Format error: ${formatErr.message}`);
+      // If formatting fails, return empty products but don't crash
+      formattedProducts = [];
     }
     
-    console.log(`[CHAT API] Final: ${formattedProducts.length} formatted products from ${products.length} raw products`);
+    console.log(`[CHAT] Returning ${formattedProducts.length} formatted products`);
 
     return res.status(200).json({
       success: true,
       response: responseText,
-      products: formattedProducts.length > 0 ? formattedProducts.slice(0, 6) : null,
+      products: (formattedProducts && formattedProducts.length > 0) ? formattedProducts.slice(0, 6) : null,
       available_filters: availableFilters,
       trending: trendingInfo,
       current_filters: filterState,

@@ -64,20 +64,21 @@ export default async function handler(req, res) {
       // Multi-source product search
       try {
         products = await searchProducts(searchKeywords, filterState);
-        console.log(`[CHAT API] Found ${products.length} products for: ${searchKeywords}`);
+        console.log(`[CHAT API] searchProducts returned ${products?.length || 0} products`);
         
         // If no products found, generate mock products
-        if (products.length === 0) {
-          console.log('[CHAT API] No products from search, generating mock data...');
+        if (!products || products.length === 0) {
+          console.log('[CHAT API] No products found, falling back to mock data...');
           products = generateMockProducts(searchKeywords, filterState);
-          console.log(`[CHAT API] Generated ${products.length} mock products`);
+          console.log(`[CHAT API] Generated ${products?.length || 0} mock products`);
         }
       } catch (err) {
-        console.error('[CHAT API] searchProducts error:', err.message);
+        console.error('[CHAT API] searchProducts error:', err.message, err.stack);
         // Fallback to mock products if search fails
         products = generateMockProducts(searchKeywords, filterState);
-        console.log(`[CHAT API] Fallback: Generated ${products.length} mock products`);
+        console.log(`[CHAT API] Error fallback: Generated ${products?.length || 0} mock products`);
       }
+    }
 
       // Sort by effective price (best deal first)
       products = sortByEffectivePrice(products);
@@ -89,6 +90,13 @@ export default async function handler(req, res) {
       if (shouldFetchTrending(searchKeywords)) {
         trendingInfo = fetchPinterestTrending(searchKeywords);
       }
+    }
+
+    // Safety: if still no products, force mock generation
+    if (!products || products.length === 0) {
+      console.log('[CHAT API] FINAL FALLBACK: No products after all attempts');
+      products = generateBasicMockProducts(searchKeywords?.split(' ')[0] || 'product', 6);
+      console.log(`[CHAT API] Generated ${products?.length} basic mock products`);
     }
 
     // Build enhanced system prompt with Claude integration

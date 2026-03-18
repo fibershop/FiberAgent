@@ -42,7 +42,24 @@ const TRENDING_CATEGORIES = {
 };
 
 export default async function handler(req, res) {
+  // Overall request timeout: 25 seconds (Vercel serverless timeout is 30s)
+  const overallTimeout = setTimeout(() => {
+    if (!res.headersSent) {
+      console.error('[CHAT] Overall timeout - taking >25 seconds, returning early');
+      return res.status(504).json({ 
+        error: 'Request timeout',
+        message: 'The request took too long to process' 
+      });
+    }
+  }, 25000);
+
+  // Cleanup timeout on response end (support both Express and test mocks)
+  if (res.on && typeof res.on === 'function') {
+    res.on('finish', () => clearTimeout(overallTimeout));
+  }
+
   if (req.method !== 'POST') {
+    clearTimeout(overallTimeout);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -53,6 +70,7 @@ export default async function handler(req, res) {
   } = req.body;
 
   if (!message) {
+    clearTimeout(overallTimeout);
     return res.status(400).json({ error: 'message required' });
   }
 
@@ -116,9 +134,8 @@ export default async function handler(req, res) {
 
     let responseText = '';
 
-    // Skip Claude for now to debug product return issue
     // Call Claude API if we have products or conversation history
-    if (false && process.env.ANTHROPIC_API_KEY && (products.length > 0 || conversationHistory.length > 0)) {
+    if (process.env.ANTHROPIC_API_KEY && (products.length > 0 || conversationHistory.length > 0)) {
       try {
         console.log('[CHAT] Calling Claude API...');
         const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
@@ -177,6 +194,7 @@ export default async function handler(req, res) {
       formattedProducts = [];
     }
 
+    clearTimeout(overallTimeout);
     return res.status(200).json({
       success: true,
       response: responseText,
@@ -186,6 +204,7 @@ export default async function handler(req, res) {
       current_filters: filterState,
     });
   } catch (err) {
+    clearTimeout(overallTimeout);
     console.error('[CHAT] Error:', err);
     return res.status(500).json({ 
       error: 'Could not process your request',
@@ -202,47 +221,62 @@ export default async function handler(req, res) {
  */
 async function searchProducts(keywords, filters) {
   let allProducts = [];
+  
+  // Timeout for entire search operation: 12 seconds
+  const searchTimeout = setTimeout(() => {
+    console.warn('[SEARCH] Search taking >12s, will timeout if Fiber API is hanging');
+  }, 12000);
 
-  // 1. Search Fiber API (primary source)
   try {
-    console.log('[SEARCH] Querying Fiber API for:', keywords);
-    const fiberProducts = await searchFiber(keywords, filters);
-    if (fiberProducts && fiberProducts.length > 0) {
-      console.log('[SEARCH] Fiber returned', fiberProducts.length, 'products');
-      allProducts.push(...fiberProducts);
-    }
-  } catch (err) {
-    console.error('[SEARCH] Fiber error:', err.message);
-  }
-
-  // 2. Search other real sources (only if Fiber returned nothing)
-  if (allProducts.length === 0) {
+    // 1. Search Fiber API (primary source)
     try {
-      console.log('[SEARCH] Fiber had no results, trying other sources...');
-      const otherProducts = await searchOtherSources(keywords, filters);
-      if (otherProducts && otherProducts.length > 0) {
-        console.log('[SEARCH] Other sources returned', otherProducts.length, 'products');
-        allProducts.push(...otherProducts);
+      console.log('[SEARCH] Querying Fiber API for:', keywords);
+      const fiberProducts = await searchFiber(keywords, filters);
+      if (fiberProducts && fiberProducts.length > 0) {
+        console.log('[SEARCH] Fiber returned', fiberProducts.length, 'products');
+        allProducts.push(...fiberProducts);
       }
     } catch (err) {
-      console.error('[SEARCH] Other sources error:', err.message);
+      console.error('[SEARCH] Fiber error:', err.message);
     }
+
+    // 2. Search other real sources (only if Fiber returned nothing)
+    if (allProducts.length === 0) {
+      try {
+        console.log('[SEARCH] Fiber had no results, trying other sources...');
+        const otherProducts = await searchOtherSources(keywords, filters);
+        if (otherProducts && otherProducts.length > 0) {
+          console.log('[SEARCH] Other sources returned', otherProducts.length, 'products');
+          allProducts.push(...otherProducts);
+        }
+      } catch (err) {
+        console.error('[SEARCH] Other sources error:', err.message);
+      }
+    }
+
+    // 3. Deduplicate & calculate effective prices
+    allProducts = deduplicateProducts(allProducts);
+    allProducts = allProducts.map(p => ({
+      ...p,
+      effective_price: calculateEffectivePrice(p.price, p.cashback_rate),
+    }));
+
+    clearTimeout(searchTimeout);
+    return allProducts;
+  } catch (err) {
+    clearTimeout(searchTimeout);
+    console.error('[SEARCH] Critical error:', err.message);
+    return [];
   }
-
-  // 3. Deduplicate & calculate effective prices
-  allProducts = deduplicateProducts(allProducts);
-  allProducts = allProducts.map(p => ({
-    ...p,
-    effective_price: calculateEffectivePrice(p.price, p.cashback_rate),
-  }));
-
-  return allProducts;
 }
 
 /**
  * Search Fiber API with filter params
  */
 async function searchFiber(keywords, filters) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000); // 8-second timeout
+  
   try {
     const filterQueryParams = buildFilterQueryParams(filters);
     const searchUrl = `${FIBER_API}/agent/search?keywords=${encodeURIComponent(keywords)}&agent_id=${AGENT_ID}&limit=15${filterQueryParams}`;
@@ -252,8 +286,10 @@ async function searchFiber(keywords, filters) {
     const searchRes = await fetch(searchUrl, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      timeout: 10000,
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!searchRes.ok) {
       console.error('[FIBER] HTTP', searchRes.status);
@@ -305,7 +341,12 @@ async function searchFiber(keywords, filters) {
     }
     return products;
   } catch (err) {
-    console.error('[FIBER] Exception:', err.message);
+    clearTimeout(timeout);
+    if (err.name === 'AbortError') {
+      console.error('[FIBER] Timeout - request took longer than 8 seconds');
+    } else {
+      console.error('[FIBER] Exception:', err.message);
+    }
     return [];
   }
 }

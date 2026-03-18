@@ -61,6 +61,27 @@ export default async function handler(req, res) {
     let filterState = updateFilterState(message, filters);
 
     if (searchKeywords) {
+      // TEST: Try Fiber directly first
+      console.log(`[CHAT API] Searching for: "${searchKeywords}"`);
+      
+      try {
+        const testUrl = `${FIBER_API}/agent/search?keywords=${encodeURIComponent(searchKeywords)}&agent_id=${AGENT_ID}&limit=10`;
+        console.log(`[CHAT API] TEST Fiber URL: ${testUrl}`);
+        
+        const testRes = await fetch(testUrl);
+        const testData = await testRes.json();
+        console.log(`[CHAT API] TEST Fiber returned:`, { success: testData.success, count: testData.results_count });
+        
+        if (testData.success && testData.results) {
+          const fiberProds = testData.results
+            .filter(m => m.type === 'product' && m.price)
+            .slice(0, 10);
+          console.log(`[CHAT API] TEST: Filtered to ${fiberProds.length} valid products`);
+        }
+      } catch (err) {
+        console.error('[CHAT API] TEST Fiber error:', err.message);
+      }
+      
       // Multi-source product search
       try {
         products = await searchProducts(searchKeywords, filterState);
@@ -140,12 +161,14 @@ export default async function handler(req, res) {
     const responseText = claudeData.content[0]?.text || 'I had trouble responding. Try again?';
 
     // Format best deals prominently
-    const formattedProducts = products.map(formatProductForResponse);
+    const formattedProducts = products?.map(formatProductForResponse) || [];
+    
+    console.log(`[CHAT API] Final response: ${formattedProducts?.length || 0} formatted products`);
 
     return res.status(200).json({
       success: true,
       response: responseText,
-      products: formattedProducts.length > 0 ? formattedProducts.slice(0, 6) : null,
+      products: formattedProducts && formattedProducts.length > 0 ? formattedProducts.slice(0, 6) : null,
       available_filters: availableFilters,
       trending: trendingInfo,
       current_filters: filterState,

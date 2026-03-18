@@ -116,8 +116,9 @@ export default async function handler(req, res) {
 
     let responseText = '';
 
+    // Skip Claude for now to debug product return issue
     // Call Claude API if we have products or conversation history
-    if (process.env.ANTHROPIC_API_KEY && (products.length > 0 || conversationHistory.length > 0)) {
+    if (false && process.env.ANTHROPIC_API_KEY && (products.length > 0 || conversationHistory.length > 0)) {
       try {
         console.log('[CHAT] Calling Claude API...');
         const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {

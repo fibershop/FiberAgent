@@ -65,6 +65,13 @@ export default async function handler(req, res) {
       try {
         products = await searchProducts(searchKeywords, filterState);
         console.log(`[CHAT API] Found ${products.length} products for: ${searchKeywords}`);
+        
+        // If no products found, generate mock products
+        if (products.length === 0) {
+          console.log('[CHAT API] No products from search, generating mock data...');
+          products = generateMockProducts(searchKeywords, filterState);
+          console.log(`[CHAT API] Generated ${products.length} mock products`);
+        }
       } catch (err) {
         console.error('[CHAT API] searchProducts error:', err.message);
         // Fallback to mock products if search fails
@@ -232,41 +239,83 @@ async function searchFiber(keywords, filters) {
 async function searchShopify(keywords, filters) {
   try {
     const products = [];
+    const baseKeyword = keywords.split(' ')[0] || 'product';
 
     // Simulate searching top 5 Shopify stores (can be extended to real API calls)
     // For now, return mock data with variety of prices and cashback rates
     const storeSelections = SHOPIFY_STORES.slice(0, 5);
     
     for (const store of storeSelections) {
-      // In production, make actual API calls to each store
-      // For now, generate realistic mock products
-      const basePrice = 50 + Math.random() * 200;
-      const cashbackRates = [0.02, 0.03, 0.05, 0.08, 0.1];
-      const randomCashback = cashbackRates[Math.floor(Math.random() * cashbackRates.length)];
+      try {
+        // In production, make actual API calls to each store
+        // For now, generate realistic mock products
+        const basePrice = 50 + Math.random() * 200;
+        const cashbackRates = [0.02, 0.03, 0.05, 0.08, 0.1];
+        const randomCashback = cashbackRates[Math.floor(Math.random() * cashbackRates.length)];
+        const productNum = Math.floor(Math.random() * 5) + 1;
 
-      products.push({
-        id: `shopify_${store.name}_${Date.now()}`,
-        title: `${keywords.split(' ')[0]} - ${store.name} Selection`,
-        price: Math.round(basePrice),
-        merchant: store.name,
-        domain: store.domain,
-        cashback_rate: randomCashback,
-        cashback_amount: Math.round(basePrice * randomCashback * 100) / 100,
-        image_url: getMerchantFavicon(store.domain),
-        affiliate_link: buildAffiliateLink(store.domain),
-        rating: 3.5 + Math.random() * 1.5,
-        reviews_count: Math.floor(Math.random() * 300),
-        availability: 'in_stock',
-        category: extractCategoryFromKeywords(keywords),
-        source: 'shopify',
-      });
+        const product = {
+          id: `shopify_${store.name}_${Date.now()}_${Math.random()}`,
+          title: `${baseKeyword} ${productNum} from ${store.name}`,
+          price: Math.round(basePrice * 100) / 100,
+          merchant: store.name,
+          domain: store.domain,
+          cashback_rate: randomCashback,
+          cashback_amount: Math.round(basePrice * randomCashback * 100) / 100,
+          image_url: getMerchantFavicon(store.domain),
+          affiliate_link: buildAffiliateLink(store.domain),
+          rating: 3.5 + Math.random() * 1.5,
+          reviews_count: Math.floor(Math.random() * 300),
+          availability: 'in_stock',
+          category: extractCategoryFromKeywords(keywords),
+          source: 'shopify',
+        };
+        
+        products.push(product);
+      } catch (storeErr) {
+        console.error(`Error processing store ${store.name}:`, storeErr.message);
+        // Continue to next store
+      }
     }
 
-    return products;
+    console.log(`[searchShopify] Generated ${products.length} products for "${keywords}"`);
+    return products.length > 0 ? products : generateBasicMockProducts(baseKeyword, 5);
   } catch (err) {
     console.error('searchShopify error:', err);
-    return [];
+    return generateBasicMockProducts(keywords.split(' ')[0] || 'product', 5);
   }
+}
+
+/**
+ * Generate basic mock products as last-resort fallback
+ */
+function generateBasicMockProducts(keyword, count) {
+  const merchants = ['Amazon', 'Best Buy', 'Target', 'Walmart', 'eBay'];
+  const products = [];
+  
+  for (let i = 0; i < count; i++) {
+    const price = 50 + Math.random() * 200;
+    const cashback = [0.02, 0.03, 0.05, 0.08][i % 4];
+    
+    products.push({
+      id: `basic_mock_${i}_${Date.now()}`,
+      title: `${keyword} Option ${i + 1}`,
+      price: Math.round(price * 100) / 100,
+      merchant: merchants[i % merchants.length],
+      domain: merchants[i % merchants.length].toLowerCase() + '.com',
+      cashback_rate: cashback,
+      cashback_amount: Math.round(price * cashback * 100) / 100,
+      image_url: '🛍️',
+      affiliate_link: '#',
+      rating: 4 + Math.random() * 0.8,
+      reviews_count: 100 + Math.random() * 500,
+      availability: 'in_stock',
+      category: 'Product',
+      source: 'mock',
+    });
+  }
+  
+  return products;
 }
 
 /**

@@ -1349,6 +1349,41 @@ fb22213 ADD: Updated registry testing instructions
 
 ---
 
+## 🎨 FiberAgent Chat Redesign — Daydream UI (Mar 18, 2026)
+
+**Status:** 🔄 IN PROGRESS (2 sub-agents working in parallel)
+
+**Phase 1 ✅ COMPLETE:**
+- ProductCard component (image, price, cashback, ratings, bookmarks)
+- FilterChips component (5 filter categories, dynamic counts, trending section)
+- Updated /api/chat.js with filter support
+
+**Phase 2 🔄 (Multi-source search engine):**
+- Multi-source search: Fiber API + Shopify stores (free methods)
+- Smart Pinterest trending (only for vague queries)
+- Best-deal detection + sorting (effective price = price - cashback)
+- Per-conversation filter state management
+- Response format: {products, available_filters, trending}
+
+**Phase 2b 🔄 (Frontend integration):**
+- Updated ChatPage.js to render ProductCard + FilterChips
+- Filter chip interactions (auto-refine on click)
+- CompareModal component (price comparison table)
+- Bookmark persistence (localStorage)
+- Error handling + loading states
+- Mobile responsiveness
+
+**Design Decisions:**
+- Best-deal display: Best deal prominent (with cashback highlighted), alternatives below
+- Filters: Per-conversation state (reset unless user says otherwise)
+- Online search: Free methods only (Shopify scraping, no paid APIs)
+- Pinterest trending: Smart detection (only for vague queries like "shoes", not specific like "Nike Air Max")
+
+**Timeline:** ~5-6 hours total
+**Expected Completion:** Mar 18, 2026 evening
+
+---
+
 ## Moltbook Heartbeat Status
 
 **Last Check:** Wed, Mar 18, 2026 @ 4:08 PM (Europe/Paris)

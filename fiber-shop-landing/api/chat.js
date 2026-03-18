@@ -247,28 +247,34 @@ async function searchFiber(keywords, filters) {
       return [];
     }
 
-    // Filter to valid products only
+    // Filter to valid products only - match actual Fiber response structure
     const products = data.results
-      .filter(m => m.price && m.price > 0 && (m.product_name || m.title))
+      .filter(m => m.type === 'product' && m.title && m.price && m.price > 0)
       .slice(0, 15)
       .map((m, idx) => {
-        const cashbackRate = parseCashbackRate(m.cashback?.display || m.cashback?.rate_percent || '3%');
+        // Parse cashback from Fiber response format
+        let cashbackRate = 0.03; // default
+        if (m.cashback) {
+          if (m.cashback.rate_percent) cashbackRate = m.cashback.rate_percent / 100;
+          else if (m.cashback.display) cashbackRate = parseCashbackRate(m.cashback.display);
+        }
+        
         const price = parseFloat(m.price);
         
         return {
-          id: `fiber_${idx}_${Date.now()}`,
-          title: m.product_name || m.title || 'Unknown Product',
+          id: m.id || `fiber_${idx}_${Date.now()}`,
+          title: m.title,
           price: price,
-          merchant: m.merchant_name || 'Unknown',
+          merchant: m.merchant_name || 'Unknown Merchant',
           domain: m.merchant_domain || 'unknown.com',
           image_url: m.image_url || getMerchantFavicon(m.merchant_domain),
           affiliate_link: m.affiliate_link || buildAffiliateLink(m.merchant_domain),
           cashback_rate: cashbackRate,
           cashback_amount: Math.round(price * cashbackRate * 100) / 100,
-          rating: m.rating || m.avg_rating || 4.0,
-          reviews_count: m.reviews_count || m.review_count || 0,
-          availability: m.in_stock ? 'in_stock' : (m.availability || 'unknown'),
-          category: m.category || 'General',
+          rating: m.rating || 4.0,
+          reviews_count: m.reviews_count || 0,
+          availability: m.in_stock !== false ? 'in_stock' : 'out_of_stock',
+          category: 'General',
           source: 'fiber',
         };
       });

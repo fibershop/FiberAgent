@@ -101,7 +101,8 @@ export default async function handler(req, res) {
       }
     }
 
-      // Sort by effective price (best deal first)
+    // Sort by effective price (best deal first)
+    if (Array.isArray(products) && products.length > 0) {
       products = sortByEffectivePrice(products);
 
       // Update available filters based on results
@@ -113,11 +114,12 @@ export default async function handler(req, res) {
       }
     }
 
-    // Safety: if still no products, force mock generation
-    if (!products || products.length === 0) {
-      console.log('[CHAT API] FINAL FALLBACK: No products after all attempts');
-      products = generateBasicMockProducts(searchKeywords?.split(' ')[0] || 'product', 6);
-      console.log(`[CHAT API] Generated ${products?.length} basic mock products`);
+    // CRITICAL: Ensure products array always exists and has data
+    if (!Array.isArray(products) || products.length === 0) {
+      console.log('[CHAT API] FINAL FALLBACK: Generating products because none found');
+      const keyword = searchKeywords?.split(' ')[0] || 'product';
+      products = generateBasicMockProducts(keyword, 6);
+      console.log(`[CHAT API] Fallback: Generated ${products.length} mock products`);
     }
 
     // Build enhanced system prompt with Claude integration

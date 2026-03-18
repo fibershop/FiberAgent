@@ -612,27 +612,42 @@ No merchants found yet for "${searchKeywords}". Ask the user to clarify what the
  */
 function extractSearchKeywords(message) {
   const lowerMsg = message.toLowerCase();
+  const trimmed = message.trim();
 
+  // Shopping intent words
   const shoppingKeywords = [
     'find', 'search', 'show', 'look for', 'want', 'need', 'recommend',
-    'best', 'cheapest', 'deal', 'cashback', 'save', 'buy',
+    'best', 'cheapest', 'deal', 'cashback', 'save', 'buy', 'price',
   ];
 
   const hasShoppingIntent = shoppingKeywords.some(k => lowerMsg.includes(k));
-  if (!hasShoppingIntent) return null;
 
-  const patterns = [
-    /(?:find|search|show|looking for|want|need|recommend|buy)\s+(?:me\s+)?(.+?)(?:\?|$|under|below|with|for|how)/i,
-    /(?:best|cheapest|top)\s+(.+?)(?:\?|$|under|with|for)/i,
-    /(.+?)\s+(?:deal|cashback|offer|price)/i,
-    /([a-z0-9\s]+?\s+[a-z0-9]+)/i,
-  ];
+  if (hasShoppingIntent) {
+    // With shopping keywords, use pattern matching to extract product name
+    const patterns = [
+      /(?:find|search|show|looking for|want|need|recommend|buy)\s+(?:me\s+)?(.+?)(?:\?|$|under|below|with|for|how)/i,
+      /(?:best|cheapest|top)\s+(.+?)(?:\?|$|under|with|for)/i,
+      /(.+?)\s+(?:deal|cashback|offer|price)/i,
+    ];
 
-  for (const pattern of patterns) {
-    const match = message.match(pattern);
-    if (match && match[1]) {
-      const keyword = match[1].trim();
-      if (keyword.length > 2) return keyword;
+    for (const pattern of patterns) {
+      const match = message.match(pattern);
+      if (match && match[1]) {
+        const keyword = match[1].trim();
+        if (keyword.length > 2) return keyword;
+      }
+    }
+  }
+
+  // ALSO: If the message looks like a bare product query (2-4 words, no complex structure)
+  // Examples: "Nike shoes", "running shoes", "blue sneakers under 200"
+  const wordCount = trimmed.split(/\s+/).length;
+  if (wordCount >= 1 && wordCount <= 4 && trimmed.length < 50) {
+    // Check if it looks like a product (contains words that could be products)
+    // Not: questions, commands, or statements
+    if (!lowerMsg.match(/\?$/) && !lowerMsg.match(/^how\s|^what\s|^when\s|^where\s/) && !lowerMsg.includes('chat')) {
+      console.log(`[CHAT] Detected bare product query: "${trimmed}"`);
+      return trimmed;
     }
   }
 

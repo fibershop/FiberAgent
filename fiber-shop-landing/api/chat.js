@@ -163,14 +163,22 @@ export default async function handler(req, res) {
     const responseText = claudeData.content[0]?.text || 'I had trouble responding. Try again?';
 
     // Format best deals prominently
-    const formattedProducts = products?.map(formatProductForResponse) || [];
+    let formattedProducts = [];
+    if (Array.isArray(products) && products.length > 0) {
+      try {
+        formattedProducts = products.map(formatProductForResponse);
+      } catch (formatErr) {
+        console.error('[CHAT API] Format error:', formatErr.message);
+        formattedProducts = [];
+      }
+    }
     
-    console.log(`[CHAT API] Final response: ${formattedProducts?.length || 0} formatted products`);
+    console.log(`[CHAT API] Final: ${formattedProducts.length} formatted products from ${products.length} raw products`);
 
     return res.status(200).json({
       success: true,
       response: responseText,
-      products: formattedProducts && formattedProducts.length > 0 ? formattedProducts.slice(0, 6) : null,
+      products: formattedProducts.length > 0 ? formattedProducts.slice(0, 6) : null,
       available_filters: availableFilters,
       trending: trendingInfo,
       current_filters: filterState,

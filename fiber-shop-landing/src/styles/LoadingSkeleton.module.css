@@ -1,0 +1,109 @@
+@keyframes skeleton-loading {
+  0% {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Product Skeleton */
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.skeletonCard {
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 208, 132, 0.1);
+  padding: 16px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.skeletonTitle {
+  width: 100%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.skeletonPrice {
+  width: 60%;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.skeletonCashback {
+  width: 80%;
+  height: 14px;
+  background: rgba(0, 208, 132, 0.1);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.skeletonButton {
+  width: 100%;
+  height: 36px;
+  background: rgba(0, 208, 132, 0.1);
+  border-radius: 6px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+/* Filter Skeleton */
+.skeletonFilters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.skeletonFilterChip {
+  width: 120px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border: 1px solid rgba(0, 208, 132, 0.1);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .skeletonGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeletonImage {
+    height: 150px;
+  }
+}

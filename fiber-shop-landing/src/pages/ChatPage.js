@@ -2,8 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import styles from '../styles/ChatPage.module.css';
+import ProductCard from '../components/ProductCard';
+import FilterChips from '../components/FilterChips';
+import CompareModal from '../components/CompareModal';
+import ErrorMessage from '../components/ErrorMessage';
+import LoadingSkeleton from '../components/LoadingSkeleton';
+import { useBookmarks } from '../hooks/useBookmarks';
 
 export default function ChatPage() {
+  const { bookmarks, isBookmarked, toggleBookmark } = useBookmarks();
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -14,8 +21,14 @@ export default function ChatPage() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [walletConnected, setWalletConnected] = useState(true); // Enable by default for testing
+  const [walletConnected, setWalletConnected] = useState(true);
   const [showDisclaimer, setShowDisclaimer] = useState(!localStorage.getItem('fiberagent_disclaimer_accepted'));
+  const [showCompareModal, setShowCompareModal] = useState(false);
+  const [compareProducts, setCompareProducts] = useState([]);
+  const [compareTitle, setCompareTitle] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState({});
+  const [lastFilteredMessageId, setLastFilteredMessageId] = useState(null);
+  const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const [imageErrors, setImageErrors] = useState({});
@@ -56,6 +69,7 @@ export default function ChatPage() {
     const userMessage = input;
     setInput('');
     setLoading(true);
+    setError(null);
 
     // Add user message to state
     const newUserMessage = {
@@ -79,6 +93,10 @@ export default function ChatPage() {
         },
       ];
 
+      // Set a timeout for API call
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       // Call conversational chat API
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -86,23 +104,38 @@ export default function ChatPage() {
         body: JSON.stringify({
           message: userMessage,
           conversationHistory,
-        })
+        }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(res.statusText || 'API request failed');
+      }
 
       const data = await res.json();
 
-      if (!res.ok || !data.success) {
+      if (!data.success) {
         const errorMsg = data.error || 'Unknown error';
+        const errorType = errorMsg.includes('overload') ? 'timeout' : 'error';
         const friendlyError = errorMsg.includes('overload') 
-          ? '⏳ API is busy right now. Try again in a moment!'
-          : `❌ Error: ${errorMsg}`;
+          ? '⏳ Taking longer than expected. Retrying...'
+          : `🌐 Couldn't load products. Try again?`;
         
+        setError({
+          type: errorType,
+          message: friendlyError,
+          originalError: errorMsg,
+        });
+
         setMessages(prevMessages => [
           ...prevMessages,
           {
             id: prevMessages.length + 1,
             type: 'assistant',
             text: friendlyError,
+            error: true,
             timestamp: new Date(),
           },
         ]);
@@ -112,34 +145,60 @@ export default function ChatPage() {
       }
 
       // Transform product results to cards
-      const products = data.products?.map(m => ({
-        title: m.merchant,
-        price: 'Visit Store',
-        cashback_rate: parseFloat(m.cashback) / 100,
-        cashback_amount: 0,
-        merchant: m.domain,
-        image: m.image_url || '🛍️',
-        affiliate_link: m.affiliate_link,
+      const products = (data.products || []).map((p, idx) => ({
+        id: p.id || `product_${idx}`,
+        title: p.title || p.merchant || 'Unknown Product',
+        price: p.price || 0,
+        cashback_rate: (p.cashback_rate || parseFloat(p.cashback || 0) / 100),
+        cashback_amount: p.cashback_amount || 0,
+        merchant: p.merchant || p.domain || 'Unknown Merchant',
+        image: p.image_url || p.image || '🛍️',
+        affiliate_link: p.affiliate_link,
+        rating: p.rating || null,
+        reviews_count: p.reviews_count || 0,
+        availability: p.availability || null,
       })) || [];
 
-      // Add Claude's response
+      // Extract filters and trending from API if available
+      const availableFilters = data.available_filters || {
+        priceRanges: [],
+        categories: [],
+        ratings: [],
+        availability: [],
+        cashbackRates: [],
+      };
+      const trending = data.trending || [];
+
+      // Add Claude's response with products, filters, and trending
       setMessages(prevMessages => [
         ...prevMessages,
         {
           id: prevMessages.length + 1,
           type: 'assistant',
-          text: data.response,
+          text: data.response || 'Here are the products I found:',
           products: products.length > 0 ? products : null,
+          availableFilters: Object.keys(availableFilters).length > 0 ? availableFilters : null,
+          trending: trending.length > 0 ? trending : null,
           timestamp: new Date(),
         },
       ]);
     } catch (err) {
+      const isTimeout = err.name === 'AbortError';
+      const errorMsg = isTimeout ? '⏳ Request timed out. Please try again.' : `🌐 Network error: ${err.message}`;
+      
+      setError({
+        type: isTimeout ? 'timeout' : 'network',
+        message: errorMsg,
+        originalError: err.message,
+      });
+
       setMessages(prevMessages => [
         ...prevMessages,
         {
           id: prevMessages.length + 1,
           type: 'assistant',
-          text: `❌ Error: ${err.message}`,
+          text: errorMsg,
+          error: true,
           timestamp: new Date(),
         },
       ]);
@@ -155,6 +214,77 @@ export default function ChatPage() {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleFilterClick = (filters) => {
+    setSelectedFilters(filters);
+    
+    // Build filter query string
+    const filterParts = [];
+    Object.entries(filters).forEach(([key, values]) => {
+      if (Array.isArray(values) && values.length > 0) {
+        filterParts.push(`${key}: ${values.join(', ')}`);
+      } else if (typeof values === 'string') {
+        filterParts.push(`${values}`);
+      }
+    });
+
+    const filterQuery = filterParts.length > 0 
+      ? `Show me products with ${filterParts.join(' and ')}`
+      : 'Show me more options';
+
+    // Auto-send the filter query
+    setInput(filterQuery);
+    setLastFilteredMessageId(messages[messages.length - 1]?.id);
+    setTimeout(() => {
+      // Trigger send programmatically
+      handleSendMessage.call({ currentQuery: filterQuery });
+    }, 100);
+  };
+
+  const handleBookmarkClick = (product) => {
+    toggleBookmark(product);
+  };
+
+  const handleMoreLikeThis = (productTitle, merchant) => {
+    const query = `Show me more products like "${productTitle}" from ${merchant}`;
+    setInput(query);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  };
+
+  const handleCompare = (productId, productTitle, price, merchant) => {
+    // In a real scenario, you'd fetch comparison data from API
+    // For now, we'll collect products for comparison
+    const currentProduct = {
+      id: productId,
+      title: productTitle,
+      price,
+      merchant,
+    };
+
+    setCompareTitle(productTitle);
+    
+    // Find all products with same title from current messages
+    const allProducts = [];
+    messages.forEach(msg => {
+      if (msg.products) {
+        allProducts.push(...msg.products);
+      }
+    });
+
+    const productsToCompare = allProducts.filter(p => 
+      p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
+      p.title === productTitle
+    );
+
+    setCompareProducts(productsToCompare.slice(0, 4)); // Limit to 4
+    setShowCompareModal(true);
+  };
+
+  const handleRetry = () => {
+    setError(null);
   };
 
   return (
@@ -251,6 +381,17 @@ export default function ChatPage() {
         <div className={styles.chatContainer}>
           {/* Messages */}
           <div className={styles.messagesArea}>
+            {/* Error Display */}
+            {error && (
+              <ErrorMessage
+                type={error.type}
+                title={error.type === 'timeout' ? 'Taking Too Long' : 'Oops!'}
+                message={error.message}
+                onRetry={handleRetry}
+                onDismiss={() => setError(null)}
+              />
+            )}
+
             {messages.map((message, idx) => (
               <motion.div
                 key={message.id}
@@ -263,77 +404,40 @@ export default function ChatPage() {
                   <p className={styles.messageText}>{message.text}</p>
 
                   {/* Products Grid */}
-                  {message.products && (
+                  {message.products && message.products.length > 0 && (
                     <div className={styles.productsGrid}>
-                      {message.products.map((product, pidx) => (
-                        <motion.div
-                          key={pidx}
-                          className={styles.productCard}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: pidx * 0.1 }}
-                        >
-                          <div className={styles.productImage}>
-                            {typeof product.image === 'string' && product.image.startsWith('http') && !imageErrors[pidx] ? (
-                              <img 
-                                src={product.image} 
-                                alt={product.title} 
-                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }}
-                                onError={() => setImageErrors(prev => ({ ...prev, [pidx]: true }))}
-                              />
-                            ) : (
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', fontSize: '2.5rem', background: 'rgba(0, 208, 132, 0.1)' }}>
-                                {product.image.startsWith('http') ? '🛍️' : product.image}
-                              </div>
-                            )}
-                          </div>
-
-                          <div className={styles.productDetails}>
-                            <div className={styles.productTitle}>{product.title}</div>
-
-                            <div className={styles.productPrice}>
-                              <span className={styles.priceLabel}>Price:</span>
-                              <span className={styles.priceValue}>
-                                {typeof product.price === 'number' ? `$${product.price.toLocaleString()}` : product.price}
-                              </span>
-                            </div>
-
-                            <div className={styles.productCashback}>
-                              <span className={styles.cashbackLabel}>Cashback:</span>
-                              <span className={styles.cashbackValue}>
-                                {(product.cashback_rate * 100).toFixed(1)}% {product.cashback_amount > 0 ? `($${product.cashback_amount})` : ''}
-                              </span>
-                            </div>
-
-                            <div className={styles.productMerchant}>
-                              <span className={styles.merchantLabel}>Merchant:</span>
-                              <span className={styles.merchantName}>{product.merchant}</span>
-                            </div>
-
-                            {product.affiliate_link ? (
-                              <motion.a
-                                href={product.affiliate_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.btnShopNow}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                style={{ display: 'inline-block', textDecoration: 'none', color: 'inherit' }}
-                              >
-                                🛒 Shop Now
-                              </motion.a>
-                            ) : (
-                              <button
-                                className={styles.btnShopNow}
-                                disabled
-                                style={{ opacity: 0.5, cursor: 'not-allowed' }}
-                              >
-                                ⏳ Loading Link...
-                              </button>
-                            )}
-                          </div>
-                        </motion.div>
+                      {message.products.map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          id={product.id}
+                          title={product.title}
+                          price={product.price}
+                          image={product.image}
+                          merchant={product.merchant}
+                          cashback_rate={product.cashback_rate}
+                          cashback_amount={product.cashback_amount}
+                          rating={product.rating}
+                          reviews_count={product.reviews_count}
+                          availability={product.availability}
+                          affiliate_link={product.affiliate_link}
+                          isBookmarked={isBookmarked(product.id)}
+                          onBookmark={handleBookmarkClick}
+                          onMoreLikeThis={handleMoreLikeThis}
+                          onCompare={handleCompare}
+                        />
                       ))}
+                    </div>
+                  )}
+
+                  {/* Filter Chips */}
+                  {message.availableFilters && (
+                    <div className={styles.filterSection}>
+                      <FilterChips
+                        availableFilters={message.availableFilters}
+                        onFiltersChange={handleFilterClick}
+                        selectedFilters={selectedFilters}
+                        trending={message.trending}
+                      />
                     </div>
                   )}
 
@@ -351,6 +455,8 @@ export default function ChatPage() {
                 animate={{ opacity: 1 }}
               >
                 <div className={styles.messageBubble}>
+                  <p className={styles.messageText}>🔍 Finding the best products for you...</p>
+                  <LoadingSkeleton count={2} type="product" />
                   <div className={styles.loadingDots}>
                     <span className={styles.dot}></span>
                     <span className={styles.dot}></span>
@@ -404,6 +510,14 @@ export default function ChatPage() {
           </p>
         </footer>
       </div>
+
+      {/* Compare Modal */}
+      <CompareModal
+        isOpen={showCompareModal}
+        onClose={() => setShowCompareModal(false)}
+        products={compareProducts}
+        productTitle={compareTitle}
+      />
     </>
   );
 }

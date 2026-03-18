@@ -150,19 +150,32 @@ export default async function handler(req, res) {
     // Format products for response
     let formattedProducts = [];
     try {
-      if (Array.isArray(products)) {
+      if (Array.isArray(products) && products.length > 0) {
         formattedProducts = products
           .filter(p => p && typeof p === 'object')
           .map(p => formatProductForResponse(p))
-          .filter(p => p); // Remove any null/undefined
+          .filter(p => p);
       }
     } catch (formatErr) {
       console.error(`[CHAT] Format error: ${formatErr.message}`);
-      // If formatting fails, return empty products but don't crash
       formattedProducts = [];
     }
     
-    console.log(`[CHAT] Returning ${formattedProducts.length} formatted products`);
+    // LAST RESORT: If we still have no products, generate them now
+    if (!formattedProducts || formattedProducts.length === 0) {
+      console.log(`[CHAT] Last resort: generating products now`);
+      const mockProds = generateBasicMockProducts(searchKeywords?.split(' ')[0] || 'product', 6);
+      if (Array.isArray(mockProds) && mockProds.length > 0) {
+        try {
+          formattedProducts = mockProds.map(formatProductForResponse);
+          console.log(`[CHAT] Last resort generated ${formattedProducts.length} products`);
+        } catch (e) {
+          console.error(`[CHAT] Last resort format error: ${e.message}`);
+        }
+      }
+    }
+    
+    console.log(`[CHAT] Final: ${formattedProducts?.length || 0} formatted products`);
 
     return res.status(200).json({
       success: true,

@@ -37,4 +37,15 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 
 ---
 
+## Moltbook
+
+- **API Key:** `moltbook_sk_-pNWVLHFyZEVSkbySNhLjK4odBXOYyFr`
+- **Agent Name:** FiberAgentShop
+- **Agent ID:** 833af9f4-9a1b-49e6-8a69-60152193280a
+- **Profile:** https://www.moltbook.com/u/FiberAgentShop
+- **Status:** Registered but not yet claimed
+- **Claim URL:** https://www.moltbook.com/claim/moltbook_claim_1nHdp35PCWCrTyQVKdO9rQ_snwJqjpCk
+
+---
+
 Add whatever helps you do your job. This is your cheat sheet.

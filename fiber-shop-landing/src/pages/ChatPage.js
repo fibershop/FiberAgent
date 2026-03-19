@@ -142,38 +142,24 @@ export default function ChatPage() {
       }
 
       // Transform product results to cards
-      // Handle both flat and nested (best_deal) response formats
-      const products = (data.products || []).map((p, idx) => {
-        const bestDeal = p.best_deal || {};
-        return {
-          id: p.id || `product_${idx}`,
-          title: p.title || bestDeal.merchant || 'Unknown Product',
-          price: bestDeal.price || p.price || bestDeal.effective_price || 0,
-          cashback_rate: bestDeal.cashback_rate || p.cashback_rate || parseFloat(p.cashback || 0) / 100,
-          cashback_amount: bestDeal.cashback_amount || p.cashback_amount || 0,
-          merchant: bestDeal.merchant || p.merchant || p.domain || 'Unknown Merchant',
-          image: p.image_url || p.image || '🛍️',
-          affiliate_link: bestDeal.affiliate_link || p.affiliate_link,
-          // Only show rating if it's real (has reviews). Otherwise null to hide stars.
-          rating: (p.rating && p.reviews_count > 0) ? p.rating : null,
-          reviews_count: p.reviews_count || p.reviews || 0,
-          availability: p.in_stock !== undefined ? (p.in_stock ? 'in_stock' : 'out_of_stock') : (p.availability || 'in_stock'),
-          source: bestDeal.source || p.source || 'fiber', // Track which source provided this deal
-          alternatives: p.alternatives || [], // Multi-source comparison data
-        };
-      }) || [];
+      const products = (data.products || []).map((p, idx) => ({
+        id: p.id || `product_${idx}`,
+        title: p.title || 'Unknown Product',
+        price: p.price || 0,
+        cashback_rate: p.cashback_rate || 0,
+        cashback_amount: p.cashback_amount || 0,
+        merchant: p.merchant || 'Unknown',
+        image: p.image_url || '🛍️',
+        affiliate_link: p.affiliate_link,
+        // Only show rating if it's real (has reviews)
+        rating: (p.rating && p.reviews_count > 0) ? p.rating : null,
+        reviews_count: p.reviews_count || 0,
+        availability: p.in_stock ? 'in_stock' : 'out_of_stock',
+        source: p.source || 'fiber',
+        alternatives: p.alternatives || [],
+      })) || [];
 
-      // Extract filters and trending from API if available
-      const availableFilters = data.available_filters || {
-        priceRanges: [],
-        categories: [],
-        ratings: [],
-        availability: [],
-        cashbackRates: [],
-      };
-      const trending = data.trending || [];
-
-      // Add Claude's response with products, filters, and trending
+      // Add Claude's response with products
       setMessages(prevMessages => [
         ...prevMessages,
         {
@@ -181,8 +167,6 @@ export default function ChatPage() {
           type: 'assistant',
           text: data.response || 'Here are the products I found:',
           products: products.length > 0 ? products : null,
-          availableFilters: Object.keys(availableFilters).length > 0 ? availableFilters : null,
-          trending: trending.length > 0 ? trending : null,
           timestamp: new Date(),
         },
       ]);

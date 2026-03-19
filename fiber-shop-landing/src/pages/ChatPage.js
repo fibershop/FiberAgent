@@ -254,7 +254,8 @@ export default function ChatPage() {
   };
 
   const handleMoreLikeThis = (productTitle, merchant) => {
-    const query = `Show me more products like "${productTitle}" from ${merchant}`;
+    // Focus on product type, not merchant - let search find across all merchants
+    const query = `Show me more products like "${productTitle}"`;
     setInput(query);
     setTimeout(() => {
       inputRef.current?.focus();

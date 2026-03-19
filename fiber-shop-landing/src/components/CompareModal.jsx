@@ -79,8 +79,13 @@ export default function CompareModal({
 
             {products.length === 0 ? (
               <div className={styles.emptyState}>
-                <p>😕 No products to compare</p>
-                <p>Add products from the results to compare prices</p>
+                <p>😕 No matching products found</p>
+                <p>Try comparing a different product or search again</p>
+              </div>
+            ) : products.length === 1 ? (
+              <div className={styles.emptyState}>
+                <p>📦 Only one product available</p>
+                <p>Search for more products to compare prices across merchants</p>
               </div>
             ) : (
               <>

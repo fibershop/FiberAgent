@@ -235,68 +235,30 @@ export default function ChatPage() {
     }, 100);
   };
 
-  const handleCompare = async (productId, productTitle, price, merchant) => {
+  const handleCompare = (productId, productTitle, price, merchant) => {
     setCompareTitle(productTitle);
     
-    try {
-      // Fetch multi-source comparison from API
-      const res = await fetch('/api/compare', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productTitle: productTitle,
-          limit: 4,
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.products) {
-          setCompareProducts(data.products);
-        } else {
-          // Fallback to current message products
-          const allProducts = [];
-          messages.forEach(msg => {
-            if (msg.products) {
-              allProducts.push(...msg.products);
-            }
-          });
-          const productsToCompare = allProducts.filter(p => 
-            p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
-            p.title === productTitle
-          );
-          setCompareProducts(productsToCompare.slice(0, 4));
-        }
-      } else {
-        // Fallback
-        const allProducts = [];
-        messages.forEach(msg => {
-          if (msg.products) {
-            allProducts.push(...msg.products);
-          }
-        });
-        const productsToCompare = allProducts.filter(p => 
-          p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
-          p.title === productTitle
-        );
-        setCompareProducts(productsToCompare.slice(0, 4));
+    // Get all products from current chat messages
+    const allProducts = [];
+    messages.forEach(msg => {
+      if (msg.products && Array.isArray(msg.products)) {
+        allProducts.push(...msg.products);
       }
-    } catch (err) {
-      console.error('Compare error:', err);
-      // Fallback to current message products
-      const allProducts = [];
-      messages.forEach(msg => {
-        if (msg.products) {
-          allProducts.push(...msg.products);
-        }
-      });
-      const productsToCompare = allProducts.filter(p => 
-        p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
-        p.title === productTitle
-      );
-      setCompareProducts(productsToCompare.slice(0, 4));
-    }
-    
+    });
+
+    // Find all products that match the title (case-insensitive)
+    const searchTerm = productTitle.toLowerCase().trim();
+    const productsToCompare = allProducts.filter(p => {
+      if (!p.title) return false;
+      return p.title.toLowerCase().includes(searchTerm);
+    });
+
+    // Always show the clicked product first, then others
+    const clicked = productsToCompare.find(p => p.id === productId);
+    const others = productsToCompare.filter(p => p.id !== productId);
+    const final = clicked ? [clicked, ...others] : productsToCompare;
+
+    setCompareProducts(final.slice(0, 6)); // Show up to 6 for comparison
     setShowCompareModal(true);
   };
 

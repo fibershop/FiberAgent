@@ -90,8 +90,8 @@ export default function ProductCard({
       <div className={styles.productInfo}>
         <h3 className={styles.productTitle}>{title}</h3>
 
-        {/* Rating */}
-        {rating && (
+        {/* Rating - Only show if we have a real rating (not fake/fallback) */}
+        {rating && rating > 0 && reviews_count > 0 && (
           <div className={styles.ratingContainer}>
             <div className={styles.stars}>
               {[...Array(5)].map((_, i) => (
@@ -101,7 +101,7 @@ export default function ProductCard({
               ))}
             </div>
             <span className={styles.ratingText}>
-              {rating.toFixed(1)} ({reviews_count || 0})
+              {rating.toFixed(1)} ({reviews_count})
             </span>
           </div>
         )}

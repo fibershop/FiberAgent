@@ -135,9 +135,21 @@ export default function CompareModal({
                                 <span className={styles.merchantName}>
                                   {product.merchant}
                                 </span>
-                                <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                                <div style={{ display: 'flex', gap: '4px', marginTop: '4px', alignItems: 'center' }}>
                                   {isBestDeal && (
                                     <span className={styles.bestBadge}>✅ Best</span>
+                                  )}
+                                  {/* Rating badge - only if real reviews exist */}
+                                  {product.rating && product.reviews_count > 0 && (
+                                    <span style={{
+                                      fontSize: '11px',
+                                      padding: '2px 6px',
+                                      borderRadius: '3px',
+                                      backgroundColor: 'rgba(255, 200, 0, 0.2)',
+                                      color: '#ffc800',
+                                    }}>
+                                      ★ {product.rating.toFixed(1)} ({product.reviews_count})
+                                    </span>
                                   )}
                                   {product.source && (
                                     <span style={{

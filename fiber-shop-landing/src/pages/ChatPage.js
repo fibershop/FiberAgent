@@ -157,7 +157,8 @@ export default function ChatPage() {
           merchant: bestDeal.merchant || p.merchant || p.domain || 'Unknown Merchant',
           image: p.image_url || p.image || '🛍️',
           affiliate_link: bestDeal.affiliate_link || p.affiliate_link,
-          rating: p.rating || 4,
+          // Only show rating if it's real (has reviews). Otherwise null to hide stars.
+          rating: (p.rating && p.reviews_count > 0) ? p.rating : null,
           reviews_count: p.reviews_count || p.reviews || 0,
           availability: p.in_stock !== undefined ? (p.in_stock ? 'in_stock' : 'out_of_stock') : (p.availability || 'in_stock'),
           source: bestDeal.source || p.source || 'fiber', // Track which source provided this deal
@@ -260,32 +261,68 @@ export default function ChatPage() {
     }, 100);
   };
 
-  const handleCompare = (productId, productTitle, price, merchant) => {
-    // In a real scenario, you'd fetch comparison data from API
-    // For now, we'll collect products for comparison
-    const currentProduct = {
-      id: productId,
-      title: productTitle,
-      price,
-      merchant,
-    };
-
+  const handleCompare = async (productId, productTitle, price, merchant) => {
     setCompareTitle(productTitle);
     
-    // Find all products with same title from current messages
-    const allProducts = [];
-    messages.forEach(msg => {
-      if (msg.products) {
-        allProducts.push(...msg.products);
+    try {
+      // Fetch multi-source comparison from API
+      const res = await fetch('/api/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productTitle: productTitle,
+          limit: 4,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.products) {
+          setCompareProducts(data.products);
+        } else {
+          // Fallback to current message products
+          const allProducts = [];
+          messages.forEach(msg => {
+            if (msg.products) {
+              allProducts.push(...msg.products);
+            }
+          });
+          const productsToCompare = allProducts.filter(p => 
+            p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
+            p.title === productTitle
+          );
+          setCompareProducts(productsToCompare.slice(0, 4));
+        }
+      } else {
+        // Fallback
+        const allProducts = [];
+        messages.forEach(msg => {
+          if (msg.products) {
+            allProducts.push(...msg.products);
+          }
+        });
+        const productsToCompare = allProducts.filter(p => 
+          p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
+          p.title === productTitle
+        );
+        setCompareProducts(productsToCompare.slice(0, 4));
       }
-    });
-
-    const productsToCompare = allProducts.filter(p => 
-      p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
-      p.title === productTitle
-    );
-
-    setCompareProducts(productsToCompare.slice(0, 4)); // Limit to 4
+    } catch (err) {
+      console.error('Compare error:', err);
+      // Fallback to current message products
+      const allProducts = [];
+      messages.forEach(msg => {
+        if (msg.products) {
+          allProducts.push(...msg.products);
+        }
+      });
+      const productsToCompare = allProducts.filter(p => 
+        p.title?.toLowerCase().includes(productTitle.toLowerCase()) || 
+        p.title === productTitle
+      );
+      setCompareProducts(productsToCompare.slice(0, 4));
+    }
+    
     setShowCompareModal(true);
   };
 

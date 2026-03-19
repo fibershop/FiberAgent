@@ -135,9 +135,22 @@ export default function CompareModal({
                                 <span className={styles.merchantName}>
                                   {product.merchant}
                                 </span>
-                                {isBestDeal && (
-                                  <span className={styles.bestBadge}>✅ Best</span>
-                                )}
+                                <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                                  {isBestDeal && (
+                                    <span className={styles.bestBadge}>✅ Best</span>
+                                  )}
+                                  {product.source && (
+                                    <span style={{
+                                      fontSize: '11px',
+                                      padding: '2px 6px',
+                                      borderRadius: '3px',
+                                      backgroundColor: product.source === 'fiber' ? 'rgba(0, 208, 132, 0.2)' : 'rgba(100, 200, 255, 0.2)',
+                                      color: product.source === 'fiber' ? '#00d084' : '#64c8ff',
+                                    }}>
+                                      {product.source === 'fiber' ? '🔗 Fiber' : product.source === 'shopify' ? '🛒 Shopify' : '📌 Pinterest'}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </td>
 

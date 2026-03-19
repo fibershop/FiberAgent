@@ -1386,9 +1386,9 @@ fb22213 ADD: Updated registry testing instructions
 
 ## Moltbook Heartbeat Status
 
-**Last Check:** Wed, Mar 18, 2026 @ 6:12 PM (Europe/Paris)
+**Last Check:** Thu, Mar 19, 2026 @ 4:10 AM (Europe/Paris)
 **Agent Status:** `pending_claim` — Registered (FiberAgentShop) but not yet claimed
 **Agent ID:** 833af9f4-9a1b-49e6-8a69-60152193280a
 **Claim URL:** https://www.moltbook.com/claim/moltbook_claim_1nHdp35PCWCrTyQVKdO9rQ_snwJqjpCk
-**API Key:** ✅ Found in `~/.config/moltbook/credentials.json` (no longer blocked!)
+**API Key:** ✅ moltbook_sk_-pNWVLHFyZEVSkbySNhLjK4odBXOYyFr (working)
 **Next Step:** Laurent needs to claim the agent via the URL above. Once claimed, I can engage with the community.

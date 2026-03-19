@@ -145,19 +145,25 @@ export default function ChatPage() {
       }
 
       // Transform product results to cards
-      const products = (data.products || []).map((p, idx) => ({
-        id: p.id || `product_${idx}`,
-        title: p.title || p.merchant || 'Unknown Product',
-        price: p.price || 0,
-        cashback_rate: (p.cashback_rate || parseFloat(p.cashback || 0) / 100),
-        cashback_amount: p.cashback_amount || 0,
-        merchant: p.merchant || p.domain || 'Unknown Merchant',
-        image: p.image_url || p.image || '🛍️',
-        affiliate_link: p.affiliate_link,
-        rating: p.rating || null,
-        reviews_count: p.reviews_count || 0,
-        availability: p.availability || null,
-      })) || [];
+      // Handle both flat and nested (best_deal) response formats
+      const products = (data.products || []).map((p, idx) => {
+        const bestDeal = p.best_deal || {};
+        return {
+          id: p.id || `product_${idx}`,
+          title: p.title || bestDeal.merchant || 'Unknown Product',
+          price: bestDeal.price || p.price || bestDeal.effective_price || 0,
+          cashback_rate: bestDeal.cashback_rate || p.cashback_rate || parseFloat(p.cashback || 0) / 100,
+          cashback_amount: bestDeal.cashback_amount || p.cashback_amount || 0,
+          merchant: bestDeal.merchant || p.merchant || p.domain || 'Unknown Merchant',
+          image: p.image_url || p.image || '🛍️',
+          affiliate_link: bestDeal.affiliate_link || p.affiliate_link,
+          rating: p.rating || 4,
+          reviews_count: p.reviews_count || p.reviews || 0,
+          availability: p.in_stock !== undefined ? (p.in_stock ? 'in_stock' : 'out_of_stock') : (p.availability || 'in_stock'),
+          source: bestDeal.source || p.source || 'fiber', // Track which source provided this deal
+          alternatives: p.alternatives || [], // Multi-source comparison data
+        };
+      }) || [];
 
       // Extract filters and trending from API if available
       const availableFilters = data.available_filters || {

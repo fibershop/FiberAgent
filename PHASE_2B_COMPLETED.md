@@ -264,3 +264,121 @@ Then test:
 ## Status: ✅ READY FOR PHASE 2 FULL INTEGRATION TEST
 
 All frontend components are production-ready. Awaiting Phase 2 API backend completion for end-to-end testing.
+
+---
+
+## 🎯 BONUS: Chat API Restoration (Real Data Only)
+
+**Date:** 2026-03-18 18:14 GMT+1  
+**Status:** ✅ COMPLETE  
+**Commit:** d495ef3  
+**Documentation:** CHAT_API_RESTORATION_COMPLETE.md
+
+### What Was Restored
+Full Phase 2 chat API from git commit 07dee46 with **REAL DATA ONLY** (no mock):
+
+#### 1. ✅ Multi-Source Product Search
+- Primary: Real Fiber API integration (`searchFiber()`)
+- Secondary: Placeholder for free sources (`searchOtherSources()`)
+- Fallback: Return empty, never mock data
+- Data validation: price > 0, title, merchant required
+
+#### 2. ✅ Fiber API Integration
+- Endpoint: `/agent/search?keywords=X&agent_id=Y&limit=15`
+- Fields: price, merchant, cashback, image, affiliate link, rating
+- Cashback parsing: handles `rate_percent` and `display` formats
+- Tested: "Nike shoes" → 15 real products from Finish Line, Nike, etc.
+
+#### 3. ✅ Best Deal Detection
+- Calculates effective price: `price - (price × cashback_rate)`
+- Sorts by effective price (lowest = best)
+- Example: Nike Zoom Vomero 5
+  - Price: $170 | Cashback: 3.25% ($5.53) | Effective: $164.47
+
+#### 4. ✅ Per-Conversation Filter State
+- Extracts from natural language:
+  - Price ranges: "under $100", "over $500" → price_min/max
+  - Brands: "Nike", "Adidas" → brand filter
+  - Categories: "running", "casual" → category filter
+- Maintains state across turns
+- Passes to Fiber API as query params
+
+#### 5. ✅ Dynamic Filter Generation
+- Analyzes search results
+- Creates filter options with counts:
+  - Price ranges: <$100, $100-500, $500-1000, >$1000
+  - Ratings: 4.5+, 4+, 3.5+ stars
+  - Cashback: 5%+, 10%+, 15%+
+- Updates counts based on actual results
+
+#### 6. ✅ Smart Pinterest Trending
+- Only for vague queries (1-3 words, no brand/model/price)
+- Skips specific: "Nike Air Max 270", "$100-150", "best gaming laptop"
+- Returns: category, trend text, hashtags, Pinterest URL
+- Example: "shoes" → "Running & Sneakers trending" with #shoes, #shoesStyle
+
+#### 7. ✅ Claude API Integration
+- Conversational responses using Claude Haiku
+- System prompt includes:
+  - Real product data & prices
+  - Active filters
+  - Trending information
+- Falls back to simple template if Claude unavailable
+- Respects conversation history
+
+#### 8. ✅ Response Format
+```json
+{
+  "success": true,
+  "response": "Found 6 Nike shoes! Best deal...",
+  "products": [
+    {
+      "id": "fiber_0",
+      "title": "Nike Zoom Vomero 5",
+      "price": 170,
+      "best_deal": {
+        "merchant": "Finish Line",
+        "cashback_rate": 0.0325,
+        "cashback_amount": 5.53,
+        "effective_price": 164.47,
+        "affiliate_link": "https://..."
+      },
+      "rating": 4.5,
+      "in_stock": true
+    }
+  ],
+  "available_filters": { ... },
+  "trending": { ... }
+}
+```
+
+### Testing Results
+✅ Fiber API search: 15 real Nike shoes  
+✅ Data validation: All prices, merchants, images valid  
+✅ Effective price: Calculations correct  
+✅ Filter extraction: Works with natural language  
+✅ Trending detection: Smart vague query detection  
+✅ Response format: Complete and proper  
+
+### Key Differences
+| Feature | Before | After |
+|---------|--------|-------|
+| Fiber API | Incomplete | ✅ Full extraction |
+| Cashback parsing | Weak | ✅ Handles both formats |
+| Filter state | Missing | ✅ Per-conversation |
+| Filter generation | Static | ✅ Dynamic |
+| Trending | Missing | ✅ Smart detection |
+| Claude API | Missing | ✅ Integrated |
+| Mock data | ✅ Returns mocks | ❌ REMOVED |
+| Response format | Incomplete | ✅ Full structure |
+
+### Files Modified
+- `fiber-shop-landing/api/chat.js`: Full Phase 2 restoration (597 lines added)
+
+### Deployment Ready
+- [x] Code restored and tested
+- [x] Real data verified
+- [x] Git commit created
+- [ ] Deploy to production
+- [ ] Monitor usage
+

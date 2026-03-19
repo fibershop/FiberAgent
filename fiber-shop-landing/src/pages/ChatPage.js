@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import styles from '../styles/ChatPage.module.css';
 import ProductCard from '../components/ProductCard';
-import FilterChips from '../components/FilterChips';
 import CompareModal from '../components/CompareModal';
 import ErrorMessage from '../components/ErrorMessage';
 import LoadingSkeleton from '../components/LoadingSkeleton';
@@ -26,8 +25,6 @@ export default function ChatPage() {
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [compareProducts, setCompareProducts] = useState([]);
   const [compareTitle, setCompareTitle] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState({});
-  const [lastFilteredMessageId, setLastFilteredMessageId] = useState(null);
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -223,31 +220,7 @@ export default function ChatPage() {
     }
   };
 
-  const handleFilterClick = (filters) => {
-    setSelectedFilters(filters);
-    
-    // Build filter query string
-    const filterParts = [];
-    Object.entries(filters).forEach(([key, values]) => {
-      if (Array.isArray(values) && values.length > 0) {
-        filterParts.push(`${key}: ${values.join(', ')}`);
-      } else if (typeof values === 'string') {
-        filterParts.push(`${values}`);
-      }
-    });
-
-    const filterQuery = filterParts.length > 0 
-      ? `Show me products with ${filterParts.join(' and ')}`
-      : 'Show me more options';
-
-    // Auto-send the filter query
-    setInput(filterQuery);
-    setLastFilteredMessageId(messages[messages.length - 1]?.id);
-    setTimeout(() => {
-      // Trigger send programmatically
-      handleSendMessage.call({ currentQuery: filterQuery });
-    }, 100);
-  };
+  // Filter functionality removed - simplified UI
 
   const handleBookmarkClick = (product) => {
     toggleBookmark(product);
@@ -473,17 +446,7 @@ export default function ChatPage() {
                     </div>
                   )}
 
-                  {/* Filter Chips */}
-                  {message.availableFilters && (
-                    <div className={styles.filterSection}>
-                      <FilterChips
-                        availableFilters={message.availableFilters}
-                        onFiltersChange={handleFilterClick}
-                        selectedFilters={selectedFilters}
-                        trending={message.trending}
-                      />
-                    </div>
-                  )}
+                  {/* Filter Chips - Removed to reduce clutter */}
 
                   <span className={styles.timestamp}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

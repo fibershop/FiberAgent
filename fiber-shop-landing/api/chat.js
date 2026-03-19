@@ -1,138 +1,126 @@
 /**
- * FiberAgent Chat API - Multi-Source Search
- * Aggregates from Fiber + Shopify + Pinterest
+ * FiberAgent Chat API - Search + Timeout Resilience
+ * Tries Fiber first, adds Shopify if time permits
  */
 
 const FIBER_API = 'https://api.fiber.shop/v1';
 const AGENT_ID = 'agent_c56b31fd2bd952ed214c7452';
 
-const SHOPIFY_STORES = [
-  'nike.com', 'adidas.com', 'footlocker.com', 'finishline.com',
-  'dickssportinggoods.com', 'target.com', 'walmart.com', 'amazon.com',
-  'bestbuy.com', 'newegg.com', 'bhphotovideo.com'
-];
-
 /**
- * Search Fiber API
+ * Search Fiber API - Simple, reliable
  */
-async function searchFiber(keywords, limit = 8) {
+async function searchFiber(keywords) {
   try {
     const controller = new AbortController();
-    const timeoutHandle = setTimeout(() => controller.abort(), 4000);
+    const timeoutHandle = setTimeout(() => controller.abort(), 5000);
     
-    const url = `${FIBER_API}/agent/search?keywords=${encodeURIComponent(keywords)}&agent_id=${AGENT_ID}&limit=${limit}`;
+    const url = `${FIBER_API}/agent/search?keywords=${encodeURIComponent(keywords)}&agent_id=${AGENT_ID}&limit=10`;
     
     const res = await fetch(url, { signal: controller.signal });
     clearTimeout(timeoutHandle);
     
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.log('Fiber API returned', res.status);
+      return [];
+    }
     
     const data = await res.json();
-    return (data.products || data.results || [])
+    console.log('Fiber response:', { hasProducts: !!data.products, count: data.products?.length });
+    
+    // Handle different response formats
+    const items = data.products || data.results || [];
+    
+    return items
       .filter(p => p.title && p.best_deal?.price > 0)
       .map(p => ({
-        ...p,
-        source: 'fiber',
         id: p.id || `fiber_${Math.random()}`,
         title: p.title,
         image_url: p.image_url || p.image,
-        price: p.best_deal?.price || p.price || 0,
-        merchant: p.best_deal?.merchant || p.merchant || 'Fiber',
-        cashback_rate: p.best_deal?.cashback_rate || 0.03,
-        cashback_amount: p.best_deal?.cashback_amount || 0,
-        affiliate_link: p.best_deal?.affiliate_link || p.affiliate_link,
+        price: p.best_deal.price,
+        merchant: p.best_deal.merchant || 'Fiber',
+        cashback_rate: p.best_deal.cashback_rate || 0.03,
+        cashback_amount: p.best_deal.cashback_amount || 0,
+        affiliate_link: p.best_deal.affiliate_link,
+        rating: p.rating || null,
+        reviews_count: p.reviews_count || p.reviews || 0,
+        source: 'fiber',
       }));
   } catch (err) {
-    console.error('Fiber search error:', err.message);
+    console.error('Fiber search failed:', err.message);
     return [];
   }
 }
 
 /**
- * Search Shopify stores
+ * Search single Shopify store (quick)
  */
-async function searchShopify(keywords, limit = 4) {
+async function searchShopifyStore(store, keywords) {
   try {
-    const results = [];
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 1000);
     
-    // Search 3-4 major stores (limit 1000ms per store)
-    for (const store of SHOPIFY_STORES.slice(0, 4)) {
-      try {
-        const controller = new AbortController();
-        const timeoutHandle = setTimeout(() => controller.abort(), 1500);
-        
-        const url = `https://${store}/search.json?q=${encodeURIComponent(keywords)}&limit=3`;
-        
-        const res = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeoutHandle);
-        
-        if (res.ok) {
-          const data = await res.json();
-          if (data.products && Array.isArray(data.products)) {
-            data.products.forEach(p => {
-              const price = p.variants?.[0]?.price ? parseFloat(p.variants[0].price) : 0;
-              if (price > 0) {
-                results.push({
-                  id: `shopify_${store}_${p.id}`,
-                  title: p.title,
-                  image_url: p.image?.src,
-                  price: price,
-                  merchant: store.replace('.com', '').toUpperCase(),
-                  source: 'shopify',
-                  cashback_rate: 0.01, // Default 1% for Shopify
-                  cashback_amount: price * 0.01,
-                  affiliate_link: `https://${store}/products/${p.handle}`,
-                  rating: null,
-                  reviews: 0,
-                });
-              }
-            });
-          }
-        }
-      } catch (err) {
-        // Skip this store
-      }
-    }
+    const url = `https://${store}/search.json?q=${encodeURIComponent(keywords)}&limit=2`;
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
     
-    return results.slice(0, limit * 2);
+    if (!res.ok) return [];
+    
+    const data = await res.json();
+    if (!data.products || !Array.isArray(data.products)) return [];
+    
+    return data.products
+      .filter(p => p.variants?.[0]?.price)
+      .map(p => ({
+        id: `shopify_${store}_${p.id}`,
+        title: p.title,
+        image_url: p.image?.src,
+        price: parseFloat(p.variants[0].price),
+        merchant: store.replace('.com', '').toUpperCase(),
+        cashback_rate: 0.01,
+        cashback_amount: parseFloat(p.variants[0].price) * 0.01,
+        affiliate_link: `https://${store}/products/${p.handle}`,
+        rating: null,
+        reviews_count: 0,
+        source: 'shopify',
+      }));
   } catch (err) {
-    console.error('Shopify search error:', err.message);
     return [];
   }
 }
 
 /**
- * Merge and deduplicate products
+ * Try to get Shopify products (time-limited)
  */
-function mergeProducts(fiber, shopify) {
+async function searchShopify(keywords, timeLimit = 3000) {
+  const deadline = Date.now() + timeLimit;
+  const stores = ['nike.com', 'amazon.com', 'target.com'];
+  const results = [];
+  
+  for (const store of stores) {
+    if (Date.now() > deadline) break;
+    const products = await searchShopifyStore(store, keywords);
+    results.push(...products);
+  }
+  
+  return results;
+}
+
+/**
+ * Deduplicate products by title
+ */
+function dedupeAndMerge(fiber, shopify) {
   const map = new Map();
   
   // Add Fiber first (priority)
   fiber.forEach(p => {
     const key = (p.title || '').toLowerCase().trim();
-    if (key && !map.has(key)) {
-      map.set(key, p);
-    }
+    if (key) map.set(key, p);
   });
   
-  // Add Shopify as alternatives
+  // Add Shopify if not duplicate
   shopify.forEach(p => {
     const key = (p.title || '').toLowerCase().trim();
-    const existing = map.get(key);
-    
-    if (existing) {
-      // Add to alternatives
-      if (!existing.alternatives) existing.alternatives = [];
-      if (!existing.alternatives.find(a => a.merchant === p.merchant)) {
-        existing.alternatives.push({
-          price: p.price,
-          merchant: p.merchant,
-          affiliate_link: p.affiliate_link,
-          source: 'shopify',
-          cashback_rate: p.cashback_rate,
-        });
-      }
-    } else {
+    if (key && !map.has(key)) {
       map.set(key, p);
     }
   });
@@ -141,8 +129,8 @@ function mergeProducts(fiber, shopify) {
 }
 
 export default async function handler(req, res) {
-  // Hard timeout: must respond within 15 seconds
-  const deadline = Date.now() + 15000;
+  const startTime = Date.now();
+  const deadline = startTime + 12000; // 12 sec hard limit
   
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -164,34 +152,32 @@ export default async function handler(req, res) {
       });
     }
 
-    if (Date.now() > deadline) {
-      return res.status(200).json({
-        success: true,
-        response: 'Taking too long - try being more specific.',
-        products: null,
-      });
+    // Search Fiber first (critical)
+    console.log(`[CHAT] Searching for: ${keywords}`);
+    const fiberProducts = await searchFiber(keywords);
+    console.log(`[CHAT] Fiber returned ${fiberProducts.length} products`);
+    
+    // If Fiber has products, try Shopify in parallel (if time permits)
+    let allProducts = [...fiberProducts];
+    
+    if (fiberProducts.length > 0 && Date.now() < deadline - 3000) {
+      console.log(`[CHAT] Adding Shopify products...`);
+      const shopifyProducts = await searchShopify(keywords, 3000);
+      console.log(`[CHAT] Shopify returned ${shopifyProducts.length} products`);
+      allProducts = dedupeAndMerge(fiberProducts, shopifyProducts);
     }
 
-    // Search all sources in parallel
-    const [fiberProducts, shopifyProducts] = await Promise.all([
-      searchFiber(keywords, 8),
-      searchShopify(keywords, 4),
-    ]);
-
-    // Merge results
-    let merged = mergeProducts(fiberProducts, shopifyProducts);
-    
-    // Sort by effective price (price - cashback)
-    merged.sort((a, b) => {
+    // Sort by effective price
+    allProducts.sort((a, b) => {
       const aEff = (a.price || 0) - (a.cashback_amount || 0);
       const bEff = (b.price || 0) - (b.cashback_amount || 0);
       return aEff - bEff;
     });
 
-    // Limit to 6 for display
-    const products = merged.slice(0, 6);
+    const products = allProducts.slice(0, 6);
+    console.log(`[CHAT] Returning ${products.length} products`);
 
-    // Build response
+    // Build response text
     const responseText = products.length > 0
       ? `Found ${products.length} great options for "${keywords}"! 🎯\n\n${products.slice(0, 3).map((p, i) => `${i+1}. ${p.title} at ${p.merchant} - $${p.price.toFixed(2)} with ${Math.round((p.cashback_rate || 0.01) * 100)}% cashback`).join('\n')}\n\nCheck all options below!`
       : `Searching for "${keywords}"... I'll look for the best deals!`;

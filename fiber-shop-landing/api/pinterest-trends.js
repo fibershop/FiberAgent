@@ -1,11 +1,11 @@
 /**
- * Pinterest Trends API
+ * Fiber Trends API Integration
  * Get trending products for a category to guide user discovery
  */
 
-const PINTEREST_SEARCH = 'https://api.pinterest.com/v1/pins/search';
+const FIBER_API = 'https://api.fiber.shop/v1';
 
-// Generic category keywords that need Pinterest guidance
+// Generic category keywords that need trends guidance
 const GENERIC_KEYWORDS = [
   'shoes', 'boots', 'jacket', 'coat', 'shirt', 'pants', 'dress',
   'hat', 'sweater', 'socks', 'gloves', 'backpack', 'bag', 'wallet',
@@ -47,54 +47,40 @@ function shouldOfferSuggestions(query) {
 }
 
 /**
- * Get Pinterest trending products for a category
- * Returns mock trending items since Pinterest API requires auth
+ * Get trending products from Fiber API
  */
-function getTrendingForCategory(category) {
-  // Mock Pinterest trends data
-  const trendingByCategory = {
-    'shoes': [
-      { title: 'Running Shoes', image: '👟', description: 'Latest athletic shoes' },
-      { title: 'Hiking Boots', image: '🥾', description: 'Trail-ready footwear' },
-      { title: 'Casual Sneakers', image: '👟', description: 'Everyday comfort' },
-      { title: 'Formal Dress Shoes', image: '👞', description: 'Professional style' },
-    ],
-    'boots': [
-      { title: 'Winter Boots', image: '🥾', description: 'Cold weather protection' },
-      { title: 'Hiking Boots', image: '⛰️', description: 'Adventure-ready' },
-      { title: 'Combat Boots', image: '👢', description: 'Edgy style' },
-      { title: 'Cowboy Boots', image: '🤠', description: 'Western classic' },
-    ],
-    'jacket': [
-      { title: 'Winter Jacket', image: '🧥', description: 'Warm & cozy' },
-      { title: 'Leather Jacket', image: '🧥', description: 'Timeless style' },
-      { title: 'Rain Jacket', image: '☔', description: 'Weather protection' },
-      { title: 'Denim Jacket', image: '👖', description: 'Casual classic' },
-    ],
-    'backpack': [
-      { title: 'Travel Backpack', image: '🎒', description: 'Adventure-ready' },
-      { title: 'School Backpack', image: '🎒', description: 'Spacious & durable' },
-      { title: 'Hiking Backpack', image: '🥾', description: 'Off-trail gear' },
-      { title: 'Laptop Backpack', image: '💼', description: 'Professional carry' },
-    ],
-    'watch': [
-      { title: 'Sports Watch', image: '⌚', description: 'Performance tracking' },
-      { title: 'Dress Watch', image: '⌚', description: 'Elegant timepiece' },
-      { title: 'Smart Watch', image: '⌚', description: 'Tech-enabled' },
-      { title: 'Casual Watch', image: '⌚', description: 'Everyday style' },
-    ],
-    'sunglasses': [
-      { title: 'Aviator Sunglasses', image: '😎', description: 'Classic style' },
-      { title: 'Wayfarer Sunglasses', image: '😎', description: 'Iconic design' },
-      { title: 'Sports Sunglasses', image: '😎', description: 'UV protection' },
-      { title: 'Oversized Sunglasses', image: '😎', description: 'Trendy vibes' },
-    ],
-  };
-  
-  const categoryKey = category.toLowerCase().trim();
-  return trendingByCategory[categoryKey] || 
-    trendingByCategory[Object.keys(trendingByCategory)[0]] ||
-    [];
+async function getTrendingForCategory(interest) {
+  try {
+    const controller = new AbortController();
+    const timeoutHandle = setTimeout(() => controller.abort(), 5000);
+    
+    // Call Fiber's trends endpoint
+    const url = `${FIBER_API}/agent/trends?interest=${encodeURIComponent(interest)}&region=US`;
+    
+    console.log(`[TRENDS] Fetching: ${url}`);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutHandle);
+    
+    if (!res.ok) {
+      console.log(`[TRENDS] Error: ${res.status}`);
+      return null;
+    }
+    
+    const data = await res.json();
+    console.log(`[TRENDS] Got response with ${data.trends?.length || 0} trends`);
+    
+    // Transform Fiber trends into suggestion cards
+    const suggestions = (data.trends || []).slice(0, 4).map((trend, idx) => ({
+      title: trend.title || trend.name,
+      description: trend.description || `Trending in ${interest}`,
+      image: trend.emoji || '🛍️',
+    }));
+    
+    return suggestions.length > 0 ? suggestions : null;
+  } catch (err) {
+    console.error('[TRENDS] Error:', err.message);
+    return null;
+  }
 }
 
 export default async function handler(req, res) {
@@ -113,21 +99,29 @@ export default async function handler(req, res) {
       });
     }
 
-    // Extract category (first meaningful word)
-    const category = message.toLowerCase()
+    // Extract interest (first meaningful word)
+    const interest = message.toLowerCase()
       .split(/\s+/)
       .find(word => GENERIC_KEYWORDS.includes(word)) || 'shoes';
 
-    const trending = getTrendingForCategory(category);
+    // Fetch trending from Fiber API
+    const suggestions = await getTrendingForCategory(interest);
+
+    if (!suggestions) {
+      return res.status(200).json({
+        shouldOfferSuggestions: false,
+        error: 'Could not fetch trends',
+      });
+    }
 
     return res.status(200).json({
       shouldOfferSuggestions: true,
-      category,
-      suggestions: trending.slice(0, 4),
-      promptText: `Great! Here are some trending ${category} options. Pick one to see specific deals:`,
+      interest,
+      suggestions,
+      promptText: `Great! Here are some trending ${interest} options. Pick one to see specific deals:`,
     });
   } catch (err) {
-    console.error('[PINTEREST] Error:', err.message);
+    console.error('[TRENDS] Error:', err.message);
     return res.status(200).json({
       shouldOfferSuggestions: false,
       error: err.message,

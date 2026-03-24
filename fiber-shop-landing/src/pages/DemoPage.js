@@ -204,7 +204,11 @@ export default function DemoPage() {
                   <div className={styles.mcBody}>
                     <h3>{m.merchant_name}</h3>
                     <span className={styles.mcDomain}>{m.merchant_domain}</span>
-                    <span className={styles.mcCashback}>{m.cashback.display} cashback</span>
+                    <span className={styles.mcCashback}>
+                      {m.cashback.display && parseFloat(m.cashback.display) > 0 
+                        ? `💰 ${m.cashback.display} cashback` 
+                        : '💳 Best price'}
+                    </span>
                   </div>
                 </a>
               ))}

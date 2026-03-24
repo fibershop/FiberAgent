@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import styles from '../styles/ChatPage.module.css';
 import ProductCard from '../components/ProductCard';
+import SuggestionCard from '../components/SuggestionCard';
 import CompareModal from '../components/CompareModal';
 import ErrorMessage from '../components/ErrorMessage';
 import LoadingSkeleton from '../components/LoadingSkeleton';
@@ -78,6 +79,42 @@ export default function ChatPage() {
     setMessages([...messages, newUserMessage]);
 
     try {
+      // Step 1: Check if we should offer suggestions (Pinterest trends)
+      const suggestionsRes = await fetch('/api/pinterest-trends', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage }),
+      });
+
+      const suggestionsData = await suggestionsRes.json();
+
+      // If suggestions available, show them instead of searching
+      if (suggestionsData.shouldOfferSuggestions && suggestionsData.suggestions) {
+        const suggestionCards = suggestionsData.suggestions.map((s, idx) => ({
+          id: `suggestion_${idx}`,
+          title: s.title,
+          image: s.image,
+          description: s.description,
+          searchQuery: s.title,
+        }));
+
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            id: prevMessages.length + 1,
+            type: 'assistant',
+            text: suggestionsData.promptText || `Let's find some options:`,
+            suggestions: suggestionCards,
+            timestamp: new Date(),
+          },
+        ]);
+
+        setLoading(false);
+        setTimeout(() => inputRef.current?.focus(), 100);
+        return;
+      }
+
+      // Step 2: If no suggestions, proceed with regular search
       // Build conversation history including the message we just added
       const conversationHistory = [
         ...messages.map(m => ({
@@ -250,6 +287,144 @@ export default function ChatPage() {
     setError(null);
   };
 
+  const handleSuggestionSelect = async (query) => {
+    // Set the suggestion as the input and trigger search
+    setInput(query);
+    setTimeout(() => {
+      // Manually trigger the search with the suggestion query
+      handleSendMessageWithQuery(query);
+    }, 0);
+  };
+
+  const handleSendMessageWithQuery = async (query) => {
+    setInput('');
+    setLoading(true);
+    setError(null);
+
+    const userMessage = query;
+
+    // Add user message to state
+    const newUserMessage = {
+      id: messages.length + 1,
+      type: 'user',
+      text: userMessage,
+      timestamp: new Date(),
+    };
+    setMessages([...messages, newUserMessage]);
+
+    try {
+      // Skip suggestions for clicked suggestions - go straight to search
+      const conversationHistory = [
+        ...messages.map(m => ({
+          type: m.type,
+          text: m.text,
+        })),
+        {
+          type: 'user',
+          text: userMessage,
+        },
+      ];
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMessage,
+          conversationHistory,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(res.statusText || 'API request failed');
+      }
+
+      const data = await res.json();
+
+      if (!data.success) {
+        const errorMsg = data.error || 'Unknown error';
+        const friendlyError = errorMsg.includes('overload') 
+          ? '⏳ Taking longer than expected. Retrying...'
+          : `🌐 Couldn't load products. Try again?`;
+        
+        setError({
+          type: errorMsg.includes('overload') ? 'timeout' : 'error',
+          message: friendlyError,
+          originalError: errorMsg,
+        });
+
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            id: prevMessages.length + 1,
+            type: 'assistant',
+            text: friendlyError,
+            error: true,
+            timestamp: new Date(),
+          },
+        ]);
+        setLoading(false);
+        setTimeout(() => inputRef.current?.focus(), 100);
+        return;
+      }
+
+      const products = (data.products || []).map((p, idx) => ({
+        id: p.id || `product_${idx}`,
+        title: p.title || 'Unknown Product',
+        price: p.price || 0,
+        cashback_rate: p.cashback_rate || 0,
+        cashback_amount: p.cashback_amount || 0,
+        merchant: p.merchant || 'Unknown',
+        image: p.image_url || '🛍️',
+        affiliate_link: p.affiliate_link,
+        rating: (p.rating && p.reviews_count > 0) ? p.rating : null,
+        reviews_count: p.reviews_count || 0,
+        availability: p.in_stock ? 'in_stock' : 'out_of_stock',
+        source: p.source || 'fiber',
+        alternatives: p.alternatives || [],
+      })) || [];
+
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          id: prevMessages.length + 1,
+          type: 'assistant',
+          text: data.response || 'Here are the products I found:',
+          products: products.length > 0 ? products : null,
+          timestamp: new Date(),
+        },
+      ]);
+    } catch (err) {
+      const isTimeout = err.name === 'AbortError';
+      const errorMsg = isTimeout ? '⏳ Request timed out. Please try again.' : `🌐 Network error: ${err.message}`;
+      
+      setError({
+        type: isTimeout ? 'timeout' : 'network',
+        message: errorMsg,
+        originalError: err.message,
+      });
+
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          id: prevMessages.length + 1,
+          type: 'assistant',
+          text: errorMsg,
+          error: true,
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setLoading(false);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -365,6 +540,22 @@ export default function ChatPage() {
               >
                 <div className={styles.messageBubble}>
                   <p className={styles.messageText}>{message.text}</p>
+
+                  {/* Suggestions Cards */}
+                  {message.suggestions && message.suggestions.length > 0 && (
+                    <div className={styles.suggestionsGrid}>
+                      {message.suggestions.map((suggestion) => (
+                        <SuggestionCard
+                          key={suggestion.id}
+                          title={suggestion.title}
+                          image={suggestion.image}
+                          description={suggestion.description}
+                          searchQuery={suggestion.searchQuery}
+                          onSelect={handleSuggestionSelect}
+                        />
+                      ))}
+                    </div>
+                  )}
 
                   {/* Products Grid */}
                   {message.products && message.products.length > 0 && (

@@ -234,6 +234,19 @@
   }
 }
 
+/* Suggestions Grid */
+.suggestionsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  max-width: 100%;
+}
+
+.suggestionsGrid > * {
+  width: 100%;
+}
+
 /* Products Grid */
 .productsGrid {
   display: grid;

@@ -14,7 +14,7 @@ export default function ChatPage() {
     {
       id: 1,
       type: 'assistant',
-      text: '👋 Hi! I\'m your FiberAgent shopping assistant. Tell me what you want to buy, and I\'ll find the best deals with cashback rewards.',
+      text: '👋 Hi! I\'m your FiberAgent shopping assistant. Tell me what you want to buy — I\'ll find the best deals, with or without cashback rewards. Sometimes the lowest price wins, sometimes cashback does. You choose!',
       timestamp: new Date(),
     },
   ]);

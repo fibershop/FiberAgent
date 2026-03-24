@@ -121,7 +121,7 @@ export default function ProductCard({
           </div>
         )}
 
-        {/* Cashback Highlight */}
+        {/* Cashback Highlight - Handle 0% case */}
         <motion.div
           className={styles.cashbackHighlight}
           initial={{ opacity: 0, y: 8 }}
@@ -129,11 +129,20 @@ export default function ProductCard({
           transition={{ delay: 0.1 }}
         >
           <div className={styles.cashbackBadge}>
-            <span className={styles.cashbackEmoji}>💰</span>
-            <span className={styles.cashbackText}>
-              Earn {(cashback_rate * 100).toFixed(1)}%
-              {cashback_amount > 0 && ` ($${cashback_amount.toFixed(2)})`}
-            </span>
+            {cashback_rate > 0 ? (
+              <>
+                <span className={styles.cashbackEmoji}>💰</span>
+                <span className={styles.cashbackText}>
+                  Earn {(cashback_rate * 100).toFixed(1)}%
+                  {cashback_amount > 0 && ` ($${cashback_amount.toFixed(2)})`}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className={styles.cashbackEmoji}>💳</span>
+                <span className={styles.cashbackText}>Best price — no cashback</span>
+              </>
+            )}
           </div>
         </motion.div>
 

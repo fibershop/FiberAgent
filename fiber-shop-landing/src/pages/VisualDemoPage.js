@@ -104,31 +104,41 @@ function VisualDemoPage() {
 
           <div className="message ai">
             <div className="text">
-              <div style={{ marginBottom: '8px' }}>Found 5 options with real cashback rewards:</div>
+              <div style={{ marginBottom: '8px' }}>Found 6 options — best prices with & without cashback:</div>
               <div className="products-grid">
                 <div className="product-item">
                   <div className="product-name">Columbia Ridge Backpacker</div>
                   <div className="product-price">$119.99</div>
-                  <div className="product-cashback">4% affiliate = $4.80 MON</div>
+                  <div className="product-cashback">💰 4% cashback = $4.80</div>
                 </div>
                 <div className="product-item">
                   <div className="product-name">Salomon Quest 4D</div>
                   <div className="product-price">$249.99</div>
-                  <div className="product-cashback">2% affiliate = $5.00 MON</div>
+                  <div className="product-cashback">💰 2% cashback = $5.00</div>
                 </div>
                 <div className="product-item">
                   <div className="product-name">Merrell Moab 3</div>
                   <div className="product-price">$149.99</div>
-                  <div className="product-cashback">3% affiliate = $4.50 MON</div>
+                  <div className="product-cashback">💰 3% cashback = $4.50</div>
                 </div>
                 <div className="product-item">
                   <div className="product-name">ASICS Gel-Venture</div>
                   <div className="product-price">$99.99</div>
-                  <div className="product-cashback">5% affiliate = $5.00 MON</div>
+                  <div className="product-cashback">💰 5% cashback = $5.00</div>
+                </div>
+                <div className="product-item">
+                  <div className="product-name">Timberland Premium</div>
+                  <div className="product-price">$109.99</div>
+                  <div className="product-cashback">💳 Best price — no cashback</div>
+                </div>
+                <div className="product-item">
+                  <div className="product-name">Keen Targhee</div>
+                  <div className="product-price">$129.99</div>
+                  <div className="product-cashback">💳 Best price — no cashback</div>
                 </div>
               </div>
               <div style={{ marginTop: '12px', fontSize: '0.9em', color: '#a0a0a0' }}>
-                🤖 I'll earn MON commissions (after purchase is confirmed). No wallet setup needed for you — I handle all the crypto. Just shop normally.
+                🤖 I show you the best deals across multiple sources — some with cashback rewards, some with lower prices. Pick what works for you. I earn MON commissions (after purchase confirmed). No wallet setup needed for you.
               </div>
             </div>
           </div>

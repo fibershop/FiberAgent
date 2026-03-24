@@ -96,10 +96,19 @@ export default async function handler(req, res) {
     const results = products.slice(0, 6);
     console.log(`[CHAT] Returning ${results.length} products in ${Date.now() - startTime}ms`);
 
-    // Build response text
-    const responseText = results.length > 0
-      ? `Found ${results.length} great options for "${keywords}"! 🎯\n\n${results.slice(0, 3).map((p, i) => `${i+1}. ${p.title} at ${p.merchant} - $${p.price.toFixed(2)} with ${(p.cashback_rate * 100).toFixed(1)}% cashback`).join('\n')}\n\nCheck all options below!`
-      : `Searching for "${keywords}"... I'll look for the best deals!`;
+    // Build response text - handle both cashback and non-cashback items
+    let responseText;
+    if (results.length > 0) {
+      const summaryLines = results.slice(0, 3).map((p, i) => {
+        const cashbackText = p.cashback_rate > 0 
+          ? `${(p.cashback_rate * 100).toFixed(1)}% cashback` 
+          : 'best price';
+        return `${i+1}. ${p.title} - $${p.price.toFixed(2)} (${cashbackText})`;
+      }).join('\n');
+      responseText = `Found ${results.length} great options for "${keywords}"! 🎯\n\n${summaryLines}\n\nCheck all options below!`;
+    } else {
+      responseText = `Searching for "${keywords}"... I'll look for the best deals!`;
+    }
 
     return res.status(200).json({
       success: true,

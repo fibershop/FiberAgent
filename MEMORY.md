@@ -1,5 +1,64 @@
 # Long-Term Memory
 
+## 🚀 Session 4 In Progress (Mar 25, 2026) — Claude-Powered Intent + Filtering
+
+**STATUS: 🟢 INITIAL IMPLEMENTATION COMPLETE — All code committed and pushed**
+
+**Goal:** Replace hardcoded keyword lists with Claude AI for:
+1. **Intent Detection** — Understand what user is asking (vague vs specific)
+2. **Smart Filtering** — Fetch 100 products, Claude filters to best 8-10
+
+**Architecture (2-Stage Pipeline):**
+```
+Stage 1: Intent Analysis (/api/intent-analysis.js)
+├─ Input: User message + conversation history
+├─ Claude decides: offer trends OR search directly?
+├─ Output: { shouldOfferTrends, keywordToSearch, reasoning }
+└─ Fallback: Heuristic if API key missing
+
+Stage 2: Smart Filtering (/api/filter-results.js)
+├─ Fiber returns 100 products (was 10)
+├─ Claude ranks by: relevance, value, quality, user context
+├─ Output: Top 8-10 with scores + reasoning
+└─ Fallback: Price-based ranking if API key missing
+
+ChatPage.js Integration:
+├─ Call /api/intent-analysis first
+├─ If specific: fetch Fiber API via /api/chat (limit=100)
+├─ Then: Call /api/filter-results to rank
+└─ Display top 6 filtered products
+```
+
+**Bug Fixed:**
+- ❌ OLD: "I'm looking for shoes" returned `shouldOfferSuggestions: false` (vague was classified as specific)
+- ✅ NEW: Claude dynamically detects intent, no hardcoded phrase lists
+
+**Files Created/Modified:**
+- ✅ `/api/intent-analysis.js` (169 lines) — Claude intent detection
+- ✅ `/api/filter-results.js` (192 lines) — Claude result filtering
+- ✅ `/api/chat.js` — Updated: `limit=10` → `limit=100`
+- ✅ `/src/pages/ChatPage.js` — New pipeline: intent → search → filter
+- ✅ `package.json` — Added: `@anthropic-ai/sdk` dependency
+
+**Setup Required:**
+- Add `ANTHROPIC_API_KEY` environment variable to Vercel
+- Graceful fallback to heuristics if key missing
+
+**Status:** ✅ Ready for testing + Vercel deployment
+- All files compiled successfully
+- `npm run build` passes (React build successful)
+- All code committed to GitHub + pushed to main
+- `git status` shows "up to date with origin/main"
+
+**Next Steps:**
+1. Add `ANTHROPIC_API_KEY` to Vercel environment variables (Laurent)
+2. Test on /chat page: "I'm looking for shoes" should now trigger suggestions
+3. Test multi-step: Vague query → suggestions OR specific → instant results
+4. Monitor Claude's filtering quality vs price-based fallback
+5. Iterate based on user feedback (filtering too aggressive? too lenient?)
+
+---
+
 ## Active Projects
 
 ### 🎉 FiberAgent OpenClaw Skill v1.0.1 - PUBLISHED + EXTENDED! (Feb 23)

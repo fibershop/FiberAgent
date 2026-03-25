@@ -99,25 +99,30 @@ export default function ChatPage() {
       const intentData = await intentRes.json();
       console.log('[CHAT] Intent analysis:', intentData);
 
-      // Step 1a: If Claude says we should offer trends, show suggestions
+      // Step 1a: If Claude says we should offer trends, show real trending data
       if (intentData.shouldOfferTrends && intentData.keywordToSearch === null) {
-        console.log('[CHAT] Offering trends suggestions');
-        // Fall back to old pinterest-trends logic for now
-        const suggestionsRes = await fetch('/api/pinterest-trends', {
+        console.log('[CHAT] Offering trends suggestions from Fiber');
+        
+        // Extract category hint from message (e.g., "looking for shoes" → "shoes")
+        const categoryMatch = userMessage.match(/(?:for|looking\s+for)\s+([a-z\s]+?)(?:\?|$)/i);
+        const category = categoryMatch ? categoryMatch[1].trim() : 'shoes';
+        
+        // Fetch real trending data from Fiber
+        const trendsRes = await fetch('/api/trends', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: userMessage }),
+          body: JSON.stringify({ category, limit: 4 }),
         });
 
-        const suggestionsData = await suggestionsRes.json();
+        const trendsData = await trendsRes.json();
 
-        if (suggestionsData.shouldOfferSuggestions && suggestionsData.suggestions) {
-          const suggestionCards = suggestionsData.suggestions.map((s, idx) => ({
-            id: `suggestion_${idx}`,
-            title: s.title,
-            image: s.image,
-            description: s.description,
-            searchQuery: s.title,
+        if (trendsData.success && trendsData.trends && trendsData.trends.length > 0) {
+          const suggestionCards = trendsData.trends.map((t, idx) => ({
+            id: `trend_${idx}`,
+            title: t.title,
+            image: t.image,
+            description: t.description || `Popular ${category}`,
+            searchQuery: t.title,
           }));
 
           setMessages(prevMessages => [
@@ -125,7 +130,7 @@ export default function ChatPage() {
             {
               id: prevMessages.length + 1,
               type: 'assistant',
-              text: suggestionsData.promptText || `Let's find some options:`,
+              text: trendsData.promptText || `🔥 Here's what people are buying right now:`,
               suggestions: suggestionCards,
               timestamp: new Date(),
             },

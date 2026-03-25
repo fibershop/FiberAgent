@@ -79,64 +79,76 @@ export default function ChatPage() {
     setMessages([...messages, newUserMessage]);
 
     try {
-      // Step 1: Check if we should offer suggestions (Pinterest trends)
-      const suggestionsRes = await fetch('/api/pinterest-trends', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage }),
-      });
+      // Build conversation history for Claude context
+      const conversationHistory = messages.map(m => ({
+        role: m.type === 'assistant' ? 'assistant' : 'user',
+        content: m.text,
+      }));
 
-      const suggestionsData = await suggestionsRes.json();
-
-      // If suggestions available, show them instead of searching
-      if (suggestionsData.shouldOfferSuggestions && suggestionsData.suggestions) {
-        const suggestionCards = suggestionsData.suggestions.map((s, idx) => ({
-          id: `suggestion_${idx}`,
-          title: s.title,
-          image: s.image,
-          description: s.description,
-          searchQuery: s.title,
-        }));
-
-        setMessages(prevMessages => [
-          ...prevMessages,
-          {
-            id: prevMessages.length + 1,
-            type: 'assistant',
-            text: suggestionsData.promptText || `Let's find some options:`,
-            suggestions: suggestionCards,
-            timestamp: new Date(),
-          },
-        ]);
-
-        setLoading(false);
-        setTimeout(() => inputRef.current?.focus(), 100);
-        return;
-      }
-
-      // Step 2: If no suggestions, proceed with regular search
-      // Build conversation history including the message we just added
-      const conversationHistory = [
-        ...messages.map(m => ({
-          type: m.type,
-          text: m.text,
-        })),
-        {
-          type: 'user',
-          text: userMessage,
-        },
-      ];
-
-      // Set a timeout for API call
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-      // Call conversational chat API
-      const res = await fetch('/api/chat', {
+      // Step 1: Analyze user intent with Claude
+      console.log('[CHAT] Analyzing intent...');
+      const intentRes = await fetch('/api/intent-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userMessage,
+          conversationHistory,
+        }),
+      });
+
+      const intentData = await intentRes.json();
+      console.log('[CHAT] Intent analysis:', intentData);
+
+      // Step 1a: If Claude says we should offer trends, show suggestions
+      if (intentData.shouldOfferTrends && intentData.keywordToSearch === null) {
+        console.log('[CHAT] Offering trends suggestions');
+        // Fall back to old pinterest-trends logic for now
+        const suggestionsRes = await fetch('/api/pinterest-trends', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: userMessage }),
+        });
+
+        const suggestionsData = await suggestionsRes.json();
+
+        if (suggestionsData.shouldOfferSuggestions && suggestionsData.suggestions) {
+          const suggestionCards = suggestionsData.suggestions.map((s, idx) => ({
+            id: `suggestion_${idx}`,
+            title: s.title,
+            image: s.image,
+            description: s.description,
+            searchQuery: s.title,
+          }));
+
+          setMessages(prevMessages => [
+            ...prevMessages,
+            {
+              id: prevMessages.length + 1,
+              type: 'assistant',
+              text: suggestionsData.promptText || `Let's find some options:`,
+              suggestions: suggestionCards,
+              timestamp: new Date(),
+            },
+          ]);
+
+          setLoading(false);
+          setTimeout(() => inputRef.current?.focus(), 100);
+          return;
+        }
+      }
+
+      // Step 2: If we have a keyword to search, search Fiber
+      const keywordToSearch = intentData.keywordToSearch || userMessage;
+      console.log('[CHAT] Searching Fiber for:', keywordToSearch);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+      const chatRes = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: keywordToSearch,
           conversationHistory,
         }),
         signal: controller.signal,
@@ -144,14 +156,14 @@ export default function ChatPage() {
 
       clearTimeout(timeoutId);
 
-      if (!res.ok) {
-        throw new Error(res.statusText || 'API request failed');
+      if (!chatRes.ok) {
+        throw new Error(chatRes.statusText || 'API request failed');
       }
 
-      const data = await res.json();
+      const chatData = await chatRes.json();
 
-      if (!data.success) {
-        const errorMsg = data.error || 'Unknown error';
+      if (!chatData.success) {
+        const errorMsg = chatData.error || 'Unknown error';
         const errorType = errorMsg.includes('overload') ? 'timeout' : 'error';
         const friendlyError = errorMsg.includes('overload') 
           ? '⏳ Taking longer than expected. Retrying...'
@@ -178,8 +190,44 @@ export default function ChatPage() {
         return;
       }
 
-      // Transform product results to cards
-      const products = (data.products || []).map((p, idx) => ({
+      // Step 3: Filter results using Claude
+      const allProducts = (chatData.products || []).map((p, idx) => ({
+        id: p.id || `product_${idx}`,
+        title: p.title || 'Unknown Product',
+        price: p.price || 0,
+        cashback_rate: p.cashback_rate || 0,
+        cashback_amount: p.cashback_amount || 0,
+        merchant: p.merchant || 'Unknown',
+        image_url: p.image_url || '🛍️',
+        affiliate_link: p.affiliate_link,
+        rating: (p.rating && p.reviews_count > 0) ? p.rating : null,
+        reviews_count: p.reviews_count || 0,
+        in_stock: p.in_stock !== false,
+        source: p.source || 'fiber',
+      })) || [];
+
+      console.log('[CHAT] Got', allProducts.length, 'products, filtering...');
+
+      const filterRes = await fetch('/api/filter-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMessage,
+          products: allProducts,
+          conversationHistory,
+        }),
+      });
+
+      const filterData = await filterRes.json();
+      console.log('[CHAT] Filtered to', filterData.filteredProducts?.length || 0, 'products');
+
+      // Use filtered products, fallback to top 6 from all products
+      const filteredProducts = filterData.success && filterData.filteredProducts?.length > 0 
+        ? filterData.filteredProducts.slice(0, 6)
+        : allProducts.slice(0, 6);
+
+      // Transform to display format
+      const products = filteredProducts.map((p, idx) => ({
         id: p.id || `product_${idx}`,
         title: p.title || 'Unknown Product',
         price: p.price || 0,
@@ -188,13 +236,13 @@ export default function ChatPage() {
         merchant: p.merchant || 'Unknown',
         image: p.image_url || '🛍️',
         affiliate_link: p.affiliate_link,
-        // Only show rating if it's real (has reviews)
-        rating: (p.rating && p.reviews_count > 0) ? p.rating : null,
+        rating: p.rating || null,
         reviews_count: p.reviews_count || 0,
         availability: p.in_stock ? 'in_stock' : 'out_of_stock',
         source: p.source || 'fiber',
         alternatives: p.alternatives || [],
-      })) || [];
+        filterReason: p.filterReason,
+      }));
 
       // Add Claude's response with products
       setMessages(prevMessages => [
@@ -202,7 +250,7 @@ export default function ChatPage() {
         {
           id: prevMessages.length + 1,
           type: 'assistant',
-          text: data.response || 'Here are the products I found:',
+          text: chatData.response || 'Here are the products I found:',
           products: products.length > 0 ? products : null,
           timestamp: new Date(),
         },

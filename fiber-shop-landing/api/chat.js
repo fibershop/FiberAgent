@@ -14,7 +14,7 @@ async function searchFiber(keywords) {
     const controller = new AbortController();
     const timeoutHandle = setTimeout(() => controller.abort(), 6000);
     
-    const url = `${FIBER_API}/agent/search?keywords=${encodeURIComponent(keywords)}&agent_id=${AGENT_ID}&limit=10`;
+    const url = `${FIBER_API}/agent/search?keywords=${encodeURIComponent(keywords)}&agent_id=${AGENT_ID}&limit=100`;
     
     console.log(`[FIBER] Searching: ${url}`);
     const res = await fetch(url, { signal: controller.signal });

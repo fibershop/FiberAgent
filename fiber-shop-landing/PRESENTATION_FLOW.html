@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FiberAgent: Complete Data Flow Presentation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .slide {
+      display: none;
+      min-height: 100vh;
+      padding: 60px 80px;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      border-bottom: 2px solid #00d084;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 3.5em;
+      margin-bottom: 30px;
+      color: #00d084;
+      font-weight: 800;
+    }
+
+    h2 {
+      font-size: 2.5em;
+      margin-bottom: 40px;
+      color: #00d084;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 1.5em;
+      margin: 30px 0 20px 0;
+      color: #00d084;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #c0c0c0;
+      max-width: 900px;
+    }
+
+    .subtitle {
+      font-size: 1.4em;
+      color: #00d084;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .flow-box {
+      background: rgba(0, 208, 132, 0.1);
+      border-left: 4px solid #00d084;
+      padding: 25px;
+      margin: 20px 0;
+      border-radius: 8px;
+      font-size: 1.1em;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin: 40px 0;
+    }
+
+    .column {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 208, 132, 0.3);
+    }
+
+    .column h3 {
+      margin-top: 0;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+      background: rgba(0, 208, 132, 0.05);
+      margin: 10px 0;
+      border-radius: 4px;
+      font-size: 1.1em;
+    }
+
+    .metric-label {
+      color: #c0c0c0;
+    }
+
+    .metric-value {
+      color: #00d084;
+      font-weight: 700;
+    }
+
+    .stage {
+      background: rgba(0, 208, 132, 0.08);
+      border: 2px solid #00d084;
+      padding: 30px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .stage-title {
+      font-size: 1.3em;
+      color: #00d084;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background: #1a1a1a;
+      border: 1px solid #00d084;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.95em;
+      overflow-x: auto;
+      margin: 20px 0;
+      color: #00d084;
+    }
+
+    .example {
+      background: rgba(0, 208, 132, 0.05);
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #00d084;
+      border-radius: 4px;
+    }
+
+    .example-title {
+      color: #00d084;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .controls {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      display: flex;
+      gap: 15px;
+      z-index: 1000;
+    }
+
+    button {
+      background: #00d084;
+      color: #0a0a0a;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1em;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: #00f5a0;
+      transform: scale(1.05);
+    }
+
+    .slide-number {
+      position: fixed;
+      bottom: 40px;
+      left: 40px;
+      color: #00d084;
+      font-size: 1.2em;
+      font-weight: 700;
+    }
+
+    .highlight {
+      color: #00d084;
+      font-weight: 700;
+    }
+
+    .checkmark {
+      color: #00d084;
+      font-weight: 700;
+    }
+
+    ul {
+      margin-left: 30px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin-bottom: 12px;
+      font-size: 1.1em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 1em;
+    }
+
+    th {
+      background: rgba(0, 208, 132, 0.2);
+      color: #00d084;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid #00d084;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(0, 208, 132, 0.2);
+    }
+
+    tr:hover {
+      background: rgba(0, 208, 132, 0.05);
+    }
+
+    .big-number {
+      font-size: 2.5em;
+      color: #00d084;
+      font-weight: 800;
+      margin: 20px 0;
+    }
+
+    .vs-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .vs-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 208, 132, 0.3);
+    }
+
+    .vs-item.bad {
+      border-color: rgba(255, 100, 100, 0.3);
+    }
+
+    .vs-item.good {
+      border-color: rgba(0, 208, 132, 0.5);
+    }
+
+    .vs-title {
+      font-size: 1.3em;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .bad .vs-title {
+      color: #ff6464;
+    }
+
+    .good .vs-title {
+      color: #00d084;
+    }
+
+    .network-diagram {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 8px;
+      margin: 30px 0;
+      border: 2px solid rgba(0, 208, 132, 0.3);
+      text-align: center;
+      font-family: 'Monaco', monospace;
+      font-size: 1em;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide active">
+  <h1>🎯 FiberAgent</h1>
+  <p class="subtitle">Complete Data Flow & Architecture</p>
+  <p style="font-size: 1.3em; margin-top: 60px;">How we use Claude AI to understand user intent, learn from conversation, and deliver personalized shopping results.</p>
+  <p style="margin-top: 80px; color: #888;">(Press → to begin)</p>
+</div>
+
+<!-- Slide 2: The Problem -->
+<div class="slide">
+  <h2>The Problem</h2>
+  <div class="vs-section">
+    <div class="vs-item bad">
+      <div class="vs-title">❌ Traditional E-commerce</div>
+      <p>User → Search bar → Keyword match</p>
+      <p style="margin-top: 30px; font-size: 1em;">Problems:</p>
+      <ul>
+        <li>Generic results for all users</li>
+        <li>No understanding of intent</li>
+        <li>"shoes" returns 10K products</li>
+        <li>No personalization</li>
+        <li>User frustrated, bounces</li>
+      </ul>
+    </div>
+    <div class="vs-item good">
+      <div class="vs-title">✅ FiberAgent (Claude-Powered)</div>
+      <p>User → Natural language → Intent analysis → Filtered results</p>
+      <p style="margin-top: 30px; font-size: 1em;">Solutions:</p>
+      <ul>
+        <li>Understands intent ("I'm looking for" vs "Nike shoes")</li>
+        <li>Learns from conversation history</li>
+        <li>Returns top 6 best matches</li>
+        <li>Personalized ranking (price + value + quality)</li>
+        <li>User gets exactly what they want</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Architecture Overview -->
+<div class="slide">
+  <h2>Architecture: 2-Stage Pipeline</h2>
+  <div class="stage">
+    <div class="stage-title">Stage 1: Intent Analysis</div>
+    <p><span class="highlight">/api/intent-analysis</span> (Claude Haiku)</p>
+    <p style="color: #888;">Input: User message + conversation history</p>
+    <p style="margin-top: 15px;">Claude determines:</p>
+    <ul style="margin-bottom: 0;">
+      <li>Is query vague ("shoes") or specific ("Nike Air Max")?</li>
+      <li>What are optimized search keywords?</li>
+      <li>Do we need more details?</li>
+    </ul>
+  </div>
+
+  <div class="stage">
+    <div class="stage-title">Stage 2: Smart Filtering</div>
+    <p><span class="highlight">/api/filter-results</span> (Claude Haiku)</p>
+    <p style="color: #888;">Input: 100 products from Fiber + conversation history</p>
+    <p style="margin-top: 15px;">Claude ranks by:</p>
+    <ul style="margin-bottom: 0;">
+      <li>Relevance to user request</li>
+      <li>Price + cashback value (combined)</li>
+      <li>Quality (ratings, reviews)</li>
+      <li>User demographics (if mentioned: gender, budget, brand)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 4: Data Flow -->
+<div class="slide">
+  <h2>Complete Data Flow</h2>
+  <div class="code-block" style="color: #888; text-align: center; font-family: sans-serif; font-size: 1.1em; padding: 40px;">
+    User: "I'm looking for running shoes"<br><br>
+    ↓<br><br>
+    <span class="highlight">Intent Analysis</span> → Is it vague? (YES)<br>
+    → Offer trending suggestions OR<br><br>
+    <span class="highlight">Intent Analysis</span> → Is it specific? (YES)<br>
+    → Search Fiber API (limit=<span class="highlight">100</span> products)<br><br>
+    ↓<br><br>
+    <span class="highlight">Smart Filtering</span> → Claude ranks 100 products<br>
+    → Considers: relevance, price, cashback, ratings<br>
+    → Remembers conversation context<br><br>
+    ↓<br><br>
+    Display: Top 6 results with "Why Claude ranked it" explanation
+  </div>
+</div>
+
+<!-- Slide 5: Context Preservation -->
+<div class="slide">
+  <h2>Context: The Secret Sauce</h2>
+  <p>We don't use a database for user preferences. We use <span class="highlight">conversation history</span>.</p>
+  
+  <div class="flow-box">
+    <strong>Session Memory (React State):</strong><br><br>
+    [<br>
+    { id: 1, type: 'user', text: "I'm looking for shoes" },<br>
+    { id: 2, type: 'assistant', text: "...", products: [...] },<br>
+    { id: 3, type: 'user', text: "Show me blue ones" },<br>
+    { id: 4, type: 'assistant', text: "...", products: [...] }<br>
+    ]<br><br>
+    <small style="color: #888;">This history is passed to Claude on EVERY request</small>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Why This Works</div>
+    <ul style="margin-bottom: 0;">
+      <li><span class="checkmark">✓</span> Claude understands "blue ones" = blue shoes from previous context</li>
+      <li><span class="checkmark">✓</span> Claude remembers "you looked at Nike last time"</li>
+      <li><span class="checkmark">✓</span> Claude learns user style (brand preference, budget, quality focus)</li>
+      <li><span class="checkmark">✓</span> Session scope: Lost on refresh (stateless, no storage)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 6: Privacy Model -->
+<div class="slide">
+  <h2>Privacy: Built Into Architecture</h2>
+  
+  <div class="two-column">
+    <div class="column">
+      <h3>❌ What We DON'T Store</h3>
+      <ul style="margin-bottom: 0;">
+        <li>User personal data (name, email, location)</li>
+        <li>Wallet addresses (session memory only)</li>
+        <li>Search history (not persisted)</li>
+        <li>Preferences profile (inferred from conversation)</li>
+        <li>Behavioral data (no cross-session tracking)</li>
+      </ul>
+    </div>
+    <div class="column">
+      <h3>✅ What We Use</h3>
+      <ul style="margin-bottom: 0;">
+        <li>Current conversation (in memory)</li>
+        <li>Fiber API responses (real-time)</li>
+        <li>Claude analysis (ephemeral)</li>
+        <li>Session context only (lost on refresh)</li>
+        <li>No databases, no profiling</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flow-box" style="margin-top: 40px; background: rgba(0, 208, 132, 0.05); border-left-color: #00d084;">
+    <strong>Bottom line:</strong> We can't spy on users because we don't store their data. Privacy by architecture, not by policy.
+  </div>
+</div>
+
+<!-- Slide 7: Example: Iterative Refinement -->
+<div class="slide">
+  <h2>Example: Iterative Refinement</h2>
+  
+  <div class="example">
+    <div class="example-title">Message 1</div>
+    <p><strong>User:</strong> "I'm looking for shoes"</p>
+    <p style="color: #888; margin-top: 10px;">Intent: Vague → Offer trending suggestions</p>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Message 2</div>
+    <p><strong>User:</strong> "Actually, Nike running shoes for men"</p>
+    <p style="color: #888; margin-top: 10px;">Intent: Specific (context: refined from general)</p>
+    <p style="color: #888;">Filter keywords: gender="men", brand="Nike", use_case="running"</p>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Message 3</div>
+    <p><strong>User:</strong> "Show me blue ones"</p>
+    <p style="color: #888; margin-top: 10px;">Intent: Filter refinement (context: already searching Nike running shoes)</p>
+    <p style="color: #888;">Claude remembers previous results, narrows to blue options</p>
+  </div>
+
+  <div class="flow-box" style="margin-top: 30px;">
+    <strong>Key:</strong> Each message adds context. Claude gets smarter with each query.
+  </div>
+</div>
+
+<!-- Slide 8: Cost Model -->
+<div class="slide">
+  <h2>Cost Optimization</h2>
+  
+  <table>
+    <tr>
+      <th>Component</th>
+      <th>Model</th>
+      <th>Cost/1K tokens</th>
+      <th>Why?</th>
+    </tr>
+    <tr>
+      <td>Intent Analysis</td>
+      <td>Haiku</td>
+      <td>$0.80</td>
+      <td>Fast classification</td>
+    </tr>
+    <tr>
+      <td>Result Filtering</td>
+      <td>Haiku</td>
+      <td>$0.80</td>
+      <td>Ranking logic</td>
+    </tr>
+    <tr>
+      <td>Context Learning</td>
+      <td>Session Memory</td>
+      <td>$0</td>
+      <td>React state (no API)</td>
+    </tr>
+  </table>
+
+  <div class="flow-box" style="margin-top: 40px;">
+    <strong>Per-search cost: ~$0.005</strong><br>
+    (Intent: $0.002 + Filtering: $0.003)
+  </div>
+
+  <div class="two-column">
+    <div class="column">
+      <h3>Daily (1000 users)</h3>
+      <div class="metric">
+        <div class="metric-label">3000 searches/day</div>
+        <div class="metric-value">$15</div>
+      </div>
+    </div>
+    <div class="column">
+      <h3>Annual (100K users)</h3>
+      <div class="metric">
+        <div class="metric-label">100M searches/year</div>
+        <div class="metric-value">$540K</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Data Sources -->
+<div class="slide">
+  <h2>Data Sources</h2>
+  
+  <table>
+    <tr>
+      <th>Source</th>
+      <th>Type</th>
+      <th>Used For</th>
+      <th>Freshness</th>
+    </tr>
+    <tr>
+      <td>Fiber API</td>
+      <td>50K+ merchants, products</td>
+      <td>Search results</td>
+      <td>Real-time</td>
+    </tr>
+    <tr>
+      <td>Cashback Rates</td>
+      <td>Per-merchant rates</td>
+      <td>Filtering by value</td>
+      <td>Real-time</td>
+    </tr>
+    <tr>
+      <td>User Conversation</td>
+      <td>Messages in chat</td>
+      <td>Intent/filtering context</td>
+      <td>Per-message</td>
+    </tr>
+    <tr>
+      <td>Product Ratings</td>
+      <td>3rd party (Fiber provides)</td>
+      <td>Quality ranking</td>
+      <td>Real-time</td>
+    </tr>
+  </table>
+
+  <div class="flow-box" style="margin-top: 40px;">
+    <strong>Single source of truth:</strong> <span class="highlight">Fiber API</span><br>
+    We don't duplicate data, we orchestrate it.
+  </div>
+</div>
+
+<!-- Slide 10: Scaling to Multiple Agents -->
+<div class="slide">
+  <h2>Scaling: Agent Network</h2>
+  
+  <p style="margin-bottom: 40px;">One intent + filtering pipeline serves unlimited agents.</p>
+
+  <div class="network-diagram">
+    Agent A (Shopping)  ──┐<br>
+    Agent B (Lifestyle) ──┤─→ /api/intent-analysis<br>
+    Agent C (Gaming)    ──┤─→ /api/chat (Fiber)<br>
+    Agent D (Fashion)   ──┤─→ /api/filter-results<br>
+    Agent E (Health)    ──┘<br>
+    <br>
+    Vercel: Load-balanced, stateless, scales automatically
+  </div>
+
+  <div class="flow-box" style="margin-top: 40px;">
+    <strong>Architecture benefit:</strong> Shared logic = no duplication, faster feature rollout, consistent behavior across agents
+  </div>
+</div>
+
+<!-- Slide 11: What Makes This Different -->
+<div class="slide">
+  <h2>Why This Matters</h2>
+  
+  <div class="two-column">
+    <div class="column">
+      <h3 style="color: #ff6464;">Traditional Search</h3>
+      <ul style="margin-bottom: 0;">
+        <li>Keyword matching</li>
+        <li>Static ranking (price)</li>
+        <li>No intent understanding</li>
+        <li>Same results for all users</li>
+        <li>Requires user profiling DB</li>
+      </ul>
+    </div>
+    <div class="column">
+      <h3 style="color: #00d084;">FiberAgent</h3>
+      <ul style="margin-bottom: 0;">
+        <li>Natural language understanding</li>
+        <li>Dynamic ranking (context-aware)</li>
+        <li>Intent detection</li>
+        <li>Personalized per conversation</li>
+        <li>Privacy-first (no DB needed)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flow-box" style="margin-top: 40px; background: rgba(0, 208, 132, 0.08);">
+    <strong>Core insight:</strong> Stop storing user data. Instead, use conversation history as context. Cheaper, faster, more private, and smarter.
+  </div>
+</div>
+
+<!-- Slide 12: Roadmap -->
+<div class="slide">
+  <h2>Roadmap</h2>
+  
+  <div class="stage">
+    <div class="stage-title">Phase 2 (May 2026)</div>
+    <ul style="margin-bottom: 0;">
+      <li><span class="checkmark">✓</span> Persistent user preferences (optional, opt-in)</li>
+      <li><span class="checkmark">✓</span> Multi-modal filtering (images: "Find shoes like this")</li>
+      <li><span class="checkmark">✓</span> A/B testing for intent models</li>
+      <li><span class="checkmark">✓</span> Analytics (aggregated, no PII)</li>
+    </ul>
+  </div>
+
+  <div class="stage">
+    <div class="stage-title">Phase 3 (Jun 2026)</div>
+    <ul style="margin-bottom: 0;">
+      <li><span class="checkmark">✓</span> Fine-tuned intent model (task-specific, even cheaper)</li>
+      <li><span class="checkmark">✓</span> Batch searching ("Find shoes AND jackets")</li>
+      <li><span class="checkmark">✓</span> Cross-agent collaboration</li>
+      <li><span class="checkmark">✓</span> Agent reputation (ERC-8004 scoring)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 13: Questions -->
+<div class="slide">
+  <h2>Q&A</h2>
+  
+  <div class="example">
+    <div class="example-title">Q: How do you prevent Claude from hallucinating?</div>
+    <p style="margin-bottom: 0;">A: Claude doesn't generate products—it filters/ranks real Fiber data. Source of truth is Fiber API's 100-product response.</p>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Q: What if Claude's filtering is wrong?</div>
+    <p style="margin-bottom: 0;">A: Graceful fallback: Show top 10 by price (cheapest after cashback). Claude is a feature, not a requirement.</p>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Q: Can users opt-out of Claude filtering?</div>
+    <p style="margin-bottom: 0;">A: Yes—always fallback to price-based ranking. Future: explicit toggle in settings.</p>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Q: How much conversation history do you keep?</div>
+    <p style="margin-bottom: 0;">A: Only current session (browser memory). On refresh, history is lost. Intentional for privacy & stateless design.</p>
+  </div>
+</div>
+
+<!-- Slide 14: Conclusion -->
+<div class="slide">
+  <h1 style="margin-bottom: 50px;">The Bridge Between AI & Shopping</h1>
+  
+  <p style="font-size: 1.3em; margin-bottom: 30px;">FiberAgent's 2-stage Claude pipeline:</p>
+
+  <div style="margin-left: 0;">
+    <div class="flow-box"><strong>1. Understands intent</strong> — Not just keywords</div>
+    <div class="flow-box"><strong>2. Personalizes results</strong> — Learns from conversation</div>
+    <div class="flow-box"><strong>3. Respects privacy</strong> — No database storage</div>
+    <div class="flow-box"><strong>4. Scales cheaply</strong> — Haiku model, $0.005/search</div>
+    <div class="flow-box"><strong>5. Works across agents</strong> — Shared infrastructure</div>
+  </div>
+
+  <p style="margin-top: 60px; color: #888; font-size: 1.1em;">Let's build the future of shopping with AI.</p>
+</div>
+
+<div class="slide-number"><span id="slide-num">1</span> / 14</div>
+
+<div class="controls">
+  <button onclick="prevSlide()">← Back</button>
+  <button onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  
+  function showSlide(n) {
+    slides.forEach(slide => slide.classList.remove('active'));
+    slides[n].classList.add('active');
+    document.getElementById('slide-num').textContent = n + 1;
+  }
+
+  function nextSlide() {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      showSlide(currentSlide);
+    }
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  // Initialize
+  showSlide(0);
+</script>
+
+</body>
+</html>

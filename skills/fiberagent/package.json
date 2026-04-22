@@ -1,10 +1,12 @@
 {
-  "name": "fiberagent",
-  "version": "1.0.1",
-  "description": "OpenClaw skill for FiberAgent — find products with crypto cashback across 50,000+ merchants on Monad",
+  "name": "fiberagent-skill",
+  "version": "2.0.0",
+  "description": "OpenClaw skill: Find products with crypto cashback across 50,000+ merchants on Monad blockchain",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/test.js",
+    "lint": "echo 'Linting not configured yet'"
   },
   "keywords": [
     "openclaw",
@@ -13,18 +15,30 @@
     "cashback",
     "crypto",
     "monad",
+    "blockchain",
     "affiliate",
     "erc-8004",
-    "agent-commerce"
+    "commerce",
+    "agent"
   ],
   "author": "Laurent Salou <laurent@fiberagent.shop>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fibershop/FiberAgent"
+    "url": "https://github.com/fibershop/FiberAgent.git",
+    "directory": "skills/fiberagent"
   },
   "homepage": "https://fiberagent.shop",
   "bugs": {
     "url": "https://github.com/fibershop/FiberAgent/issues"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "index.js",
+    "SKILL.md",
+    "README.md",
+    "package.json"
+  ]
 }

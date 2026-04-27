@@ -113,12 +113,23 @@ function extractMaxPrice(intent) {
   return m ? parseInt(m[1]) : null;
 }
 
+// Bug #7: sanitize image URLs before embedding in markdown. Reject anything
+// that isn't http(s); encode parens so a hostile URL can't break out of `![](...)`.
+function sanitizeImageUrl(url) {
+  if (typeof url !== 'string' || !url) return null;
+  let parsed;
+  try { parsed = new URL(url); } catch { return null; }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+  return url.replace(/[()]/g, c => encodeURIComponent(c));
+}
+
 function formatResults(results) {
   if (!results.length) return 'No products found.';
-  
+
   // Build markdown table with images
   const rows = results.map((p, i) => {
-    const image = p.image ? `![](${p.image})` : '📦';
+    const safeImage = sanitizeImageUrl(p.image);
+    const image = safeImage ? `![](${safeImage})` : '📦';
     const title = p.title || 'Unknown';
     const price = `$${p.price.toFixed(2)}`;
     const merchant = p.merchant || 'Unknown';

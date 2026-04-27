@@ -15,9 +15,8 @@ const FIBER_API = 'https://api.fiber.shop/v1';
 const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://fiberagent.shop';
 
 // ─── Wallet validation (EVM + Solana) ───
-// Bugs #11/#13: MCP was EVM-only and case-careless. Now: validate format up
-// front, lowercase EVM (matches skill index.js + on-chain norm), preserve case
-// for Solana base58 (case-sensitive).
+// Bug #11/#13: MCP was EVM-only and case-careless. Now: validate format up front,
+// preserve case for Solana base58, lowercase for EVM (matches skill index.js).
 const EVM_RE = /^0x[a-fA-F0-9]{40}$/;
 const SOLANA_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
@@ -39,11 +38,22 @@ function validateWallet(addr) {
 }
 
 // Wallet-aware token default. Solana wallets cannot receive Monad-EVM tokens,
-// so we never silently coerce to MON for them (audit bug #19).
+// so we never silently coerce to MON for them (audit bug #19). Caller may also
+// pass through whatever the user explicitly chose.
 function defaultTokenForWallet(kind) {
   if (kind === 'evm') return 'MON';
   if (kind === 'solana') return 'USDC';
   return null;
+}
+
+// Bug #7: sanitize image URLs before embedding in markdown. Reject anything that
+// isn't http(s); encode parens so a hostile URL can't break out of `![](...)`.
+function sanitizeImageUrl(url) {
+  if (typeof url !== 'string' || !url) return null;
+  let parsed;
+  try { parsed = new URL(url); } catch { return null; }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+  return url.replace(/[()]/g, c => encodeURIComponent(c));
 }
 
 // ─── Search via our backend /api/agent/search (handles Fiber API + Fallback) ───
@@ -145,19 +155,9 @@ function extractMaxPrice(intent) {
   return m ? parseInt(m[1]) : null;
 }
 
-// Bug #7: sanitize image URLs before embedding in markdown. Reject anything
-// that isn't http(s); encode parens so a hostile URL can't break out of `![](...)`.
-function sanitizeImageUrl(url) {
-  if (typeof url !== 'string' || !url) return null;
-  let parsed;
-  try { parsed = new URL(url); } catch { return null; }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
-  return url.replace(/[()]/g, c => encodeURIComponent(c));
-}
-
 function formatResults(results) {
   if (!results.length) return 'No products found.';
-
+  
   // Build markdown table with images
   const rows = results.map((p, i) => {
     const safeImage = sanitizeImageUrl(p.image);
@@ -215,8 +215,8 @@ export default async function handler(req, res) {
             properties: {
               keywords: { type: 'string', description: 'Product search terms (e.g., "running shoes", "wireless headphones")' },
               agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse, skips wallet prompt)' },
-              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)' },
-              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'REQUIRED if no agent_id: Your preferred reward token (MON=default, BONK=community, USDC=stable)' },
+              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).' },
+              preferred_token: { type: 'string', description: 'REQUIRED if no agent_id: Preferred reward token (e.g. MON, BONK, USDC, USD1). Defaults: EVM→MON, Solana→USDC.' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
             required: ['keywords']
@@ -230,8 +230,8 @@ export default async function handler(req, res) {
             properties: {
               intent: { type: 'string', description: 'Natural language description (e.g., "find running shoes under $150 with good reviews")' },
               agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse, skips wallet prompt)' },
-              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)' },
-              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'REQUIRED if no agent_id: Your preferred reward token (MON=default, BONK=community, USDC=stable)' },
+              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).' },
+              preferred_token: { type: 'string', description: 'REQUIRED if no agent_id: Preferred reward token (e.g. MON, BONK, USDC, USD1). Defaults: EVM→MON, Solana→USDC.' },
               max_results: { type: 'integer', description: 'Number of results to return', default: 5, maximum: 20 }
             },
             required: ['intent']
@@ -239,15 +239,15 @@ export default async function handler(req, res) {
         },
         {
           name: 'register_agent',
-          description: 'Register your agent with FiberAgent to earn cashback commissions on referred purchases',
+          description: 'Register your agent with FiberAgent to earn cashback commissions on referred purchases. Supports EVM and Solana wallets.',
           inputSchema: {
             type: 'object',
             properties: {
-              agent_id: { type: 'string', description: 'Unique identifier for your agent' },
-              agent_name: { type: 'string', description: 'Human-readable name for your agent (optional)' },
-              wallet: { type: 'string', description: 'Blockchain wallet address (0x...) where commissions are paid' }
+              wallet_address: { type: 'string', description: 'Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).' },
+              preferred_token: { type: 'string', description: 'Preferred reward token (e.g. MON, BONK, USDC, USD1). Defaults: EVM→MON, Solana→USDC.' },
+              agent_name: { type: 'string', description: 'Human-readable name for your agent (optional)' }
             },
-            required: ['agent_id', 'wallet']
+            required: ['wallet_address']
           }
         },
         {
@@ -269,8 +269,8 @@ export default async function handler(req, res) {
             properties: {
               product_query: { type: 'string', description: 'Product name or title to compare (e.g., "Nike Pegasus 41")' },
               agent_id: { type: 'string', description: 'Your agent ID (if already registered — use for fast reuse, skips wallet prompt)' },
-              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)' },
-              preferred_token: { type: 'string', enum: ['MON', 'BONK', 'USDC'], description: 'REQUIRED if no agent_id: Your preferred reward token (MON=default, BONK=community, USDC=stable)' }
+              wallet_address: { type: 'string', description: 'REQUIRED if no agent_id: Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).' },
+              preferred_token: { type: 'string', description: 'REQUIRED if no agent_id: Preferred reward token (e.g. MON, BONK, USDC, USD1). Defaults: EVM→MON, Solana→USDC.' }
             },
             required: ['product_query']
           }
@@ -409,11 +409,25 @@ export default async function handler(req, res) {
         switch (name) {
           case 'search_products': {
             const keywords = args?.keywords || '';
-            const wallet_address = args?.wallet_address;
-            const preferred_token = args?.preferred_token || 'MON';
-            
+            const rawWallet = args?.wallet_address;
+            let wallet_address = null;
+            let walletKind = null;
+            if (rawWallet) {
+              const wc = validateWallet(rawWallet);
+              if (!wc.ok) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  error: { code: -32602, message: wc.error },
+                  id
+                });
+              }
+              wallet_address = wc.normalized;
+              walletKind = wc.kind;
+            }
+            const preferred_token = args?.preferred_token || (walletKind ? defaultTokenForWallet(walletKind) : null);
+
             // Check if agent_id was passed in arguments first, then check session
-            let agent_id = args?.agent_id || Object.values(agents).sort((a, b) => 
+            let agent_id = args?.agent_id || Object.values(agents).sort((a, b) =>
               new Date(b.registered_at) - new Date(a.registered_at)
             )[0]?.agent_id;
             
@@ -536,8 +550,22 @@ export default async function handler(req, res) {
           }
           case 'search_by_intent': {
             const intent = args?.intent || '';
-            const wallet_address = args?.wallet_address;
-            const preferred_token = args?.preferred_token || 'MON';
+            const rawWallet = args?.wallet_address;
+            let wallet_address = null;
+            let walletKind = null;
+            if (rawWallet) {
+              const wc = validateWallet(rawWallet);
+              if (!wc.ok) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  error: { code: -32602, message: wc.error },
+                  id
+                });
+              }
+              wallet_address = wc.normalized;
+              walletKind = wc.kind;
+            }
+            const preferred_token = args?.preferred_token || (walletKind ? defaultTokenForWallet(walletKind) : null);
             const keywords = extractKeywords(intent);
             const maxPrice = extractMaxPrice(intent);
             const wantsCashback = /highest\s+cashback|best\s+cashback/i.test(intent);
@@ -844,8 +872,22 @@ export default async function handler(req, res) {
             }
             
             // If no agent and no wallet provided, REQUIRE wallet
-            const wallet_address = args?.wallet_address;
-            const preferred_token = args?.preferred_token || 'MON';
+            const rawWallet = args?.wallet_address;
+            let wallet_address = null;
+            let walletKind = null;
+            if (rawWallet) {
+              const wc = validateWallet(rawWallet);
+              if (!wc.ok) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  error: { code: -32602, message: wc.error },
+                  id
+                });
+              }
+              wallet_address = wc.normalized;
+              walletKind = wc.kind;
+            }
+            const preferred_token = args?.preferred_token || (walletKind ? defaultTokenForWallet(walletKind) : null);
             
             if (!agent_id || agent_id === 'mcp-user') {
               if (!wallet_address) {
@@ -968,19 +1010,27 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       {
         keywords: z.string().describe('Product search terms (e.g., "nike running shoes")'),
         agent_id: z.string().optional().describe('Your agent ID (if already registered — use this to skip wallet prompt)'),
-        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)'),
-        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('REQUIRED if no agent_id: Preferred reward token (MON=default native, BONK=community, USDC=stablecoin)'),
+        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).'),
+        preferred_token: z.string().optional().describe('Preferred reward token (e.g. MON, BONK, USDC, USD1). Defaults: EVM wallets→MON, Solana wallets→USDC.'),
         max_results: z.number().optional().default(5).describe('Max results (1-20)'),
       },
       async ({ keywords, agent_id, wallet_address, preferred_token, max_results }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `❌ Missing wallet address. To search for "${keywords}", provide your blockchain wallet address (0x...) and preferred token (MON/BONK/USDC).` }] };
+          return { content: [{ type: 'text', text: `❌ Missing wallet address. To search for "${keywords}", provide your blockchain wallet address (EVM 0x... or Solana base58) and preferred token.` }] };
         }
-        
+
+        // Validate wallet format if provided
+        if (wallet_address) {
+          const wc = validateWallet(wallet_address);
+          if (!wc.ok) return { content: [{ type: 'text', text: `❌ ${wc.error}` }] };
+          wallet_address = wc.normalized;
+          if (!preferred_token) preferred_token = defaultTokenForWallet(wc.kind);
+        }
+
         // If wallet provided but no token preference, error
         if (wallet_address && !preferred_token && !agent_id) {
-          return { content: [{ type: 'text', text: `❌ Missing token preference. Provide preferred token: MON (default), BONK, or USDC.` }] };
+          return { content: [{ type: 'text', text: `❌ Missing token preference. Provide preferred token: MON, BONK, USDC, or USD1.` }] };
         }
         
         // If we have agent_id, use it directly (no re-registration)
@@ -994,7 +1044,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 wallet_address: wallet_address,
-                preferred_token: preferred_token || 'MON'
+                preferred_token: preferred_token
               }),
               signal: AbortSignal.timeout(10000)
             });
@@ -1042,19 +1092,27 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       {
         intent: z.string().describe('Natural language request (e.g., "Find Nike shoes under $150, best cashback")'),
         agent_id: z.string().optional().describe('Your agent ID (if already registered — use this to skip wallet prompt)'),
-        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)'),
-        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('REQUIRED if no agent_id: Preferred reward token (MON=default native, BONK=community, USDC=stablecoin)'),
+        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).'),
+        preferred_token: z.string().optional().describe('Preferred reward token (e.g. MON, BONK, USDC, USD1). Defaults: EVM wallets→MON, Solana wallets→USDC.'),
         preferences: z.array(z.string()).optional().describe('Preferences (e.g., ["running", "lightweight"])'),
       },
       async ({ intent, agent_id, wallet_address, preferred_token, preferences }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `Please ask the user for their blockchain wallet address (format: 0x...) to help with "${intent}" and earn cashback rewards. Also ask for their preferred reward token (MON, BONK, or USDC). Provide wallet links if needed: Metamask (https://metamask.io) or Coinbase Wallet (https://coinbase.com/wallet).` }] };
+          return { content: [{ type: 'text', text: `Please ask the user for their blockchain wallet address (EVM 0x... or Solana base58) to help with "${intent}" and earn cashback rewards. Also ask for their preferred reward token. Provide wallet links if needed: Metamask (https://metamask.io), Coinbase Wallet (https://coinbase.com/wallet), or Phantom (https://phantom.app).` }] };
         }
-        
+
+        // Validate wallet format if provided
+        if (wallet_address) {
+          const wc = validateWallet(wallet_address);
+          if (!wc.ok) return { content: [{ type: 'text', text: `❌ ${wc.error}` }] };
+          wallet_address = wc.normalized;
+          if (!preferred_token) preferred_token = defaultTokenForWallet(wc.kind);
+        }
+
         // If wallet provided but no token preference, ask for it
         if (wallet_address && !preferred_token && !agent_id) {
-          return { content: [{ type: 'text', text: `Please ask the user which reward token they'd like to earn in: MON (default Monad native), BONK (community), or USDC (stablecoin). This is required to proceed.` }] };
+          return { content: [{ type: 'text', text: `Please ask the user which reward token they'd like to earn in: MON, BONK, USDC, or USD1. This is required to proceed.` }] };
         }
         
         const keywords = extractKeywords(intent);
@@ -1072,7 +1130,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 wallet_address: wallet_address,
-                preferred_token: preferred_token || 'MON'
+                preferred_token: preferred_token
               }),
               signal: AbortSignal.timeout(10000)
             });
@@ -1240,15 +1298,24 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
       {
         product_query: z.string().describe('Product to compare (e.g., "nike air force 1")'),
         agent_id: z.string().optional().describe('Your agent ID (if already registered — use this to skip wallet prompt)'),
-        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address from Metamask, Coinbase, etc. (0x...)'),
-        preferred_token: z.enum(['MON', 'BONK', 'USDC']).optional().describe('REQUIRED if no agent_id: Preferred reward token (MON=default native, BONK=community, USDC=stablecoin)'),
+        wallet_address: z.string().optional().describe('REQUIRED if no agent_id: Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).'),
+        preferred_token: z.string().optional().describe('Preferred reward token (e.g. MON, BONK, USDC, USD1). Defaults: EVM wallets→MON, Solana wallets→USDC.'),
       },
       async ({ product_query, agent_id, wallet_address, preferred_token }) => {
         // Need either agent_id OR wallet_address
         if (!agent_id && !wallet_address) {
-          return { content: [{ type: 'text', text: `Please ask the user for their blockchain wallet address (format: 0x...) to compare prices and cashback for "${product_query}". Also ask for their preferred reward token (MON, BONK, or USDC). Provide wallet links if needed: Metamask (https://metamask.io) or Coinbase Wallet (https://coinbase.com/wallet).` }] };
+          return { content: [{ type: 'text', text: `Please ask the user for their blockchain wallet address (EVM 0x... or Solana base58) to compare prices and cashback for "${product_query}". Also ask for their preferred reward token. Provide wallet links if needed: Metamask (https://metamask.io), Coinbase Wallet (https://coinbase.com/wallet), or Phantom (https://phantom.app).` }] };
         }
-        
+
+        // Validate wallet format if provided
+        if (wallet_address) {
+          const wc = validateWallet(wallet_address);
+          if (!wc.ok) return { content: [{ type: 'text', text: `❌ ${wc.error}` }] };
+          wallet_address = wc.normalized;
+          if (!preferred_token) preferred_token = defaultTokenForWallet(wc.kind);
+        }
+
+
         // If wallet provided but no token preference, ask for it
         if (wallet_address && !preferred_token && !agent_id) {
           return { content: [{ type: 'text', text: `Please ask the user which reward token they'd like to earn in: MON (default Monad native), BONK (community), or USDC (stablecoin). This is required to complete the comparison.` }] };
@@ -1265,7 +1332,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 wallet_address: wallet_address,
-                preferred_token: preferred_token || 'MON'
+                preferred_token: preferred_token
               }),
               signal: AbortSignal.timeout(10000)
             });

@@ -715,60 +715,49 @@ export default async function handler(req, res) {
             }
           }
           case 'get_agent_stats': {
-            let agent_id = args?.agent_id || Object.values(agents).sort((a, b) => 
-              new Date(b.registered_at) - new Date(a.registered_at)
-            )[0]?.agent_id;
-            
+            const agent_id = args?.agent_id;
             if (!agent_id) {
               return res.status(200).json({
                 jsonrpc: '2.0',
-                error: { code: -32602, message: 'No agent_id provided and no agent found in session. Provide agent_id parameter.' },
+                error: { code: -32602, message: 'agent_id is required. Pass the ID returned by register_agent or a search.' },
                 id
               });
             }
-            
+
             try {
-              // Fetch live stats from Fiber API (works for any agent_id, not just local)
-              const statsResponse = await fetch(`${FIBER_API}/agent/stats?agent_id=${encodeURIComponent(agent_id)}`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                signal: AbortSignal.timeout(8000)
-              });
-              
-              // Look up agent in local store for fallback
-              const localAgent = Object.values(agents).find(a => a.agent_id === agent_id);
-              
-              let stats = {
-                agent_id,
-                name: localAgent?.name || 'Agent',
-                wallet: localAgent?.wallet || 'Unknown',
-                device_id: localAgent?.device_id || 'Unknown',
-                registered_at: localAgent?.registered_at || new Date().toISOString(),
-                token: localAgent?.token || 'MON',
-                total_searches: localAgent?.searches || 0,
-                total_earnings_pending: 0,
-                total_earnings_confirmed: 0,
-                cashback_pending: 0,
-                cashback_confirmed: 0
-              };
-              
-              if (statsResponse.ok) {
-                const fiberStats = await statsResponse.json();
-                if (fiberStats.data) {
-                  stats.total_searches = fiberStats.data.total_searches || 0;
-                  stats.total_earnings_pending = fiberStats.data.pending_earnings || fiberStats.data.earnings_pending || 0;
-                  stats.total_earnings_confirmed = fiberStats.data.confirmed_earnings || fiberStats.data.earnings_confirmed || 0;
-                  stats.cashback_pending = fiberStats.data.cashback_pending || 0;
-                  stats.cashback_confirmed = fiberStats.data.cashback_confirmed || 0;
-                }
+              const statsResponse = await fetch(
+                `${FIBER_API}/agent/${encodeURIComponent(agent_id)}/stats`,
+                { signal: AbortSignal.timeout(8000) }
+              );
+
+              if (!statsResponse.ok) {
+                return res.status(200).json({
+                  jsonrpc: '2.0',
+                  result: {
+                    content: [{
+                      type: 'text',
+                      text: `❌ Stats unavailable for agent ${agent_id} (HTTP ${statsResponse.status}).`
+                    }]
+                  },
+                  id
+                });
               }
-              
+
+              const data = await statsResponse.json().catch(() => ({}));
+              const s = data.stats || {};
+              const name = data.agent_name || 'Agent';
+              const wallet = s.wallet_address || 'unknown';
+              const purchases = s.total_purchases_tracked || 0;
+              const earnings = Number(s.total_earnings_usd || 0);
+              const pending = Number(s.pending_payout_usd || 0);
+              const joined = s.joined_date || 'unknown';
+
               return res.status(200).json({
                 jsonrpc: '2.0',
                 result: {
                   content: [{
                     type: 'text',
-                    text: `📊 Agent Stats: ${stats.name}\n\n**Wallet:** ${stats.wallet}\n**Device ID:** ${stats.device_id}\n**Registered:** ${stats.registered_at}\n**Token:** ${stats.token}\n\n**Searches:** ${stats.total_searches}\n**Cashback (Pending):** ${stats.cashback_pending} ${stats.token}\n**Cashback (Confirmed):** ${stats.cashback_confirmed} ${stats.token}\n**Earnings (Pending):** $${stats.total_earnings_pending.toFixed(2)}\n**Earnings (Confirmed):** $${stats.total_earnings_confirmed.toFixed(2)}\n\n**Total Potential:** $${(stats.total_earnings_pending + stats.total_earnings_confirmed).toFixed(2)}`
+                    text: `📊 **${name}** — Earnings\n\n**Agent ID:** ${agent_id}\n**Wallet:** ${wallet}\n**Joined:** ${joined}\n\n**Performance:**\n• Purchases tracked: ${purchases}\n• Total earnings (USD): $${earnings.toFixed(2)}\n• Pending payout (USD): $${pending.toFixed(2)}\n\nFor full breakdown by token and merchant, sign in at https://fiber.shop`
                   }]
                 },
                 id
@@ -779,7 +768,7 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `📊 Agent Stats: ${stats.name}\n\n**Wallet:** ${stats.wallet}\n**Device ID:** ${stats.device_id}\n**Token:** ${stats.token}\n**Searches:** ${stats.total_searches}\n\n(Fiber API unavailable for live earnings — check back soon)`
+                    text: `❌ Stats lookup failed for agent ${agent_id}: ${err?.message || 'unknown error'}`
                   }]
                 },
                 id
@@ -1142,58 +1131,42 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'get_agent_stats',
-      'Check your agent earnings, pending cashback, and wallet balance.',
-      { 
-        agent_id: z.string().optional().describe('Your agent ID (optional — uses last-registered agent if not provided)')
+      'Check an agent\'s earnings, pending cashback, and lifetime stats. Pass agent_id explicitly — there is no implicit "current agent" across MCP sessions.',
+      {
+        agent_id: z.string().describe('Agent ID to look up (e.g. agent_2dbf947b6ca049b57469cf39). Returned by register_agent or shown after a search.')
       },
       async ({ agent_id }) => {
-        let agentId = agent_id;
-        if (!agentId) {
-          const lastAgent = Object.values(agents).sort((a, b) => 
-            new Date(b.registered_at) - new Date(a.registered_at)
-          )[0];
-          if (!lastAgent) {
-            return { content: [{ type: 'text', text: '❌ No registered agent found. Use `register_agent` first.' }] };
-          }
-          agentId = lastAgent.agent_id;
+        if (!agent_id) {
+          return { content: [{ type: 'text', text: '❌ agent_id is required. Use `register_agent` to get one, or pass an ID returned by a previous search.' }] };
         }
-        
-        const localAgent = Object.values(agents).find(a => a.agent_id === agentId);
-        if (!localAgent) {
-          return { content: [{ type: 'text', text: `❌ Agent "${agentId}" not found in this session. Register with \`register_agent\` first.` }] };
-        }
-        
+
         try {
-          const statsResponse = await fetch(`${FIBER_API}/agent/stats?agent_id=${encodeURIComponent(agentId)}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            signal: AbortSignal.timeout(8000)
-          });
-          
-          let stats = {
-            agent_id: agentId,
-            name: localAgent.name,
-            wallet: localAgent.wallet,
-            device_id: localAgent.device_id,
-            registered_at: localAgent.registered_at,
-            token: localAgent.token,
-            total_searches: 0,
-            pending_earnings: 0,
-            confirmed_earnings: 0
-          };
-          
-          if (statsResponse.ok) {
-            const fiberStats = await statsResponse.json();
-            if (fiberStats.data) {
-              stats.total_searches = fiberStats.data.total_searches || 0;
-              stats.pending_earnings = fiberStats.data.pending_earnings || 0;
-              stats.confirmed_earnings = fiberStats.data.confirmed_earnings || 0;
-            }
+          const statsResponse = await fetch(
+            `${FIBER_API}/agent/${encodeURIComponent(agent_id)}/stats`,
+            { signal: AbortSignal.timeout(8000) }
+          );
+
+          if (!statsResponse.ok) {
+            return { content: [{ type: 'text', text: `❌ Stats unavailable for agent ${agent_id} (HTTP ${statsResponse.status}).` }] };
           }
-          
-          return { content: [{ type: 'text', text: `📊 **${localAgent.name}** — Earnings Dashboard\n\n**Wallet:** ${localAgent.wallet}\n**Device ID:** ${localAgent.device_id}\n**Reward Token:** ${localAgent.token}\n**Registered:** ${localAgent.registered_at}\n\n**🎯 Performance:**\n• Searches: ${stats.total_searches}\n• Pending Earnings: ${stats.pending_earnings} ${localAgent.token}\n• Confirmed Earnings: ${stats.confirmed_earnings} ${localAgent.token}\n• **Total:** ${(stats.pending_earnings + stats.confirmed_earnings).toFixed(2)} ${localAgent.token}\n\nRefresh this regularly to see your earnings grow!` }] };
+
+          const data = await statsResponse.json().catch(() => ({}));
+          const s = data.stats || {};
+          const name = data.agent_name || 'Agent';
+          const wallet = s.wallet_address || 'unknown';
+          const purchases = s.total_purchases_tracked || 0;
+          const earnings = Number(s.total_earnings_usd || 0);
+          const pending = Number(s.pending_payout_usd || 0);
+          const joined = s.joined_date || 'unknown';
+
+          return {
+            content: [{
+              type: 'text',
+              text: `📊 **${name}** — Earnings\n\n**Agent ID:** ${agent_id}\n**Wallet:** ${wallet}\n**Joined:** ${joined}\n\n**Performance:**\n• Purchases tracked: ${purchases}\n• Total earnings (USD): $${earnings.toFixed(2)}\n• Pending payout (USD): $${pending.toFixed(2)}\n\nFor full breakdown by token and merchant, sign in at https://fiber.shop`
+            }]
+          };
         } catch (err) {
-          return { content: [{ type: 'text', text: `📊 **${localAgent.name}** — Earnings Dashboard\n\n**Wallet:** ${localAgent.wallet}\n**Device ID:** ${localAgent.device_id}\n**Token:** ${localAgent.token}\n\n(Live earnings unavailable — check back soon!)` }] };
+          return { content: [{ type: 'text', text: `❌ Stats lookup failed for agent ${agent_id}: ${err?.message || 'unknown error'}` }] };
         }
       }
     );

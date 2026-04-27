@@ -14,6 +14,38 @@
 const FIBER_API = 'https://api.fiber.shop/v1';
 const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://fiberagent.shop';
 
+// ─── Wallet validation (EVM + Solana) ───
+// Bugs #11/#13: MCP was EVM-only and case-careless. Now: validate format up
+// front, lowercase EVM (matches skill index.js + on-chain norm), preserve case
+// for Solana base58 (case-sensitive).
+const EVM_RE = /^0x[a-fA-F0-9]{40}$/;
+const SOLANA_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+function validateWallet(addr) {
+  if (typeof addr !== 'string') {
+    return { ok: false, error: 'wallet_address must be a string' };
+  }
+  const trimmed = addr.trim();
+  if (EVM_RE.test(trimmed)) {
+    return { ok: true, kind: 'evm', normalized: trimmed.toLowerCase() };
+  }
+  if (SOLANA_RE.test(trimmed)) {
+    return { ok: true, kind: 'solana', normalized: trimmed };
+  }
+  return {
+    ok: false,
+    error: 'Invalid wallet address. Expected EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).'
+  };
+}
+
+// Wallet-aware token default. Solana wallets cannot receive Monad-EVM tokens,
+// so we never silently coerce to MON for them (audit bug #19).
+function defaultTokenForWallet(kind) {
+  if (kind === 'evm') return 'MON';
+  if (kind === 'solana') return 'USDC';
+  return null;
+}
+
 // ─── Search via our backend /api/agent/search (handles Fiber API + Fallback) ───
 
 async function searchViaBackend(keywords, agentId = 'mcp-user', limit = 10) {
@@ -644,16 +676,27 @@ export default async function handler(req, res) {
           }
           case 'register_agent': {
             const agent_name = args?.agent_name || args?.name || 'Claude';
-            const wallet_address = args?.wallet_address || args?.wallet;
-            
-            if (!wallet_address) {
+            const rawWallet = args?.wallet_address || args?.wallet;
+
+            if (!rawWallet) {
               return res.status(200).json({
                 jsonrpc: '2.0',
-                error: { code: -32602, message: 'Missing required parameter: wallet_address (0x... blockchain address)' },
+                error: { code: -32602, message: 'Missing required parameter: wallet_address (EVM 0x... or Solana base58).' },
                 id
               });
             }
-            
+
+            const walletCheck = validateWallet(rawWallet);
+            if (!walletCheck.ok) {
+              return res.status(200).json({
+                jsonrpc: '2.0',
+                error: { code: -32602, message: walletCheck.error },
+                id
+              });
+            }
+            const wallet_address = walletCheck.normalized;
+            const preferred_token = args?.preferred_token || defaultTokenForWallet(walletCheck.kind);
+
             // Check if already registered locally
             const existingAgent = Object.values(agents).find(a => a.wallet === wallet_address);
             if (existingAgent) {
@@ -668,15 +711,18 @@ export default async function handler(req, res) {
                 id
               });
             }
-            
+
             try {
-              // Register DIRECTLY with Fiber API (not through our backend)
+              // Register DIRECTLY with Fiber API (not through our backend).
+              // Bug #9: don't send agent_name as agent_id (backend generates it),
+              // and pass preferred_token through so the user's choice is preserved.
               const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  agent_id: agent_name,
-                  wallet_address: wallet_address
+                  wallet_address: wallet_address,
+                  preferred_token: preferred_token,
+                  agent_name: agent_name
                 }),
                 signal: AbortSignal.timeout(10000)
               });
@@ -710,7 +756,7 @@ export default async function handler(req, res) {
                 result: {
                   content: [{
                     type: 'text',
-                    text: `✅ Registered with Fiber!\n\n**Agent Name:** ${agent_name}\n**Agent ID:** ${fiberResponse.agent_id}\n**Wallet:** ${wallet_address}\n**Device ID:** ${fiberResponse.wildfire_device_id}\n**Token:** ${fiberResponse.preferred_token || 'MON'}\n**Founding Agent:** ${fiberResponse.founding_agent ? 'Yes 🎉' : 'No'}\n**ERC-8004:** https://www.8004scan.io/agents/monad/135\n\n**Next Steps:**\n1. Use your **Agent ID** in all searches to track cashback\n2. Share your Agent ID with humans so they use it when shopping\n3. Get pending rewards with: \`get_agent_stats\` or \`get_agent_balance\``
+                    text: `✅ Registered with Fiber!\n\n**Agent Name:** ${agent_name}\n**Agent ID:** ${fiberResponse.agent_id}\n**Wallet:** ${wallet_address}\n**Device ID:** ${fiberResponse.wildfire_device_id}\n**Token:** ${fiberResponse.preferred_token || preferred_token}\n**Status:** ${fiberResponse.founding_agent ? '🎉 Founding Agent!' : 'Active'}\n\n**Next Steps:**\n1. Use your **Agent ID** in all searches to track cashback\n2. Share your Agent ID with humans so they use it when shopping\n3. Get pending rewards with: \`get_agent_stats\` or \`get_agent_balance\``
                   }]
                 },
                 id
@@ -1082,53 +1128,64 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.tool(
       'register_agent',
-      'Register your agent with your own blockchain wallet (Metamask, Coinbase Wallet, etc.) to start earning cashback.',
+      'Register your agent with your own blockchain wallet (Metamask, Coinbase Wallet, Phantom, etc.) to start earning cashback. Supports EVM (0x...) and Solana (base58) wallets.',
       {
-        wallet_address: z.string().describe('Your blockchain wallet address (0x... format). Use your existing wallet from Metamask, Coinbase, or any EVM wallet.'),
+        wallet_address: z.string().describe('Your blockchain wallet address. EVM (0x + 40 hex chars) or Solana (base58, 32–44 chars).'),
+        preferred_token: z.string().optional().describe('Preferred reward token (e.g. MON, BONK, USDC, USD1). If omitted, defaults are EVM→MON, Solana→USDC.'),
         agent_name: z.string().optional().describe('Display name (e.g., "Claude Shopping Agent")'),
       },
-      async ({ wallet_address, agent_name }) => {
+      async ({ wallet_address, preferred_token, agent_name }) => {
         const name = agent_name || 'Agent';
-        
-        // Check if already registered locally
-        const existingAgent = Object.values(agents).find(a => a.wallet === wallet_address);
-        if (existingAgent) {
-          return { content: [{ type: 'text', text: `✅ Already registered!\n\n**Agent ID:** ${existingAgent.agent_id}\n**Wallet:** ${wallet_address}\n**Device ID:** ${existingAgent.device_id}\n**Token:** ${existingAgent.token}\n**Registered:** ${existingAgent.registered_at}\n\nYou're ready to earn! Search products to track cashback.` }] };
+
+        const walletCheck = validateWallet(wallet_address);
+        if (!walletCheck.ok) {
+          return { content: [{ type: 'text', text: `❌ ${walletCheck.error}` }] };
         }
-        
+        const normalizedWallet = walletCheck.normalized;
+        const tokenToSend = preferred_token || defaultTokenForWallet(walletCheck.kind);
+
+        // Check if already registered locally
+        const existingAgent = Object.values(agents).find(a => a.wallet === normalizedWallet);
+        if (existingAgent) {
+          return { content: [{ type: 'text', text: `✅ Already registered!\n\n**Agent ID:** ${existingAgent.agent_id}\n**Wallet:** ${normalizedWallet}\n**Device ID:** ${existingAgent.device_id}\n**Token:** ${existingAgent.token}\n**Registered:** ${existingAgent.registered_at}\n\nYou're ready to earn! Search products to track cashback.` }] };
+        }
+
         try {
-          // Register DIRECTLY with Fiber API (not through our backend proxy)
+          // Register DIRECTLY with Fiber API. Bug #9: don't send agent_name as
+          // agent_id (backend generates it) and pass preferred_token through.
           const registerResponse = await fetch(`${FIBER_API}/agent/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              agent_id: name,
-              wallet_address: wallet_address
+              wallet_address: normalizedWallet,
+              preferred_token: tokenToSend,
+              agent_name: name
             }),
             signal: AbortSignal.timeout(10000)
           });
-          
+
           if (!registerResponse.ok) {
-            const error = await registerResponse.json();
-            return { content: [{ type: 'text', text: `❌ Registration failed: ${error.error || error.message}` }] };
+            const error = await registerResponse.json().catch(() => ({}));
+            return { content: [{ type: 'text', text: `❌ Registration failed: ${error.error || error.message || `HTTP ${registerResponse.status}`}` }] };
           }
-          
+
           const fiberResponse = await registerResponse.json();
-          
+
           // Store locally
           const localKey = `agent_${Math.random().toString(36).slice(2, 9)}`;
           agents[localKey] = {
             agent_id: fiberResponse.agent_id,
             device_id: fiberResponse.wildfire_device_id,
             name: name,
-            wallet: wallet_address,
-            token: fiberResponse.preferred_token || 'MON',
+            wallet: normalizedWallet,
+            token: fiberResponse.preferred_token || tokenToSend,
             registered_at: fiberResponse.registered_at,
             searches: 0,
             earnings: 0
           };
-          
-          return { content: [{ type: 'text', text: `✅ Successfully Registered!\n\n**Agent Name:** ${name}\n**Agent ID:** ${fiberResponse.agent_id}\n**Wallet:** ${wallet_address}\n**Device ID:** ${fiberResponse.wildfire_device_id}\n**Reward Token:** ${fiberResponse.preferred_token || 'MON'}\n**Status:** ${fiberResponse.founding_agent ? '🎉 Founding Agent!' : 'Active'}\n\n**Next Steps:**\n1. Use your Agent ID in searches: \`search_products\` or \`search_by_intent\`\n2. Each product link earns you cashback when purchased\n3. Check your earnings: \`get_agent_stats\` with your Agent ID\n4. View on blockchain: https://www.8004scan.io/agents/monad/135` }] };
+
+          const resolvedToken = fiberResponse.preferred_token || tokenToSend;
+          return { content: [{ type: 'text', text: `✅ Successfully Registered!\n\n**Agent Name:** ${name}\n**Agent ID:** ${fiberResponse.agent_id}\n**Wallet:** ${normalizedWallet}\n**Device ID:** ${fiberResponse.wildfire_device_id}\n**Reward Token:** ${resolvedToken}\n**Status:** ${fiberResponse.founding_agent ? '🎉 Founding Agent!' : 'Active'}\n\n**Next Steps:**\n1. Use your Agent ID in searches: \`search_products\` or \`search_by_intent\`\n2. Each product link earns you cashback when purchased\n3. Check your earnings: \`get_agent_stats\` with your Agent ID` }] };
         } catch (err) {
           return { content: [{ type: 'text', text: `❌ Registration error: ${err.message}` }] };
         }

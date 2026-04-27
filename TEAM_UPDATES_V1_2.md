@@ -10,6 +10,22 @@ A 50,000-foot view of the v1.2 overhaul, for the whole team (technical and non-t
 
 A major overhaul of the Fiber MCP — the bridge that connects Claude, ChatGPT, Cursor, and other AI assistants to Fiber's cashback network. Today's MCP requires every user to share a crypto wallet just to *browse* products, which loses ~90% of mainstream users at "what's a wallet?" v1.2 fixes that, clears a backlog of production bugs, and adds new capabilities — multi-store price comparison ranked by best total deal, cross-LLM wishlists, and "how much have I earned?" working in any chat — that no other shopping AI can match. Aimed at fundraising-quality demo readiness.
 
+## The keystone goal — unifying MCP and the web app
+
+The biggest thing v1.2 needs to fix isn't a single bug — it's an **architectural gap** between the MCP and `fiber.shop`. Today these are two disconnected systems. A user who hands the MCP a wallet, makes purchases, and earns cashback **cannot then log into `fiber.shop` with that wallet or email** to see their account. Same the other way: someone who signed up on the web app isn't recognizable to the MCP. The two halves don't talk.
+
+This explains a chain of confusing symptoms: backend status reports that disagree with the web app, "earnings = $0" from one endpoint while the web app shows real paid tokens, and the inability to ship the "how much have I earned?" feature credibly without knowing which data source to trust.
+
+**v1.2 closes that gap.** When someone registers via the MCP, they're creating (or resolving to) a `fiber.shop` user account. The MCP becomes the seamless front door — search and buy in any LLM, then log into your account on the web to manage everything.
+
+**Why this matters for the demo and for fundraising:** the story shifts from "look, the MCP works" to "look, you can shop via Claude or ChatGPT, then log into our web app and see your account." Same identity, two surfaces. No other shopping AI does this.
+
+This is mostly a backend lift (Laurent + Tim) — the MCP can be ready for it (call the right endpoints, format the right responses), but the actual identity unification has to happen at the data layer.
+
+## Important context — the MCP's origin
+
+The FiberAgent MCP was originally built for a **Monad hackathon**. Solana support was added to the underlying Fiber platform later, but the MCP code still reflects Monad-first assumptions in many places (token defaults, hardcoded ERC-8004 references in registration responses, "Founding Agent" branding, status terminology that pre-dates Solana payouts). Several items in the bug audit are not "bugs" in the traditional sense — they're **unmodernized hackathon defaults** that haven't kept up with the platform's evolution. v1.2 is as much a modernization as it is a feature push.
+
 ---
 
 ## Critical Bug Fixes — PR #1

@@ -2,6 +2,9 @@
 .env
 .env.local
 .env.*.local
+.env.fiber.*
+.env.erc8004
+# .env.example is intentionally tracked as a template; keep it sanitized (no real keys)
 
 # Node
 node_modules/

@@ -6,6 +6,20 @@ Status legend: 🔴 not fixed · 🟡 in progress · 🟢 fixed
 
 ---
 
+## Architectural gaps (system-level — not single-line bugs)
+
+These aren't fixable with a code patch — they're structural issues that require backend coordination with Laurent + Tim. Listed here because they're load-bearing for v1.2 and explain a chain of symptoms in the code-level bugs below.
+
+| # | Status | Issue | Why it matters |
+|---|--------|-------|----------------|
+| A1 | 🔴 | **MCP and `fiber.shop` are disconnected identity systems.** A wallet/email registered via MCP cannot log into the web app, and vice versa. Two parallel registration flows, no bridge between them. | **Keystone v1.2 goal.** Closing this turns the MCP from a one-shot purchase tool into "the front door to your `fiber.shop` account" — the demo story for fundraising. |
+| A2 | 🔴 | **`/v1/agent/:id/stats` reports stale status vs. web app + on-chain reality.** Returns `READY` and `pending_payout_usd: 12.31` for commissions the web app shows as `Paid` and that landed on-chain (Solscan-verified) months ago. | All "how much have I earned?" / cashback-balance MCP work depends on querying the same source-of-truth the web app uses. Likely related to A1 — two disconnected data systems. |
+| A3 | 🔴 | **Monad-first assumptions throughout the MCP code.** Token defaults to `MON` (Monad-EVM) for all wallets including Solana wallets that physically can't receive it. `register_agent` response hardcodes `ERC-8004: https://www.8004scan.io/agents/monad/135`. "Founding Agent 🎉" branding. Status terminology pre-dates Solana payouts. | The MCP was built for a Monad hackathon; Solana support was added to the platform later but the MCP code didn't get modernized. v1.2 is as much a modernization as it is feature work. |
+
+**Open question to Laurent (lifted from above):** which backend endpoint is canonical for cashback status now that the platform is multi-chain? Whatever powers `app.fiber.shop/tokens` is the right answer — that needs to be exposed to the MCP, or the existing stats endpoint needs to be brought in sync.
+
+---
+
 ## Critical (severity 8–10)
 
 | # | Sev | Status | Issue | Location | Fix |
@@ -43,7 +57,7 @@ Status legend: 🔴 not fixed · 🟡 in progress · 🟢 fixed
 
 | # | Sev | Status | Issue | Location | Fix |
 |---|-----|--------|-------|----------|-----|
-| 19 | 3 | 🔴 | Token coercion silently defaults to MON if `preferred_token` missing — user choice dropped without notification. | mcp.js:955 | Either error or surface the default explicitly |
+| 19 | 6 | 🔴 | **Token coercion silently defaults to MON for all wallets, including Solana wallets that can't physically receive MON.** Bumped from sev 3 to 6 — actively misleads Solana users about how they'll be paid. Display says "MON" while backend may have correctly resolved to USD1/BONK; either way, MCP shouldn't pick MON as a fallback. (See architectural gap A3.) | mcp.js:955, plus echo in register response | Wallet-aware default: EVM → MON, Solana → ask user / USDC. Never silently coerce. |
 | 20 | 3 | 🔴 | Inconsistent URL encoding on wallet addresses (encoded sometimes, not others). Wallets with `+`/`&` rare but break. | multiple | Encode consistently |
 | 21 | 2 | 🔴 | GET requests set `Content-Type: application/json` (non-standard, harmless). | mcp.js:33, 1170 | Remove `headers` from GET fetch options |
 | 22 | 2 | 🔴 | Comment claims "stateless mode: no session tracking" but code uses in-memory `agents` map. Self-contradictory. | mcp.js:8, 142 | Delete the map (see #4); update comment |

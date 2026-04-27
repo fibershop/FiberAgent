@@ -420,7 +420,6 @@ export default async function handler(req, res) {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
                     wallet_address: wallet_address,
                     preferred_token: preferred_token
                   }),
@@ -559,7 +558,6 @@ export default async function handler(req, res) {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
                     wallet_address: wallet_address,
                     preferred_token: preferred_token
                   }),
@@ -838,7 +836,6 @@ export default async function handler(req, res) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                      agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
                       wallet_address: wallet_address,
                       preferred_token: preferred_token
                     }),
@@ -950,7 +947,6 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
                 wallet_address: wallet_address,
                 preferred_token: preferred_token || 'MON'
               }),
@@ -1029,7 +1025,6 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
                 wallet_address: wallet_address,
                 preferred_token: preferred_token || 'MON'
               }),
@@ -1212,7 +1207,6 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                agent_id: `claude-${Math.random().toString(36).slice(2, 9)}`,
                 wallet_address: wallet_address,
                 preferred_token: preferred_token || 'MON'
               }),

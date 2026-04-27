@@ -1283,7 +1283,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.resource('merchant-catalog', 'fiber://merchants/catalog', { description: 'Merchant catalog with cashback rates', mimeType: 'application/json' }, async () => {
       const merchants = {};
-      PRODUCTS.forEach(p => { if (!merchants[p.merchant]) merchants[p.merchant] = { name: p.merchant, domain: p.domain, rate: p.cashbackRate, products: [] }; merchants[p.merchant].products.push(p.title); });
+      FALLBACK_PRODUCTS.forEach(p => { if (!merchants[p.merchant]) merchants[p.merchant] = { name: p.merchant, domain: p.domain, rate: p.cashbackRate, products: [] }; merchants[p.merchant].products.push(p.title); });
       return { contents: [{ uri: 'fiber://merchants/catalog', mimeType: 'application/json', text: JSON.stringify({ total: '50,000+', sample: Object.values(merchants) }, null, 2) }] };
     });
 
@@ -1293,7 +1293,7 @@ ${results.slice(0, 5).map((p, i) => `| ${i+1} | ${p.merchant} | ${p.cashbackRate
 
     server.resource('cashback-rates', 'fiber://rates/top', { description: 'Top cashback rates by merchant', mimeType: 'application/json' }, async () => {
       const rates = {};
-      PRODUCTS.forEach(p => { if (!rates[p.merchant] || rates[p.merchant].rate < p.cashbackRate) rates[p.merchant] = { merchant: p.merchant, domain: p.domain, rate: p.cashbackRate }; });
+      FALLBACK_PRODUCTS.forEach(p => { if (!rates[p.merchant] || rates[p.merchant].rate < p.cashbackRate) rates[p.merchant] = { merchant: p.merchant, domain: p.domain, rate: p.cashbackRate }; });
       return { contents: [{ uri: 'fiber://rates/top', mimeType: 'application/json', text: JSON.stringify({ rates: Object.values(rates).sort((a, b) => b.rate - a.rate) }, null, 2) }] };
     });
 
